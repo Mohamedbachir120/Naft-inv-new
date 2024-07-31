@@ -66,7 +66,7 @@ class DetailLocalitePage extends StatelessWidget {
                           children: [
                             Text(
                               localisation.code_bar,
-                              style: defaultTextStyle(),
+                              style: defaultTextStyle(color: Colors.white),
                             ),
                             Text(
                               "${localisation.biens.length} Articles",
@@ -84,21 +84,63 @@ class DetailLocalitePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Recherche",
+                        "Nouveau article",
                         style: defaultTextStyle(
                             fontWeight: FontWeight.w700, fontSize: 18),
                       ),
                       TextButton(
                           onPressed: () {},
                           child: Text(
-                            "Scanner",
+                            "+ SN",
                             style: defaultTextStyle(color: GRAY),
                           ))
                     ],
                   ),
                 ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                            onPressed: () {},
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    "Scanner un article",
+                                    style:
+                                        defaultTextStyle(color: Colors.white),
+                                  )
+                                ],
+                              ),
+                            )),
+                      )
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "OU",
+                      style: defaultTextStyle(
+                          color: YELLOW,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700),
+                    )
+                  ],
+                ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 0, horizontal: 25),
+                  margin: EdgeInsets.fromLTRB(25, 10, 25, 0),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
@@ -117,7 +159,10 @@ class DetailLocalitePage extends StatelessWidget {
                           flex: 1,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.search),
+                            child: Icon(
+                              Icons.edit,
+                              color: MAINCOLOR,
+                            ),
                           )),
                       Flexible(
                           flex: 5,
@@ -127,6 +172,8 @@ class DetailLocalitePage extends StatelessWidget {
                                   SynchronizationRequestSearch(keyword: value));
                             },
                             decoration: InputDecoration(
+                              hintText: "Saisir le code bar",
+                              hintStyle: defaultTextStyle(color: GRAY),
                               fillColor: Colors.white,
                               filled: true,
                               border: InputBorder.none,
@@ -150,7 +197,7 @@ class DetailLocalitePage extends StatelessWidget {
                                           keyword: ""));
                                 },
                                 icon: Icon(
-                                  Icons.clear,
+                                  Icons.check,
                                   color: Colors.white,
                                 )),
                           ))
@@ -158,7 +205,7 @@ class DetailLocalitePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                    height: MediaQuery.of(context).size.width * 1.15,
+                    height: MediaQuery.of(context).size.width * 1,
                     child: ListView.builder(
                         itemCount: state.localites.length,
                         itemBuilder: (context, index) {

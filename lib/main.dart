@@ -104,8 +104,6 @@ class App extends StatelessWidget {
               authenticationRepository: authenticationRepository,
               synchronizationRepository: SynchronizationRepository(
                 db: authenticationRepository.db,
-                deviceID: authenticationRepository.deviceId,
-                structure: authenticationRepository.centre,
               ),
             ),
           ),

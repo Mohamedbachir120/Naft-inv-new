@@ -97,6 +97,18 @@ class User {
     }
   }
 
+  static Future<String> getStructure() async {
+    try {
+      final database = openDatabase(join(await getDatabasesPath(), DBNAME));
+      final db = await database;
+
+      final List<Map<String, dynamic>> maps = await db.query('User');
+      return maps[0]["COP_ID"];
+    } catch (e) {
+      return "";
+    }
+  }
+
   @override
   String toString() {
     return 'User{matricule: $matricule, name: $nom}';

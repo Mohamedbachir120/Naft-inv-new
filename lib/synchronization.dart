@@ -15,9 +15,8 @@ class SynchronizationPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => SynchronizationBloc(
           synchronizationRepository: SynchronizationRepository(
-              db: authenticationRepository.db,
-              structure: authenticationRepository.centre,
-              deviceID: authenticationRepository.deviceId),
+            db: authenticationRepository.db,
+          ),
           authenticationRepository: authenticationRepository),
       child: SafeArea(
           child: Scaffold(

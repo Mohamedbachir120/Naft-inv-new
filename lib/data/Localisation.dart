@@ -17,6 +17,23 @@ class Localisation {
   // Constructeur
   Localisation(this.code_bar, this.designation, this.cop_lib, this.cop_id,
       this.biens, this.nonEtiqu);
+  Localisation copyWith({
+    String? codeBar,
+    String? designation,
+    String? copLib,
+    String? copId,
+    List<Bien_materiel>? biens,
+    List<Non_Etiquete>? nonEtiqu,
+  }) {
+    return Localisation(
+      codeBar ?? this.code_bar,
+      designation ?? this.designation,
+      copLib ?? this.cop_lib,
+      copId ?? this.cop_id,
+      biens ?? this.biens,
+      nonEtiqu ?? this.nonEtiqu,
+    );
+  }
 
   static Future<Localisation> get_localisation(String code_bar) async {
     User user = await User.auth();

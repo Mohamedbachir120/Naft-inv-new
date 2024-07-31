@@ -1165,12 +1165,18 @@ class LocaliteWidget extends StatelessWidget {
                 child: IconButton(
                   style: TextButton.styleFrom(backgroundColor: purple),
                   onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                          builder: (context) => DetailLocalitePage(
-                                localisation: localisation,
-                              )),
-                    );
+                    Bien_materiel bien = Bien_materiel("dd", 1, "23/27/24",
+                        "99999999999test", 1, "9TS1", "24141S", "SS");
+
+                    context
+                        .read<SynchronizationBloc>()
+                        .add(SynchronizationAddBien(bien: bien));
+                    // Navigator.of(context).pushReplacement(
+                    //   MaterialPageRoute(
+                    //       builder: (context) => DetailLocalitePage(
+                    //             localisation: localisation,
+                    //           )),
+                    // );
                   },
                   icon: Icon(
                     Icons.arrow_forward,

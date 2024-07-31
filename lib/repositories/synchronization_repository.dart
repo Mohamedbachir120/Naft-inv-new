@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:device_information/device_information.dart';
 import 'package:dio/dio.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
@@ -13,12 +14,11 @@ import 'package:path/path.dart';
 
 class SynchronizationRepository {
   final Database db;
-  SynchronizationRepository(
-      {required this.deviceID, required this.structure, required this.db});
-  final String deviceID;
+  SynchronizationRepository({required this.db});
+  String deviceID = "";
   String filter = "";
   String keyword = "";
-  final String structure;
+  String structure = "";
 
   List<Equipe> equipes = [];
   List<Localisation> localisations = [];
@@ -34,7 +34,8 @@ class SynchronizationRepository {
   }
 
   Future<void> getStatus() async {
-    print("calling get status synchronization");
+    String deviceID = await DeviceInformation.deviceIMEINumber;
+    String structure = await User.getStructure();
     if (deviceID != "" && structure != "") {
       if (await User.check_user() != 0) {
         List<Bien_materiel> biens = await Bien_materiel.all_objects();
@@ -154,6 +155,34 @@ class SynchronizationRepository {
     } else {
       localisations = original;
     }
+    _controller.add(SynchronizationStatus.success);
+  }
+
+  void addBien(Bien_materiel bien) {
+    _controller.add(SynchronizationStatus.searching);
+    localisations = localisations.map((e) {
+      if (e.code_bar == bien.code_localisation) {
+        e = e.copyWith(biens: [bien, ...e.biens]);
+        return e;
+      } else {
+        return e;
+      }
+    }).toList();
+    _controller.add(SynchronizationStatus.success);
+  }
+
+  void addSn(Non_Etiquete sn) {
+    _controller.add(SynchronizationStatus.searching);
+
+    localisations = localisations.map((e) {
+      if (e.code_bar == sn.code_localisation) {
+        e.copyWith(nonEtiqu: [sn, ...e.nonEtiqu]);
+
+        return e;
+      } else {
+        return e;
+      }
+    }).toList();
     _controller.add(SynchronizationStatus.success);
   }
 }

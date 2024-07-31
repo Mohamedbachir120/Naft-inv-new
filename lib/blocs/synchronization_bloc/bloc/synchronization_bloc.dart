@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Equipe.dart';
 import 'package:naftinv/data/Localisation.dart';
+import 'package:naftinv/data/Non_Etiquete.dart';
 import 'package:naftinv/repositories/authentication_repository.dart';
 import 'package:naftinv/repositories/synchronization_repository.dart';
 
@@ -29,6 +31,8 @@ class SynchronizationBloc
     on<SynchronizationStatusChanged>(_onSynchronizationStatusChanged);
     on<SynchronizationRequestSearch>(_onSynchronizationRequestSearch);
     on<SynchronizationRequestFilter>(_onSynchronizationRequestFilter);
+    on<SynchronizationAddBien>(_onSynchronizationAddBien);
+    on<SynchronizationAddSn>(_onSynchronizationAddSn);
 
     _synchronizationStatusSubscription =
         synchronizationRepository.status.listen(
@@ -106,5 +110,15 @@ class SynchronizationBloc
   void _onSynchronizationRequestFilter(
       SynchronizationRequestFilter event, Emitter<SynchronizationState> emit) {
     synchronizationRepository.activeFilter(event.filter);
+  }
+
+  void _onSynchronizationAddBien(
+      SynchronizationAddBien event, Emitter<SynchronizationState> emit) {
+    synchronizationRepository.addBien(event.bien);
+  }
+
+  void _onSynchronizationAddSn(
+      SynchronizationAddSn event, Emitter<SynchronizationState> emit) {
+    synchronizationRepository.addSn(event.sn);
   }
 }

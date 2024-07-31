@@ -18,3 +18,13 @@ class SynchronizationRequestFilter extends SynchronizationEvent {
   final String filter;
   SynchronizationRequestFilter({required this.filter});
 }
+
+class SynchronizationAddBien extends SynchronizationEvent {
+  final Bien_materiel bien;
+  SynchronizationAddBien({required this.bien});
+}
+
+class SynchronizationAddSn extends SynchronizationEvent {
+  final Non_Etiquete sn;
+  SynchronizationAddSn({required this.sn});
+}
