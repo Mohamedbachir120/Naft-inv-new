@@ -16,7 +16,7 @@ class Bien_materiel {
   String date_format() {
     DateTime day = DateTime.parse(this.date_scan);
 
-    return "${day.day}/${day.month}/${day.year}    ${day.hour}:${day.minute}";
+    return "${day.day}-${day.month}-${day.year}    ${day.hour}:${day.minute}";
   }
 
   late final String code_bar;
@@ -58,7 +58,6 @@ class Bien_materiel {
 
     final List<Map<String, dynamic>> maps = await db.query(
         "Bien_materiel where code_bar  = '$code_bar' and code_localisation ='$code_localisation' ");
-
     return (maps.length > 0);
   }
 
@@ -112,19 +111,15 @@ class Bien_materiel {
   }
 
   Future<bool> Store_Bien() async {
-    this.date_scan = date_format();
+    print("store bien called");
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
-    var connectivityResult = await (Connectivity().checkConnectivity());
-
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      // try {
-      User user = await User.auth();
-      Dio dio = Dio();
+    User user = await User.auth();
+    Dio dio = Dio();
+    String imeiNo = await DeviceInformation.deviceIMEINumber;
+    try {
       dio.options.headers["Authorization"] = 'Bearer ' + await user.getToken();
-      String imeiNo = await DeviceInformation.deviceIMEINumber;
 
       final response = await dio.post(
           '${LARAVEL_ADDRESS}api/create_bien/${imeiNo}',
@@ -136,8 +131,6 @@ class Bien_materiel {
         this.stockage = 1;
       }
       this.stockage = 1;
-      db.insert('Bien_materiel', this.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
 
       return true;
       // } on DioError {
@@ -148,14 +141,26 @@ class Bien_materiel {
 
       //   return true;
       // }
-    } else {
-      await db.insert('Bien_materiel', this.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
-      return true;
+    } catch (e) {
+      try {
+        await refreshToken(db);
+        dio.options.headers["Authorization"] =
+            'Bearer ' + await user.getToken();
+
+        final response = await dio.post(
+            '${LARAVEL_ADDRESS}api/create_bien/${imeiNo}',
+            data: this.toJson());
+        this.stockage = 1;
+      } catch (e) {
+        this.stockage = 0;
+      }
     }
+    await db.insert('Bien_materiel', this.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return true;
   }
 
-  Store_Bien_Soft() async {
+  Future<bool> Store_Bien_Soft() async {
     this.date_scan = date_format();
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
@@ -177,7 +182,7 @@ class Bien_materiel {
             String imeiNo = await DeviceInformation.deviceIMEINumber;
 
             final response = await dio.post(
-                '${LARAVEL_ADDRESS}api/create_bien/${imeiNo}',
+                '${LARAVEL_ADDRESS}api/create_bien/$imeiNo',
                 data: this.toJson());
             if (response.toString() == "true") {
               db.rawUpdate(
@@ -249,12 +254,12 @@ class Bien_materiel {
           maps[i]["inv_id"]);
     });
   }
-   static Future<List<Bien_materiel>> all_objects() async {
+
+  static Future<List<Bien_materiel>> all_objects() async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
-    final List<Map<String, dynamic>> maps =
-        await db.query("Bien_materiel");
+    final List<Map<String, dynamic>> maps = await db.query("Bien_materiel");
 
     return List.generate(maps.length, (i) {
       return Bien_materiel(
@@ -292,4 +297,35 @@ class Bien_materiel {
             "matricule": "$matricule",
             "stockage": $stockage }''';
   }
+
+  Future<void> refreshToken(Database db) async {
+    final Dio dio = Dio();
+    User user = await User.auth();
+    try {
+      var response = await dio.post('${LARAVEL_ADDRESS}api/auth/refresh_token',
+          data: {"refresh_token": user.refresh_token});
+
+      // Update the token in your authentication repository after refreshing
+      user.token = response.data['access_token'];
+      user.refresh_token = response.data['refresh_token'];
+
+      db.insert('User', user.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      print("############# Token refreshed successfully.");
+    } catch (e) {
+      print("############### Error refreshing token: ${e.toString()}");
+    }
+  }
+}
+
+String valueState(int a) {
+  switch (a) {
+    case 1:
+      return "Bon";
+    case 2:
+      return "Hors service";
+    case 3:
+      return "A réformer";
+  }
+  return "Bon";
 }

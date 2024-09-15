@@ -7,7 +7,7 @@ import 'package:naftinv/all_objects.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Localisation.dart';
 import 'package:naftinv/data/Non_Etiquete.dart';
-import 'package:naftinv/detail_bien.dart';
+import 'package:naftinv/detailBien.dart';
 import 'package:naftinv/main.dart';
 import 'package:naftinv/operations.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -158,9 +158,8 @@ class _HistoryPageState extends State<HistoryPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Detail_Bien(
-                            bien_materiel: bien,
-                            localisation: loc,
+                          builder: (context) => DetailBienPage(
+                            bien: bien,
                           ),
                         ),
                       );
@@ -397,7 +396,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   case 2:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => All_objects()),
+                      MaterialPageRoute(builder: (context) => BiensPage()),
                     );
                     break;
                 }
@@ -468,7 +467,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   case 2:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => All_objects()),
+                      MaterialPageRoute(builder: (context) => BiensPage()),
                     );
                     break;
                 }

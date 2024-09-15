@@ -100,7 +100,7 @@ class Localisation {
     final db = await database;
 
     final List<Map<String, dynamic>> maps =
-        await db.query("${TABLENAME} where cop_lib  = 0 ");
+        await db.query("$TABLENAME where cop_lib  = 0 ");
     List<Bien_materiel> biens = await get_linked_Object(code_bar);
     List<Non_Etiquete> sns = await get_linked_SN(code_bar);
 

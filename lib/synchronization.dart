@@ -12,6 +12,7 @@ class SynchronizationPage extends StatelessWidget {
   final AuthenticationRepository authenticationRepository;
   @override
   Widget build(BuildContext context) {
+    print("builder called");
     return BlocProvider(
       create: (context) => SynchronizationBloc(
           synchronizationRepository: SynchronizationRepository(
@@ -24,7 +25,8 @@ class SynchronizationPage extends StatelessWidget {
         listener: (context, state) {
           if (state is SynchronizationInitial) {
             if (state.status == SynchronizationStatus.success) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) {
                 return LoginPage();
               }));
             }

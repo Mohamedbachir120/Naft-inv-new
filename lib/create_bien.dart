@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Localisation.dart';
 
-import 'package:naftinv/detail_bien.dart';
+import 'package:naftinv/detailBien.dart';
 import 'package:naftinv/main.dart';
 import 'package:naftinv/data/Localisation.dart';
 
@@ -119,9 +119,8 @@ class _Create_BienState extends State<Create_Bien> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => Detail_Bien(
-                                          bien_materiel: bien,
-                                          localisation: localisation,
+                                        builder: (context) => DetailBienPage(
+                                          bien: bien,
                                         ),
                                       ),
                                     );

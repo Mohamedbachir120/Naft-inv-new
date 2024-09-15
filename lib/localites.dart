@@ -23,6 +23,11 @@ class LocalitePage extends StatelessWidget {
         child: BlocBuilder<SynchronizationBloc, SynchronizationState>(
           builder: (context, state) {
             if (state is SynchronizationInitial) {
+              final localites = state.localites
+                  .where((e) =>
+                      e.code_bar.contains(state.keyword) ||
+                      e.designation.contains(state.keyword))
+                  .toList();
               return Column(children: [
                 Container(
                   decoration: BoxDecoration(
@@ -46,12 +51,12 @@ class LocalitePage extends StatelessWidget {
                               ),
                             ),
                             Flexible(
-                              flex: 1,
+                              flex: 2,
                               child: Text("LOCALITÉS",
                                   style: defaultTextStyle(
                                       color: Colors.white, fontSize: 18)),
                             ),
-                            Flexible(flex: 1, child: Text(""))
+                            Flexible(flex: 1, child: SizedBox())
                           ],
                         ),
                       ),
@@ -167,16 +172,27 @@ class LocalitePage extends StatelessWidget {
                             fontWeight: FontWeight.w700, fontSize: 18),
                       ),
                       TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            "Scanner",
-                            style: defaultTextStyle(color: GRAY),
+                          onPressed: () {
+                            scanBarcodeNormal(context);
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.camera_alt,
+                                color: purple,
+                              ),
+                              Text(
+                                "  Scanner",
+                                style: defaultTextStyle(
+                                    color: purple, fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ))
                     ],
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 0, horizontal: 25),
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 25),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
@@ -200,6 +216,7 @@ class LocalitePage extends StatelessWidget {
                       Flexible(
                           flex: 5,
                           child: TextFormField(
+                            initialValue: state.keyword,
                             onChanged: (value) {
                               context.read<SynchronizationBloc>().add(
                                   SynchronizationRequestSearch(keyword: value));
@@ -235,24 +252,16 @@ class LocalitePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(
-                    height: MediaQuery.of(context).size.width * 1.15,
-                    child: ListView.builder(
-                        itemCount: state.localites.length,
-                        itemBuilder: (context, index) {
-                          if (index != state.localites.length - 1) {
-                            return LocaliteWidget(
-                              localisation: state.localites[index],
-                            );
-                          } else {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 15.0),
-                              child: LocaliteWidget(
-                                localisation: state.localites[index],
-                              ),
-                            );
-                          }
-                        })),
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    padding: EdgeInsets.only(bottom: 20),
+                    itemCount: localites.length,
+                    itemBuilder: (context, index) {
+                      return LocaliteWidget(
+                        localisation: localites[index],
+                      );
+                    }),
               ]);
             } else {
               return CircularProgressIndicator();

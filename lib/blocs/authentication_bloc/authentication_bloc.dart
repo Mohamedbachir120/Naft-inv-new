@@ -20,6 +20,9 @@ class AuthenticationBloc
     on<AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
     on<SelectStructure>(_onSelectStructure);
     on<SubmitAuthentication>(_onSubmitAuthentication);
+    on<AuthenticationSignOut>(_onAuthenticationSignOut);
+    on<SubmitImmobilisationAuthentication>(
+        _onSubmitAuthenticationImmobilisation);
 
     _authenticationStatusSubscription = authenticationRepository.status.listen(
       (status) => add(AuthenticationStatusChanged(status: status)),
@@ -76,6 +79,13 @@ class AuthenticationBloc
             centre: authenticationRepository.centre,
             user: null,
             deviceID: authenticationRepository.deviceId));
+      case AuthenticationStatus.authenticatedImmo:
+        emit(AuthenticationInitial(
+            status: AuthenticationStatus.authenticatedImmo
+            ,
+            user: authenticationRepository.user,
+            centre: authenticationRepository.centre,
+            deviceID: authenticationRepository.deviceId));
     }
   }
 
@@ -88,5 +98,19 @@ class AuthenticationBloc
       SubmitAuthentication event, Emitter<AuthenticationState> emit) {
     authenticationRepository.attemptAuthentication(
         event.matricule, event.password);
+  }
+
+  void _onAuthenticationSignOut(
+      AuthenticationSignOut event, Emitter<AuthenticationState> emit) {
+    authenticationRepository.signOut();
+  }
+
+  void _onSubmitAuthenticationImmobilisation(
+      SubmitImmobilisationAuthentication event,
+      Emitter<AuthenticationState> emit) {
+    authenticationRepository.attemptAuthenticationImmobilisation(
+        centre: event.centre,
+        username: event.matricule,
+        password: event.password);
   }
 }

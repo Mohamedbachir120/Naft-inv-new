@@ -114,49 +114,43 @@ class Non_Etiquete {
   }
 
   Future<bool> Store_Non_Etique() async {
-    this.date_scan = date_format();
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
-    var connectivityResult = await (Connectivity().checkConnectivity());
+    Dio dio = Dio();
+    User user = await User.auth();
+    String imeiNo = await DeviceInformation.deviceIMEINumber;
+    try {
+      dio.options.headers['Connection'] = 'Keep-Alive';
+      dio.options.headers['Accept'] = '*/*';
+      dio.options.headers['Content-Type'] = 'application/json';
+      dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
 
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      try {
-        User user = await User.auth();
-        Dio dio = Dio();
-        String imeiNo = await DeviceInformation.deviceIMEINumber;
+      final response = await dio.post(
+          '${LARAVEL_ADDRESS}api/create_NonEtiqu/$imeiNo',
+          data: toJson());
+      print(response.data);
 
-        dio.options.headers['Connection'] = 'Keep-Alive';
-        dio.options.headers['Accept'] = '*/*';
-        dio.options.headers['Content-Type'] = 'application/json';
-        dio.options.headers["Authorization"] =
-            'Bearer ' + await user.getToken();
+      this.stockage = 1;
 
-        final response = await dio.post(
-            '${LARAVEL_ADDRESS}api/create_NonEtiqu/${imeiNo}',
-            data: this.toJson());
-        print(response.data);
-        if (response == true) {
-          this.stockage = 1;
-        }
-        this.stockage = 1;
-        db.insert('Non_Etiquete', this.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace);
-
-        return true;
-      } on DioError catch (e) {
-        print(e.message);
-        this.stockage = 0;
-        db.insert('Non_Etiquete', this.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace);
-        return true;
-      }
-    } else {
-      await db.insert('Non_Etiquete', this.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
       return true;
+    } catch (e) {
+      try {
+        await refreshToken(db);
+        dio.options.headers["Authorization"] =
+            'Bearer ${await user.getToken()}';
+
+        await dio.post('${LARAVEL_ADDRESS}api/create_NonEtiqu/$imeiNo',
+            data: this.toJson());
+        this.stockage = 1;
+      } catch (e) {
+        this.stockage = 0;
+      }
     }
+
+    db.insert('Non_Etiquete', this.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return true;
   }
 
   Store_Non_Etique_Soft() async {
@@ -245,9 +239,8 @@ class Non_Etiquete {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
-    final List<Map<String, dynamic>> maps =
-        await db.query("Non_Etiquete where stockage  = 0 ");
-
+    final List<Map<String, dynamic>> maps = await db.query("Non_Etiquete ");
+    print(maps);
     return List.generate(maps.length, (i) {
       return Non_Etiquete(
           maps[i]["num_serie"],
@@ -301,5 +294,24 @@ class Non_Etiquete {
 
             
             }''';
+  }
+
+  Future<void> refreshToken(Database db) async {
+    final Dio dio = Dio();
+    User user = await User.auth();
+    try {
+      var response = await dio.post('${LARAVEL_ADDRESS}api/auth/refresh_token',
+          data: {"refresh_token": user.refresh_token});
+
+      // Update the token in your authentication repository after refreshing
+      user.token = response.data['access_token'];
+      user.refresh_token = response.data['refresh_token'];
+
+      db.insert('User', user.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      print("############# Token refreshed successfully.");
+    } catch (e) {
+      print("############### Error refreshing token: ${e.toString()}");
+    }
   }
 }

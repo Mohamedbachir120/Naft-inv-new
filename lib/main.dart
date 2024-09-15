@@ -5,10 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:naftinv/Login.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/choix_structure/choix_structure_bloc.dart';
+import 'package:naftinv/blocs/cubit/bien_immo/bien_immo_cubit.dart';
+import 'package:naftinv/blocs/cubit/taux/taux_cubit.dart';
+import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
+import 'package:naftinv/blocs/settings_bloc/settingsRepository.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/constante.dart';
+import 'package:naftinv/homeImmobilisation.dart';
 import 'package:naftinv/noInternet.dart';
 import 'package:naftinv/permissionNotGranted.dart';
 import 'package:naftinv/repositories/authentication_repository.dart';
@@ -45,7 +51,7 @@ Future<Database> initializeDatabase() async {
 
   if (!dbExistsScan) {
     print("Database creation");
-    // Copy from asset
+    // Copy from asset8
     ByteData data = await rootBundle.load(join("assets", "naftal_scan.db"));
     List<int> bytes =
         data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
@@ -70,18 +76,21 @@ void main() async {
   runApp(App(
     authenticationRepository: AuthenticationRepository(db: database),
     choixStructureRepository: ChoixStructureRepository(db: database),
+    settingsrepository: Settingsrepository(db: database),
   ));
 }
 
 class App extends StatelessWidget {
-  const App({
-    Key? key,
-    required this.authenticationRepository,
-    required this.choixStructureRepository,
-  }) : super(key: key);
+  const App(
+      {Key? key,
+      required this.authenticationRepository,
+      required this.choixStructureRepository,
+      required this.settingsrepository})
+      : super(key: key);
 
   final AuthenticationRepository authenticationRepository;
   final ChoixStructureRepository choixStructureRepository;
+  final Settingsrepository settingsrepository;
 
   @override
   Widget build(BuildContext context) {
@@ -95,10 +104,16 @@ class App extends StatelessWidget {
             ),
           ),
           BlocProvider(
+              create: (_) =>
+                  SettingsBloc(settingsrepository: settingsrepository)),
+          BlocProvider(
             create: (_) => ChoixStructureBloc(
               choixStructureRepository: choixStructureRepository,
             ),
           ),
+          BlocProvider(
+              create: (_) => BienImmoCubit(
+                  authenticationRepository: authenticationRepository)),
           BlocProvider(
             create: (_) => SynchronizationBloc(
               authenticationRepository: authenticationRepository,
@@ -169,7 +184,7 @@ class AppView extends StatelessWidget {
               case AuthenticationStatus.init:
                 _navigator.pushAndRemoveUntil<void>(
                   MaterialPageRoute<void>(
-                    builder: (_) => const ChoixStructurePage(),
+                    builder: (_) => ChoixStructurePage(),
                   ),
                   ModalRoute.withName('/'),
                 );
@@ -221,6 +236,13 @@ class AppView extends StatelessWidget {
                   ModalRoute.withName('/permissionNotGranted'),
                 );
                 break;
+              case AuthenticationStatus.authenticatedImmo:
+                _navigator.pushAndRemoveUntil<void>(
+                  MaterialPageRoute<void>(
+                    builder: (_) => HomeImmo(),
+                  ),
+                  ModalRoute.withName('/homeImmo'),
+                );
             }
           },
           child: child,
@@ -232,7 +254,10 @@ class AppView extends StatelessWidget {
 }
 
 class ChoixStructurePage extends StatelessWidget {
-  const ChoixStructurePage({Key? key}) : super(key: key);
+  ChoixStructurePage({Key? key}) : super(key: key);
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController structureController = TextEditingController();
 
   void Show_Error(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -300,23 +325,216 @@ class ChoixStructurePage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(
-                            Icons.home_filled,
-                            size: 23,
-                            color: Color(0xFF171059),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
                           Expanded(
-                            child: Text(
-                              "Centre d'opération",
-                              style: defaultTextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 18,
-                                  color: Color(0xFF171059)),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.home_filled,
+                                  size: 23,
+                                  color: Color(0xFF171059),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    "Centre d'opération",
+                                    style: defaultTextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 18,
+                                        color: Color(0xFF171059)),
+                                  ),
+                                )
+                              ],
                             ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      titleTextStyle: defaultTextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04,
+                                          fontWeight: FontWeight.w700),
+                                      backgroundColor: Colors.white,
+                                      title:
+                                          Text('Gestion des immobilisations'),
+                                      content: Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 0, 0, 20),
+                                                alignment: Alignment.center,
+                                                child: EasyAutocomplete(
+                                                  controller:
+                                                      structureController,
+                                                  decoration: InputDecoration(
+                                                      hintText:
+                                                          "Centre d'opération"),
+                                                  inputTextStyle:
+                                                      defaultTextStyle(
+                                                          color: Color(
+                                                              0xFF171059)),
+                                                  suggestions: state.structures,
+                                                  onChanged: (val) {
+                                                    context
+                                                        .read<
+                                                            ChoixStructureBloc>()
+                                                        .add(
+                                                            ChoixStructurePickStructure(
+                                                                structure:
+                                                                    val));
+                                                  },
+                                                  onSubmitted: (val) {
+                                                    context
+                                                        .read<
+                                                            ChoixStructureBloc>()
+                                                        .add(
+                                                            ChoixStructurePickStructure(
+                                                                structure:
+                                                                    val));
+
+                                                    
+                                                  },
+                                                )),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        25),
+                                              ),
+                                              child: TextFormField(
+                                                controller: emailController,
+                                                decoration:
+                                                    defaultInputDecoration(
+                                                  title: "Nom d'utilisateur",
+                                                ),
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                style: defaultTextStyle(),
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                              ),
+                                              child: TextFormField(
+                                                controller: passwordController,
+                                                decoration: InputDecoration(
+                                                  suffixIcon: IconButton(
+                                                    onPressed: () {},
+                                                    icon: const Icon(
+                                                      Icons.remove_red_eye,
+                                                      color: MAINCOLOR,
+                                                    ),
+                                                  ),
+                                                  labelText: "Mot de passe",
+                                                  fillColor: Colors.white,
+                                                  labelStyle:
+                                                      defaultTextStyle(),
+
+                                                  focusedBorder:
+                                                      UnderlineInputBorder(
+                                                    borderSide:
+                                                        BorderSide(color: GRAY),
+                                                  ),
+                                                  enabledBorder:
+                                                      UnderlineInputBorder(
+                                                    borderSide:
+                                                        BorderSide(color: GRAY),
+                                                  ),
+                                                  border: UnderlineInputBorder(
+                                                    borderSide:
+                                                        BorderSide(color: GRAY),
+                                                  ),
+                                                  //fillColor: Colors.green
+                                                ),
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                style: const TextStyle(
+                                                  fontFamily: "Poppins",
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  backgroundColor: purple,
+                                                  textStyle: const TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                                onPressed: () async {
+                                                  context
+                                                      .read<
+                                                          AuthenticationBloc>()
+                                                      .add(SubmitImmobilisationAuthentication(
+                                                          matricule:
+                                                              emailController
+                                                                  .text,
+                                                          password:
+                                                              passwordController
+                                                                  .text,
+                                                          centre:
+                                                              structureController
+                                                                  .text));
+
+                                                  context
+                                                      .read<
+                                                          SynchronizationBloc>()
+                                                      .add(
+                                                          SynchronizationRefresh());
+                                                },
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 12,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    // ignore: prefer_const_literals_to_create_immutables
+                                                    children: <Widget>[
+                                                      Text(
+                                                        'Connexion',
+                                                        style: defaultTextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            },
+                            icon: Icon(Icons.info_outline),
                           )
                         ],
                       ),
@@ -403,13 +621,15 @@ class ChoixStructurePage extends StatelessWidget {
                                                           1)));
                                     }
 
-                                    if (state.selectedStructures.length > 0) {
-                                      context.read<AuthenticationBloc>().add(
-                                          SelectStructure(
-                                              year: state.year,
-                                              centre:
-                                                  state.selectedStructures));
-                                    }
+                                    context.read<AuthenticationBloc>().add(
+                                        SelectStructure(
+                                            year: state.year,
+                                            centre: state.selectedStructures
+                                                .substring(
+                                                    0,
+                                                    state.selectedStructures
+                                                            .indexOf("-") -
+                                                        1)));
                                   } catch (e) {
                                     print(e.toString());
                                     Show_Error(context);

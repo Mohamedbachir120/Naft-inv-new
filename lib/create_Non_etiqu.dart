@@ -381,8 +381,7 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) =>
-                                                    All_Non_Etiqu(),
+                                                builder: (context) => SNsPage(),
                                               ),
                                             );
                                           } else {

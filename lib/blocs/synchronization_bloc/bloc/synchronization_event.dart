@@ -28,3 +28,16 @@ class SynchronizationAddSn extends SynchronizationEvent {
   final Non_Etiquete sn;
   SynchronizationAddSn({required this.sn});
 }
+
+class SynchronizationDefaultLocalite extends SynchronizationEvent {
+  final Localisation loc;
+  SynchronizationDefaultLocalite({required this.loc});
+}
+
+class SynchronizationStart extends SynchronizationEvent {
+  SynchronizationStart();
+}
+
+class SynchronizationRefresh extends SynchronizationEvent {
+  SynchronizationRefresh();
+}

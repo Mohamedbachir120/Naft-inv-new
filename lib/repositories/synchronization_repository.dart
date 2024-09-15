@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:device_information/device_information.dart';
 import 'package:dio/dio.dart';
@@ -23,6 +24,8 @@ class SynchronizationRepository {
   List<Equipe> equipes = [];
   List<Localisation> localisations = [];
   List<Localisation> original = [];
+  List<String> natures = [];
+  Localisation? defaultLocalisation;
   final _controller = StreamController<SynchronizationStatus>();
 
   Stream<SynchronizationStatus> get status async* {
@@ -36,13 +39,21 @@ class SynchronizationRepository {
   Future<void> getStatus() async {
     String deviceID = await DeviceInformation.deviceIMEINumber;
     String structure = await User.getStructure();
+
+    final List<Map<String, dynamic>> naturesQ = await db.query(
+        'FIM_IMMOBILISATION',
+        distinct: true,
+        columns: ['FIM_ID', 'FIM_LIB']);
+    natures = List.generate(naturesQ.length, (i) {
+      return "${naturesQ[i]['FIM_ID']} ${naturesQ[i]['FIM_LIB']}";
+    });
+    print(structure);
     if (deviceID != "" && structure != "") {
       if (await User.check_user() != 0) {
         List<Bien_materiel> biens = await Bien_materiel.all_objects();
         List<Non_Etiquete> sns = await Non_Etiquete.synchonized_objects();
         final List<Map<String, dynamic>> maps =
             await db.query("T_E_LOCATION_LOC where COP_ID = '$structure' ");
-        print(maps);
         localisations = List.generate(maps.length, (i) {
           return Localisation(
               maps[i]['LOC_ID'],
@@ -57,18 +68,16 @@ class SynchronizationRepository {
                   .toList());
         });
         original = localisations;
-        print(localisations);
-
+        print(original);
         _controller.add(SynchronizationStatus.success);
       } else {
         try {
           var dio = Dio();
-          print("this is device id $deviceID");
           var response = await dio.post(
             '${LARAVEL_ADDRESS}api/auth/signin',
             data: {"email": "999999", "password": "a", 'code': deviceID},
           );
-          print(response.data);
+
           final token = response.data["token"];
           dio.options.headers["Authorization"] = 'Bearer ' + await token;
 
@@ -76,7 +85,6 @@ class SynchronizationRepository {
               '${LARAVEL_ADDRESS}api/localite_par_centre/$structure',
               queryParameters: {'code': deviceID});
           List temp = response.data;
-          print(response.data);
           localisations = List.generate(temp.length, (i) {
             return Localisation(temp[i]['loc_ID'], temp[i]['loc_LIB'],
                 temp[i]['cop_LIB'], temp[i]['cop_ID'], [], []);
@@ -129,14 +137,14 @@ class SynchronizationRepository {
     _controller.add(SynchronizationStatus.searching);
 
     keyword = key;
-    if (keyword.length == 0) {
-      localisations = original;
-    } else {
-      localisations = original
-          .where((e) =>
-              e.code_bar.contains(keyword) || e.designation.contains(keyword))
-          .toList();
-    }
+    // if (keyword.length == 0) {
+    //   localisations = original;
+    // } else {
+    //   localisations = original
+    //       .where((e) =>
+    //           e.code_bar.contains(keyword) || e.designation.contains(keyword))
+    //       .toList();
+    // }
     _controller.add(SynchronizationStatus.success);
   }
 
@@ -160,6 +168,8 @@ class SynchronizationRepository {
 
   void addBien(Bien_materiel bien) {
     _controller.add(SynchronizationStatus.searching);
+
+    bien.Store_Bien();
     localisations = localisations.map((e) {
       if (e.code_bar == bien.code_localisation) {
         e = e.copyWith(biens: [bien, ...e.biens]);
@@ -173,16 +183,91 @@ class SynchronizationRepository {
 
   void addSn(Non_Etiquete sn) {
     _controller.add(SynchronizationStatus.searching);
-
+    sn.Store_Non_Etique();
     localisations = localisations.map((e) {
       if (e.code_bar == sn.code_localisation) {
-        e.copyWith(nonEtiqu: [sn, ...e.nonEtiqu]);
-
-        return e;
+        return e.copyWith(nonEtiqu: [sn, ...e.nonEtiqu]);
       } else {
         return e;
       }
     }).toList();
     _controller.add(SynchronizationStatus.success);
+  }
+
+  Future<void> synchronize() async {
+    _controller.add(SynchronizationStatus.loading);
+    List<Bien_materiel> objects = await Bien_materiel.synchonized_objects();
+    List<Non_Etiquete> object2 = await Non_Etiquete.synchonized_objects();
+    User user = await User.auth();
+    Dio dio = Dio();
+    try {
+      dio.options.headers["Authorization"] = 'Bearer ' + await user.getToken();
+      String imeiNo = await DeviceInformation.deviceIMEINumber;
+
+      var response = await dio.post('${LARAVEL_ADDRESS}api/save_many/${imeiNo}',
+          data: jsonEncode(objects));
+
+      response = await dio.post(
+          '${LARAVEL_ADDRESS}api/save_manyNonEtiqu/${imeiNo}',
+          data: jsonEncode(object2));
+
+      if (response.toString() == "true") {
+        final database = openDatabase(join(await getDatabasesPath(), DBNAME));
+        final db = await database;
+        await db.rawUpdate(
+            "UPDATE Bien_materiel SET stockage = 1 where stockage = 0");
+      }
+      _controller.add(SynchronizationStatus.synchronized);
+    } catch (e) {
+      await refreshToken();
+      try {
+        dio.options.headers["Authorization"] =
+            'Bearer ${await user.getToken()}';
+        String imeiNo = await DeviceInformation.deviceIMEINumber;
+
+        var response = await dio.post(
+            '${LARAVEL_ADDRESS}api/save_many/${imeiNo}',
+            data: jsonEncode(objects));
+
+        response = await dio.post(
+            '${LARAVEL_ADDRESS}api/save_manyNonEtiqu/${imeiNo}',
+            data: jsonEncode(object2));
+
+        if (response.toString() == "true") {
+          final database = openDatabase(join(await getDatabasesPath(), DBNAME));
+          final db = await database;
+          await db.rawUpdate(
+              "UPDATE Bien_materiel SET stockage = 1 where stockage = 0");
+        }
+      } catch (e) {
+        _controller.add(SynchronizationStatus.failed);
+      }
+    }
+  }
+
+  void setDefaultLocalisation(Localisation loc) {
+    _controller.add(SynchronizationStatus.searching);
+
+    defaultLocalisation = loc;
+    _controller.add(SynchronizationStatus.success);
+  }
+
+  Future<void> refreshToken() async {
+    final Dio dio = Dio();
+    User user = await User.auth();
+    try {
+      var response = await dio.post('${LARAVEL_ADDRESS}api/auth/refresh_token',
+          data: {"refresh_token": user.refresh_token});
+
+      // Update the token in your authentication repository after refreshing
+      user.token = response.data['access_token'];
+      user.refresh_token = response.data['refresh_token'];
+
+      db.insert('User', user.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      print("############# Token refreshed successfully.");
+    } catch (e) {
+      print("############### Error refreshing token: ${e.toString()}");
+    }
   }
 }

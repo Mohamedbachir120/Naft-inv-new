@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:naftinv/homeImmobilisation.dart';
 import 'package:naftinv/localites.dart';
 import 'package:naftinv/main.dart';
+import 'package:naftinv/operations.dart';
+import 'package:naftinv/profilPage.dart';
 
 class SplashPage extends StatefulWidget {
   static Route route() {
@@ -24,9 +27,11 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     // Navigate to the next screen after a delay
     Timer(Duration(seconds: 1), () {
       // Navigate to your main content screen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => LocalitePage()),
-      );
+
+      // Navigator.push(context,
+      //     MaterialPageRoute(builder: (BuildContext context) {
+      //   return HomeImmo();
+      // }));
     });
   }
 

@@ -9,7 +9,8 @@ enum SynchronizationStatus {
   searching,
   found,
   success,
-  failed
+  failed,
+  synchronized,
 }
 
 final class SynchronizationInitial extends SynchronizationState {
@@ -19,6 +20,8 @@ final class SynchronizationInitial extends SynchronizationState {
   final String centre;
   final String keyword;
   final String filter;
+  final Localisation? localisation;
+  final List<String> natures;
 
   SynchronizationInitial(
       {required this.equipes,
@@ -26,5 +29,7 @@ final class SynchronizationInitial extends SynchronizationState {
       required this.status,
       required this.centre,
       required this.filter,
-      required this.keyword});
+      required this.keyword,
+      required this.localisation,
+      required this.natures});
 }

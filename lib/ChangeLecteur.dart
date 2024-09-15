@@ -358,7 +358,7 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                   case 2:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => All_objects()),
+                      MaterialPageRoute(builder: (context) => BiensPage()),
                     );
                     break;
                 }

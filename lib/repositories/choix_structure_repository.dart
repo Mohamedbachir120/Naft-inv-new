@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:naftinv/blocs/choix_structure/choix_structure_bloc.dart';
 import 'package:naftinv/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:io' as io;
@@ -10,6 +11,7 @@ import 'dart:io' as io;
 class ChoixStructureRepository {
   ChoixStructureRepository({required this.db});
   final Database db;
+
   List<String> structures = [];
   String selectedStructure = "";
   int YEAR = DateTime.now().year;
@@ -41,10 +43,13 @@ class ChoixStructureRepository {
     }
   }
 
-  void selectStructure(String s) {
+  void selectStructure(String s) async {
+    final prefs = await SharedPreferences.getInstance();
+
     _controller.add(ChoixStructureStatus.editing);
 
     selectedStructure = s;
+    prefs.setString('structure', selectedStructure);
     _controller.add(ChoixStructureStatus.loaded);
   }
 

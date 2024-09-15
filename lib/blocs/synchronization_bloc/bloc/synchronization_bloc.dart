@@ -22,6 +22,8 @@ class SynchronizationBloc
       {required this.authenticationRepository,
       required this.synchronizationRepository})
       : super(SynchronizationInitial(
+            natures: synchronizationRepository.natures,
+            localisation: synchronizationRepository.defaultLocalisation,
             centre: authenticationRepository.centre,
             equipes: synchronizationRepository.equipes,
             localites: synchronizationRepository.localisations,
@@ -33,6 +35,9 @@ class SynchronizationBloc
     on<SynchronizationRequestFilter>(_onSynchronizationRequestFilter);
     on<SynchronizationAddBien>(_onSynchronizationAddBien);
     on<SynchronizationAddSn>(_onSynchronizationAddSn);
+    on<SynchronizationDefaultLocalite>(_onSynchronizationDefaultLocalite);
+    on<SynchronizationStart>(_onSynchronizationStart);
+    on<SynchronizationRefresh>(_onSynchronizationRefresh);
 
     _synchronizationStatusSubscription =
         synchronizationRepository.status.listen(
@@ -48,57 +53,84 @@ class SynchronizationBloc
     return super.close();
   }
 
+  void _onSynchronizationRefresh(
+      SynchronizationRefresh event, Emitter<SynchronizationState> emit) {
+    synchronizationRepository.getStatus();
+  }
+
   void _onSynchronizationStatusChanged(SynchronizationStatusChanged event,
       Emitter<SynchronizationState> emit) async {
     switch (event.status) {
       case SynchronizationStatus.initial:
         return emit(SynchronizationInitial(
+            localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
             localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.initial,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
-            keyword: synchronizationRepository.keyword));
+            keyword: synchronizationRepository.keyword,
+            natures: synchronizationRepository.natures));
       case SynchronizationStatus.loading:
         return emit(SynchronizationInitial(
+            localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
             localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.loading,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
-            keyword: synchronizationRepository.keyword));
+            keyword: synchronizationRepository.keyword,
+            natures: synchronizationRepository.natures));
       case SynchronizationStatus.success:
         return emit(SynchronizationInitial(
+            localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
             localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.success,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
-            keyword: synchronizationRepository.keyword));
+            keyword: synchronizationRepository.keyword,
+            natures: synchronizationRepository.natures));
       case SynchronizationStatus.failed:
         return emit(SynchronizationInitial(
+            localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
             localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.failed,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
-            keyword: synchronizationRepository.keyword));
+            keyword: synchronizationRepository.keyword,
+            natures: synchronizationRepository.natures));
       case SynchronizationStatus.searching:
         return emit(SynchronizationInitial(
+            localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
             localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.searching,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
-            keyword: synchronizationRepository.keyword));
+            keyword: synchronizationRepository.keyword,
+            natures: synchronizationRepository.natures));
       case SynchronizationStatus.found:
         return emit(SynchronizationInitial(
+            localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
             localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.found,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
-            keyword: synchronizationRepository.keyword));
+            keyword: synchronizationRepository.keyword,
+            natures: synchronizationRepository.natures));
+      case SynchronizationStatus.synchronized:
+        return emit(SynchronizationInitial(
+            localisation: synchronizationRepository.defaultLocalisation,
+            equipes: synchronizationRepository.equipes,
+            localites: synchronizationRepository.localisations,
+            status: SynchronizationStatus.synchronized,
+            centre: authenticationRepository.centre,
+            filter: synchronizationRepository.filter,
+            keyword: synchronizationRepository.keyword,
+            natures: synchronizationRepository.natures));
     }
   }
 
@@ -120,5 +152,15 @@ class SynchronizationBloc
   void _onSynchronizationAddSn(
       SynchronizationAddSn event, Emitter<SynchronizationState> emit) {
     synchronizationRepository.addSn(event.sn);
+  }
+
+  void _onSynchronizationDefaultLocalite(SynchronizationDefaultLocalite event,
+      Emitter<SynchronizationState> emit) {
+    synchronizationRepository.setDefaultLocalisation(event.loc);
+  }
+
+  void _onSynchronizationStart(
+      SynchronizationStart event, Emitter<SynchronizationState> emit) {
+    synchronizationRepository.synchronize();
   }
 }

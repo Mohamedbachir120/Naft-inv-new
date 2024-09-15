@@ -70,18 +70,23 @@ class AuthenticationRepository {
             maps[0]['COP_ID'],
             maps[0]['INV_ID'],
             maps[0]["validity"],
-            maps[0]["token"]);
+            maps[0]["token"],
+            maps[0]["refresh_token"]);
         user = localUser;
         centre = user?.COP_ID ?? "";
         DateTime date =
             DateTime.parse(user?.validity ?? DateTime.now().toString());
         DateTime now = DateTime.now();
         print("$now ${user?.validity}");
-        print("cconnected ");
+        print("user authenticated from authentication screen");
         if (date.isAfter(now)) {
           centre = user!.COP_ID;
           user = localUser;
-          _controller.add(AuthenticationStatus.authenticated);
+          if (user?.INV_ID == "Immo") {
+            _controller.add(AuthenticationStatus.authenticatedImmo);
+          } else {
+            _controller.add(AuthenticationStatus.authenticated);
+          }
         } else {
           nb = 0;
           await db.execute("DELETE FROM User;");
@@ -99,8 +104,6 @@ class AuthenticationRepository {
   void setStructure(String struct, int y) async {
     centre = struct;
     year = y;
-    final database = openDatabase(join(await getDatabasesPath(), DBNAME));
-    final db = await database;
 
     final List<Map<String, dynamic>> maps =
         await db.query("T_E_LOCATION_LOC where COP_ID = '$centre'; ");
@@ -110,39 +113,79 @@ class AuthenticationRepository {
   }
 
   void attemptAuthentication(String matricule, String password) async {
+    print("trying auth");
     if (matricule.trim().length > 5 &&
         password.trim() == "a" &&
         matricule.trim() != "999999") {
-      final database = openDatabase(join(await getDatabasesPath(), DBNAME));
-
-      final db = await database;
       final List<Map<String, dynamic>> maps = await db.query(
           "T_E_GROUPE_INV where EMP_ID = '$matricule' and YEAR = $year and COP_ID = '$centre' ");
 
       if (maps.length > 0) {
+        print("correct auth user found");
         user = User(
             maps[0]["EMP_ID"],
             maps[0]["EMP_FULLNAME"],
             centre,
             maps[0]["INV_ID"],
             DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+            "",
             "");
         print(user?.validity);
-        try {
-          String token = await user?.save_token() ?? "";
-          user?.token = token;
-        } catch (e) {
-          print(e.toString());
-        }
-        db.insert('User', user!.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace);
+        await user?.save_token(db, password);
 
         _controller.add(AuthenticationStatus.authenticated);
       } else {
+        print("user not found");
         _controller.add(AuthenticationStatus.centreSelected);
       }
     } else {
       _controller.add(AuthenticationStatus.centreSelected);
+    }
+  }
+
+  void signOut() async {
+    _controller.add(AuthenticationStatus.init);
+    await db.execute("DELETE FROM User;");
+  }
+
+  void attemptAuthenticationImmobilisation(
+      {required String centre,
+      required String username,
+      required String password}) async {
+    print("###### $centre $username $password");
+    Dio dio = Dio();
+    String tempCentre = centre.split("-")[0].trim();
+    try {
+      var responseAuth = await dio.post(
+        '${LARAVEL_ADDRESS}api/auth/signin',
+        data: {"email": username, "password": password, 'code': deviceId},
+      );
+      final token = responseAuth.data["token"];
+
+      dio.options.headers["Authorization"] = 'Bearer ' + await token;
+
+      print(token);
+      var response = await dio.get(
+          "${LARAVEL_ADDRESS}api/immobilisation_user?code=$deviceId&cop_id=$tempCentre&username=$username");
+
+      if (response.data['sucess'] == true) {
+        user = User(
+            username,
+            username,
+            tempCentre,
+            'Immo',
+            DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+            "",
+            "");
+
+        await user?.save_token(db, password);
+
+        db.insert('User', user!.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace);
+        _controller.add(AuthenticationStatus.authenticatedImmo);
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

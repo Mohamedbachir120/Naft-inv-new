@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/constante.dart';
 import 'package:naftinv/data/User.dart';
 import 'package:naftinv/main.dart';
@@ -11,17 +12,7 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class LoginPage extends StatefulWidget {
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class LoginPage extends StatelessWidget {
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
@@ -127,24 +118,8 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             child: TextFormField(
                               controller: emailController,
-                              decoration: InputDecoration(
-                                labelText: "Matricule",
-                                hintText: "Matricule",
-                                labelStyle: const TextStyle(color: GRAY),
-
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: GRAY),
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: GRAY),
-                                ),
-                                border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: GRAY),
-                                ),
-                                fillColor: Colors.white,
-
-                                //fillColor: Colors.green
-                              ),
+                              decoration:
+                                  defaultInputDecoration(title: "Matricule"),
                               keyboardType: TextInputType.emailAddress,
                               style: const TextStyle(
                                 fontFamily: "Poppins",
@@ -220,6 +195,10 @@ class _LoginPageState extends State<LoginPage> {
                                     SubmitAuthentication(
                                         matricule: emailController.text,
                                         password: passwordController.text));
+
+                                context
+                                    .read<SynchronizationBloc>()
+                                    .add(SynchronizationRefresh());
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
@@ -283,4 +262,41 @@ class _LoginPageState extends State<LoginPage> {
       )),
     );
   }
+}
+
+InputDecoration defaultInputDecoration({required String title}) {
+  return InputDecoration(
+    labelText: title,
+    hintText: title,
+    labelStyle: defaultTextStyle(),
+
+    focusedBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: GRAY),
+    ),
+    enabledBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: GRAY),
+    ),
+    border: UnderlineInputBorder(
+      borderSide: BorderSide(color: GRAY),
+    ),
+    fillColor: Colors.white,
+
+    //fillColor: Colors.green
+  );
+}
+
+InputDecoration snInputDecoration({required String title}) {
+  return InputDecoration(
+    labelText: title,
+
+    hintText: title,
+    labelStyle: defaultTextStyle(color: MAINCOLOR),
+    hintStyle: defaultTextStyle(color: MAINCOLOR),
+    focusedBorder: InputBorder.none,
+    enabledBorder: InputBorder.none,
+    border: InputBorder.none,
+    fillColor: Colors.white,
+
+    //fillColor: Colors.green
+  );
 }

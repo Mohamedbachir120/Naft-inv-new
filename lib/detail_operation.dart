@@ -7,7 +7,7 @@ import 'package:naftinv/all_objects.dart';
 import 'package:naftinv/create_Non_etiqu.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Localisation.dart';
-import 'package:naftinv/detail_bien.dart';
+import 'package:naftinv/detailBien.dart';
 import 'package:naftinv/history.dart';
 import 'package:naftinv/main.dart';
 import 'package:naftinv/mode_manuel_bien.dart';
@@ -123,9 +123,8 @@ class _Detail_OperationState extends State<Detail_Operation> {
                       Navigator.push(
                         this.context,
                         MaterialPageRoute(
-                          builder: (context) => Detail_Bien(
-                            bien_materiel: bien,
-                            localisation: localisation,
+                          builder: (context) => DetailBienPage(
+                            bien: bien,
                           ),
                         ),
                       );
@@ -240,9 +239,8 @@ class _Detail_OperationState extends State<Detail_Operation> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => Detail_Bien(
-                bien_materiel: bien,
-                localisation: localisation,
+              builder: (context) => DetailBienPage(
+                bien: bien,
               ),
             ),
           );
@@ -670,7 +668,7 @@ class _Detail_OperationState extends State<Detail_Operation> {
             case 2:
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => All_objects()),
+                MaterialPageRoute(builder: (context) => BiensPage()),
               );
               break;
           }

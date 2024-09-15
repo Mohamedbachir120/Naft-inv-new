@@ -20,6 +20,7 @@ enum AuthenticationStatus {
   centreSelected,
   uncheckedDevice,
   noInternet,
+  authenticatedImmo,
   permissionNotGaranted
 }
 
