@@ -9,12 +9,14 @@ import 'package:intl/intl.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/choix_structure/choix_structure_bloc.dart';
 import 'package:naftinv/blocs/cubit/bien_immo/bien_immo_cubit.dart';
+import 'package:naftinv/blocs/cubit/password/password_cubit.dart';
 import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/components/AvatarComponent.dart';
 import 'package:naftinv/constante.dart';
 import 'package:naftinv/data/BienImmo.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
+import 'package:naftinv/repositories/authentication_repository.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
@@ -34,614 +36,900 @@ class HomeImmo extends StatelessWidget {
     ));
     return Scaffold(
       body: SingleChildScrollView(
-        child: BlocListener<BienImmoCubit, BienImmoState>(
-          listener: (context, state) {
-            if (state is BienImmoUpdated) {
-              showTopSnackBar(
-                Overlay.of(context),
-                const CustomSnackBar.success(
-                  message: 'Modifié avec succès !',
-                ),
-              );
-            } else if (state is BienImmoError) {
-              showTopSnackBar(
-                Overlay.of(context),
-                const CustomSnackBar.error(
-                  message: 'Erreur  article introuvable!',
-                ),
-              );
-            }
-          },
-          child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-            builder: (context, state) {
-              return Container(
-                child: Column(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.width * 0.4,
-                      decoration: BoxDecoration(
-                          color: MAINCOLOR,
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(50),
-                              bottomRight: Radius.circular(50))),
-                      padding: const EdgeInsets.fromLTRB(25, 40, 25, 30),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                flex: 4,
-                                child: Row(
-                                  children: [
-                                    Flexible(
-                                      flex: 2,
-                                      child: Avatarcomponent(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.37,
-                                          backgroundColor: purple,
-                                          color: Colors.white,
-                                          text: state.user?.nom[0] ?? "U"),
-                                    ),
-                                    Flexible(
-                                      flex: 5,
-                                      child: Container(
-                                        padding: EdgeInsets.all(10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              state.user?.nom ?? "",
-                                              style: defaultTextStyle(
-                                                  fontSize: 17,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10.0),
-                                              child: Row(
-                                                children: [
-                                                  Text(
-                                                    "${state.user?.COP_ID}",
-                                                    style: defaultTextStyle(
-                                                      color: GRAY,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                  Icon(
-                                                    Icons.location_on_outlined,
-                                                    color: GRAY,
-                                                    size: 14,
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+        child: BlocProvider(
+          create: (context) =>
+              ChangePasswordCubit(context.read<AuthenticationRepository>()),
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<BienImmoCubit, BienImmoState>(
+                listener: (context, state) {
+                  if (state is BienImmoUpdated) {
+                    showTopSnackBar(
+                      Overlay.of(context),
+                      const CustomSnackBar.success(
+                        message: 'Modifié avec succès !',
+                      ),
+                    );
+                  } else if (state is BienImmoError) {
+                    showTopSnackBar(
+                      Overlay.of(context),
+                      const CustomSnackBar.error(
+                        message: 'Erreur  article introuvable!',
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+            child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              builder: (context, state) {
+                return Container(
+                  child: Column(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.width * 0.4,
+                        decoration: BoxDecoration(
+                            color: MAINCOLOR,
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(50),
+                                bottomRight: Radius.circular(50))),
+                        padding: const EdgeInsets.fromLTRB(25, 40, 25, 30),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  flex: 4,
+                                  child: Row(
+                                    children: [
+                                      Flexible(
+                                        flex: 2,
+                                        child: Avatarcomponent(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.37,
+                                            backgroundColor: purple,
+                                            color: Colors.white,
+                                            text: state.user?.nom[0] ?? "U"),
                                       ),
-                                    )
-                                  ],
+                                      Flexible(
+                                        flex: 5,
+                                        child: Container(
+                                          padding: EdgeInsets.all(10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                state.user?.nom ?? "",
+                                                style: defaultTextStyle(
+                                                    fontSize: 17,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      "${state.user?.COP_ID}",
+                                                      style: defaultTextStyle(
+                                                        color: GRAY,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    Icon(
+                                                      Icons
+                                                          .location_on_outlined,
+                                                      color: GRAY,
+                                                      size: 14,
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Flexible(
-                                flex: 1,
-                                child: IconButton(
-                                  onPressed: () {
-                                    SettingsBloc settingsBloc =
-                                        context.read<SettingsBloc>();
-                                    showModalBottomSheet(
-                                        isScrollControlled: true,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return BlocProvider.value(
-                                            value: settingsBloc,
-                                            child: BlocBuilder<SettingsBloc,
-                                                SettingsState>(
-                                              builder: (context, state) {
-                                                if (state is SettingsInitial) {
-                                                  return Container(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.73,
-                                                    padding: EdgeInsets.all(
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.05),
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Icon(
-                                                                Icons.settings),
-                                                            Text(
-                                                              "Paramétrer votre application",
-                                                              style: defaultTextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  fontSize: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.038),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        Container(
-                                                          padding: EdgeInsets.symmetric(
-                                                              vertical: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.025),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                Flexible(
+                                  flex: 1,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      SettingsBloc settingsBloc =
+                                          context.read<SettingsBloc>();
+                                      showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return BlocProvider.value(
+                                              value: settingsBloc,
+                                              child: BlocBuilder<SettingsBloc,
+                                                  SettingsState>(
+                                                builder: (context, state) {
+                                                  if (state
+                                                      is SettingsInitial) {
+                                                    return Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.73,
+                                                      padding: EdgeInsets.all(
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.05),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
                                                             children: [
-                                                              Flexible(
-                                                                flex: 1,
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .flash_on,
-                                                                      color:
-                                                                          YELLOW,
-                                                                    ),
-                                                                    Text(
-                                                                      "Flash",
-                                                                      style:
-                                                                          defaultTextStyle(),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                flex: 2,
-                                                                child:
-                                                                    RadioListTile<
-                                                                        bool>(
-                                                                  title:
-                                                                      const Text(
-                                                                          'On'),
-                                                                  value: true,
-                                                                  groupValue:
-                                                                      state
-                                                                          .flash,
-                                                                  onChanged:
-                                                                      (val) {
-                                                                    settingsBloc
-                                                                        .add(
-                                                                            SettingsUpdateFlash());
-                                                                  },
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                flex: 2,
-                                                                child:
-                                                                    RadioListTile<
-                                                                        bool>(
-                                                                  title:
-                                                                      const Text(
-                                                                          'Off'),
-                                                                  value: false,
-                                                                  groupValue:
-                                                                      state
-                                                                          .flash,
-                                                                  onChanged:
-                                                                      (val) {
-                                                                    settingsBloc
-                                                                        .add(
-                                                                            SettingsUpdateFlash());
-                                                                  },
-                                                                ),
-                                                              ),
+                                                              Icon(Icons
+                                                                  .settings),
+                                                              Text(
+                                                                "Paramétrer votre application",
+                                                                style: defaultTextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    fontSize: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width *
+                                                                        0.038),
+                                                              )
                                                             ],
                                                           ),
-                                                        ),
-                                                        Container(
-                                                          padding: EdgeInsets.only(
-                                                              bottom: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.025),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Flexible(
-                                                                flex: 1,
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .barcode_reader,
-                                                                      color:
-                                                                          YELLOW,
-                                                                    ),
-                                                                    Text(
-                                                                      " Lecteur",
-                                                                      style:
-                                                                          defaultTextStyle(),
-                                                                    )
-                                                                  ],
+                                                          Container(
+                                                            padding: EdgeInsets.symmetric(
+                                                                vertical: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.025),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Flexible(
+                                                                  flex: 1,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .flash_on,
+                                                                        color:
+                                                                            YELLOW,
+                                                                      ),
+                                                                      Text(
+                                                                        "Flash",
+                                                                        style:
+                                                                            defaultTextStyle(),
+                                                                      )
+                                                                    ],
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                              Flexible(
-                                                                flex: 1,
-                                                                child:
-                                                                    RadioListTile<
-                                                                        int>(
-                                                                  title:
-                                                                      const Text(
-                                                                          '1'),
-                                                                  value: 1,
-                                                                  groupValue: state
-                                                                      .lecteur,
-                                                                  onChanged:
-                                                                      (val) {
-                                                                    settingsBloc.add(SettingsUpdateLecteur(
-                                                                        lecteur:
-                                                                            1));
-                                                                  },
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                child:
-                                                                    RadioListTile<
-                                                                        int>(
-                                                                  title:
-                                                                      const Text(
-                                                                          '2'),
-                                                                  value: 2,
-                                                                  groupValue: state
-                                                                      .lecteur,
-                                                                  onChanged:
-                                                                      (val) {
-                                                                    settingsBloc.add(SettingsUpdateLecteur(
-                                                                        lecteur:
-                                                                            2));
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          padding: EdgeInsets.only(
-                                                              bottom: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.025),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              Flexible(
-                                                                flex: 1,
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .check_circle_outline,
-                                                                      color:
-                                                                          YELLOW,
-                                                                    ),
-                                                                    Text(
-                                                                      " Etat du bien",
-                                                                      style:
-                                                                          defaultTextStyle(),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              Flexible(
-                                                                flex: 1,
-                                                                child:
-                                                                    Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center,
-                                                                  padding: EdgeInsets
-                                                                      .symmetric(
-                                                                          vertical:
-                                                                              4,
-                                                                          horizontal:
-                                                                              8),
-                                                                  decoration: BoxDecoration(
-                                                                      color:
-                                                                          LIGHTYELLOW,
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              25)),
+                                                                Flexible(
+                                                                  flex: 2,
                                                                   child:
-                                                                      DropdownButton<
-                                                                          int>(
-                                                                    style:
-                                                                        defaultTextStyle(),
-                                                                    dropdownColor:
-                                                                        Colors
-                                                                            .white,
-                                                                    underline:
-                                                                        Container(),
-                                                                    iconSize: 0,
-                                                                    hint: Text(
-                                                                        'Select an option'), // Hint when no item is selected
-                                                                    value: state
-                                                                        .modeScan, // The currently selected item
-                                                                    items: [
-                                                                      1,
-                                                                      2,
-                                                                      3
-                                                                    ].map((int
-                                                                        item) {
-                                                                      return DropdownMenuItem<
-                                                                          int>(
-                                                                        value:
-                                                                            item, // Set the value to the current item, not state.modeScan
-                                                                        child: Text(
-                                                                            "${valueState(item)}"),
-                                                                      );
-                                                                    }).toList(),
-                                                                    onChanged: (int?
-                                                                        newValue) {
-                                                                      // Update the selected value with the new selection
-                                                                      settingsBloc.add(SettingsUpdateMode(
-                                                                          modeScan:
-                                                                              newValue!));
+                                                                      RadioListTile<
+                                                                          bool>(
+                                                                    title:
+                                                                        const Text(
+                                                                            'On'),
+                                                                    value: true,
+                                                                    groupValue:
+                                                                        state
+                                                                            .flash,
+                                                                    onChanged:
+                                                                        (val) {
+                                                                      settingsBloc
+                                                                          .add(
+                                                                              SettingsUpdateFlash());
                                                                     },
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            ],
+                                                                Flexible(
+                                                                  flex: 2,
+                                                                  child:
+                                                                      RadioListTile<
+                                                                          bool>(
+                                                                    title: const Text(
+                                                                        'Off'),
+                                                                    value:
+                                                                        false,
+                                                                    groupValue:
+                                                                        state
+                                                                            .flash,
+                                                                    onChanged:
+                                                                        (val) {
+                                                                      settingsBloc
+                                                                          .add(
+                                                                              SettingsUpdateFlash());
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            padding: EdgeInsets.only(
+                                                                bottom: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.025),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Flexible(
+                                                                  flex: 1,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .barcode_reader,
+                                                                        color:
+                                                                            YELLOW,
+                                                                      ),
+                                                                      Text(
+                                                                        " Lecteur",
+                                                                        style:
+                                                                            defaultTextStyle(),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Flexible(
+                                                                  flex: 1,
+                                                                  child:
+                                                                      RadioListTile<
+                                                                          int>(
+                                                                    title:
+                                                                        const Text(
+                                                                            '1'),
+                                                                    value: 1,
+                                                                    groupValue:
+                                                                        state
+                                                                            .lecteur,
+                                                                    onChanged:
+                                                                        (val) {
+                                                                      settingsBloc.add(SettingsUpdateLecteur(
+                                                                          lecteur:
+                                                                              1));
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  child:
+                                                                      RadioListTile<
+                                                                          int>(
+                                                                    title:
+                                                                        const Text(
+                                                                            '2'),
+                                                                    value: 2,
+                                                                    groupValue:
+                                                                        state
+                                                                            .lecteur,
+                                                                    onChanged:
+                                                                        (val) {
+                                                                      settingsBloc.add(SettingsUpdateLecteur(
+                                                                          lecteur:
+                                                                              2));
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            padding: EdgeInsets.only(
+                                                                bottom: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.025),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Flexible(
+                                                                  flex: 1,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                        Icons
+                                                                            .check_circle_outline,
+                                                                        color:
+                                                                            YELLOW,
+                                                                      ),
+                                                                      Text(
+                                                                        " Etat du bien",
+                                                                        style:
+                                                                            defaultTextStyle(),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Flexible(
+                                                                  flex: 1,
+                                                                  child:
+                                                                      Container(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        vertical:
+                                                                            4,
+                                                                        horizontal:
+                                                                            8),
+                                                                    decoration: BoxDecoration(
+                                                                        color:
+                                                                            LIGHTYELLOW,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(25)),
+                                                                    child:
+                                                                        DropdownButton<
+                                                                            int>(
+                                                                      style:
+                                                                          defaultTextStyle(),
+                                                                      dropdownColor:
+                                                                          Colors
+                                                                              .white,
+                                                                      underline:
+                                                                          Container(),
+                                                                      iconSize:
+                                                                          0,
+                                                                      hint: Text(
+                                                                          'Select an option'), // Hint when no item is selected
+                                                                      value: state
+                                                                          .modeScan, // The currently selected item
+                                                                      items: [
+                                                                        1,
+                                                                        2,
+                                                                        3
+                                                                      ].map((int
+                                                                          item) {
+                                                                        return DropdownMenuItem<
+                                                                            int>(
+                                                                          value:
+                                                                              item, // Set the value to the current item, not state.modeScan
+                                                                          child:
+                                                                              Text("${valueState(item)}"),
+                                                                        );
+                                                                      }).toList(),
+                                                                      onChanged:
+                                                                          (int?
+                                                                              newValue) {
+                                                                        // Update the selected value with the new selection
+                                                                        settingsBloc.add(SettingsUpdateMode(
+                                                                            modeScan:
+                                                                                newValue!));
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    return CircularProgressIndicator();
+                                                  }
+                                                },
+                                              ),
+                                            );
+                                          });
+                                    },
+                                    icon: Icon(
+                                      Icons.settings,
+                                      color: YELLOW,
+                                      size: 32,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                  onPressed: () async {
+                                    String barcodeScanRes = "";
+                                    try {
+                                      if (context
+                                              .read<SettingsBloc>()
+                                              .settingsrepository
+                                              .lecteur ==
+                                          0) {
+                                        final result =
+                                            await BarcodeScanner.scan(
+                                          options: ScanOptions(
+                                            autoEnableFlash: context
+                                                .read<SettingsBloc>()
+                                                .settingsrepository
+                                                .flash,
+                                            android: AndroidOptions(
+                                              aspectTolerance: 0.00,
+                                              useAutoFocus: true,
+                                            ),
+                                          ),
+                                        );
+                                        barcodeScanRes = result.rawContent;
+                                      } else {
+                                        barcodeScanRes =
+                                            await FlutterBarcodeScanner
+                                                .scanBarcode(
+                                                    '#ff6666',
+                                                    'Cancel',
+                                                    true,
+                                                    ScanMode.BARCODE);
+                                      }
+                                    } on PlatformException {
+                                      barcodeScanRes =
+                                          'Failed to get platform version.';
+                                      print("####### ");
+                                    }
+                                    print("####### ");
+                                    context
+                                        .read<BienImmoCubit>()
+                                        .findBien(barcodeScanRes.trim());
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.white,
+                                        ),
+                                        Text(
+                                          " Scanner",
+                                          style: defaultTextStyle(
+                                              color: Colors.white),
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "OU",
+                            style: defaultTextStyle(
+                                color: YELLOW,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700),
+                          )
+                        ],
+                      ),
+                      Container(
+                        margin: EdgeInsets.fromLTRB(25, 10, 25, 0),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 3,
+                                blurRadius: 4,
+                                offset: Offset(0, 3),
+                              )
+                            ]),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: MAINCOLOR,
+                                  ),
+                                )),
+                            Flexible(
+                                flex: 5,
+                                child: TextFormField(
+                                  textCapitalization:
+                                      TextCapitalization.characters,
+                                  controller: codeBarController,
+                                  decoration: InputDecoration(
+                                    hintText: "Saisir le code bar",
+                                    hintStyle: defaultTextStyle(color: GRAY),
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                  ),
+                                )),
+                            Flexible(
+                                flex: 1,
+                                child: Container(
+                                  margin: EdgeInsets.all(4),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: purple, // Background color
+                                    shape: BoxShape.circle, // Circular shape
+                                  ),
+                                  child: IconButton(
+                                      onPressed: () {
+                                        if (codeBarController.text
+                                                .trim()
+                                                .length >
+                                            3) {
+                                          context
+                                              .read<BienImmoCubit>()
+                                              .findBien(codeBarController.text
+                                                  .trim());
+                                        } else {
+                                          showTopSnackBar(
+                                            Overlay.of(context),
+                                            const CustomSnackBar.error(
+                                              message: 'Code bar incorrect !',
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      icon: Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      )),
+                                ))
+                          ],
+                        ),
+                      ),
+                      BlocBuilder<BienImmoCubit, BienImmoState>(
+                        builder: (context, state) {
+                          if (state is BienImmoInitial) {
+                            return InitialWidget();
+                          } else if (state is BienImmoLoaded) {
+                            return ViewDetailsBienImmo(
+                                bienImmo: state.bienImmo);
+                          } else if (state is BienImmoUpdated) {
+                            return ViewDetailsBienImmo(
+                                bienImmo: state.bienImmo);
+                          } else if (state is BienImmoEdit) {
+                            print("##### view  called ");
+
+                            return buildBienImmoEditForm(
+                                context, state.bienImmo);
+                          } else if (state is BienImmoError) {
+                            return InitialWidget();
+                          } else {
+                            return Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                child:
+                                    Center(child: CircularProgressIndicator()));
+                          }
+                        },
+                      ),
+                      BlocBuilder<ChangePasswordCubit, ChangePasswordState>(
+                        builder: (context, state) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.width * 0.012,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05),
+                            child: InkWell(
+                              onTap: () {
+                                ChangePasswordCubit cubit =
+                                    context.read<ChangePasswordCubit>();
+                                final oldPasswordController =
+                                    TextEditingController();
+                                final newPasswordController =
+                                    TextEditingController();
+
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return BlocProvider.value(
+                                      value: cubit,
+                                      child: AlertDialog(
+                                        titleTextStyle: defaultTextStyle(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        title: Text('Changer le mot de passe'),
+                                        content: BlocListener<
+                                            ChangePasswordCubit,
+                                            ChangePasswordState>(
+                                          listener: (context, state) {
+                                            if (state
+                                                is ChangePasswordSuccess) {
+                                              // Show success message
+                                              showTopSnackBar(
+                                                Overlay.of(context),
+                                                const CustomSnackBar.success(
+                                                  message:
+                                                      'Modifié avec succès !',
+                                                ),
+                                              );
+                                              Navigator.pop(
+                                                  context); // Close dialog
+                                            } else if (state
+                                                is ChangePasswordFailure) {
+                                              // Show failure message
+                                              showTopSnackBar(
+                                                Overlay.of(context),
+                                                const CustomSnackBar.error(
+                                                  message:
+                                                      'Ancier mot de passe incorrect !',
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                // Old Password Input Field
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25),
+                                                  ),
+                                                  child: TextFormField(
+                                                    controller:
+                                                        oldPasswordController,
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          "Ancien mot de passe",
+                                                      suffixIcon: IconButton(
+                                                        onPressed: () {},
+                                                        icon: const Icon(
+                                                          Icons.remove_red_eye,
+                                                          color: MAINCOLOR,
+                                                        ),
+                                                      ),
+                                                      labelStyle:
+                                                          defaultTextStyle(),
+                                                      focusedBorder:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: GRAY),
+                                                      ),
+                                                      enabledBorder:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: GRAY),
+                                                      ),
+                                                      border:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: GRAY),
+                                                      ),
+                                                    ),
+                                                    obscureText:
+                                                        true, // Make it password field
+                                                    style: const TextStyle(
+                                                      fontFamily: "Poppins",
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 20),
+
+                                                // New Password Input Field
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25),
+                                                  ),
+                                                  child: TextFormField(
+                                                    controller:
+                                                        newPasswordController,
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          "Nouveau mot de passe",
+                                                      suffixIcon: IconButton(
+                                                        onPressed: () {},
+                                                        icon: const Icon(
+                                                          Icons.remove_red_eye,
+                                                          color: MAINCOLOR,
+                                                        ),
+                                                      ),
+                                                      labelStyle:
+                                                          defaultTextStyle(),
+                                                      focusedBorder:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: GRAY),
+                                                      ),
+                                                      enabledBorder:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: GRAY),
+                                                      ),
+                                                      border:
+                                                          UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: GRAY),
+                                                      ),
+                                                    ),
+                                                    obscureText:
+                                                        true, // Make it password field
+                                                    style: const TextStyle(
+                                                      fontFamily: "Poppins",
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 20),
+
+                                                // Submit Button
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    backgroundColor: purple,
+                                                    textStyle: const TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  onPressed: () async {
+                                                    final oldPassword =
+                                                        oldPasswordController
+                                                            .text;
+                                                    final newPassword =
+                                                        newPasswordController
+                                                            .text;
+
+                                                    if (oldPassword.isEmpty ||
+                                                        newPassword.isEmpty) {
+                                                      showTopSnackBar(
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .error(
+                                                          message:
+                                                              'Veuillez remplir tous les champs !',
+                                                        ),
+                                                      );
+                                                      return;
+                                                    }
+
+                                                    // Call cubit to change password
+                                                    cubit.changePassword(
+                                                      oldPassword,
+                                                      newPassword,
+                                                    );
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 12,
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          'Changer le mot de passe',
+                                                          style:
+                                                              defaultTextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color: Colors.white,
                                                           ),
                                                         ),
                                                       ],
                                                     ),
-                                                  );
-                                                } else {
-                                                  return CircularProgressIndicator();
-                                                }
-                                              },
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          );
-                                        });
-                                  },
-                                  icon: Icon(
-                                    Icons.settings,
-                                    color: YELLOW,
-                                    size: 32,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                                onPressed: () async {
-                                  String barcodeScanRes = "";
-                                  try {
-                                    if (context
-                                            .read<SettingsBloc>()
-                                            .settingsrepository
-                                            .lecteur ==
-                                        0) {
-                                      final result = await BarcodeScanner.scan(
-                                        options: ScanOptions(
-                                          autoEnableFlash: context
-                                              .read<SettingsBloc>()
-                                              .settingsrepository
-                                              .flash,
-                                          android: AndroidOptions(
-                                            aspectTolerance: 0.00,
-                                            useAutoFocus: true,
                                           ),
                                         ),
-                                      );
-                                      barcodeScanRes = result.rawContent;
-                                    } else {
-                                      barcodeScanRes =
-                                          await FlutterBarcodeScanner
-                                              .scanBarcode('#ff6666', 'Cancel',
-                                                  true, ScanMode.BARCODE);
-                                    }
-                                  } on PlatformException {
-                                    barcodeScanRes =
-                                        'Failed to get platform version.';
-                                    print("####### ${barcodeScanRes}");
-                                  }
-                                  print("####### ${barcodeScanRes}");
-                                  context
-                                      .read<BienImmoCubit>()
-                                      .findBien(barcodeScanRes.trim());
-                                },
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(
+                                    MediaQuery.of(context).size.width * 0.05),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: GRAY),
+                                    borderRadius: BorderRadius.circular(13)),
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       const Icon(
-                                        Icons.camera_alt,
-                                        color: Colors.white,
+                                        Icons.lock_outline,
+                                        color: purple,
                                       ),
                                       Text(
-                                        " Scanner",
-                                        style: defaultTextStyle(
-                                            color: Colors.white),
+                                        "Modifier mot de passe",
+                                        style: defaultTextStyle(color: purple),
                                       )
-                                    ],
-                                  ),
-                                )),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "OU",
-                          style: defaultTextStyle(
-                              color: YELLOW,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700),
-                        )
-                      ],
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(25, 10, 25, 0),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 3,
-                              blurRadius: 4,
-                              offset: Offset(0, 3),
-                            )
-                          ]),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.edit,
-                                  color: MAINCOLOR,
-                                ),
-                              )),
-                          Flexible(
-                              flex: 5,
-                              child: TextFormField(
-                                textCapitalization:
-                                    TextCapitalization.characters,
-                                controller: codeBarController,
-                                decoration: InputDecoration(
-                                  hintText: "Saisir le code bar",
-                                  hintStyle: defaultTextStyle(color: GRAY),
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                ),
-                              )),
-                          Flexible(
-                              flex: 1,
-                              child: Container(
-                                margin: EdgeInsets.all(4),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: purple, // Background color
-                                  shape: BoxShape.circle, // Circular shape
-                                ),
-                                child: IconButton(
-                                    onPressed: () {
-                                      if (codeBarController.text.trim().length >
-                                          3) {
-                                        context.read<BienImmoCubit>().findBien(
-                                            codeBarController.text.trim());
-                                      } else {
-                                        showTopSnackBar(
-                                          Overlay.of(context),
-                                          const CustomSnackBar.error(
-                                            message: 'Code bar incorrect !',
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    icon: Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                    )),
-                              ))
-                        ],
-                      ),
-                    ),
-                    BlocBuilder<BienImmoCubit, BienImmoState>(
-                      builder: (context, state) {
-                        if (state is BienImmoInitial) {
-                          return InitialWidget();
-                        } else if (state is BienImmoLoaded) {
-                          return ViewDetailsBienImmo(bienImmo: state.bienImmo);
-                        } else if (state is BienImmoUpdated) {
-                          return ViewDetailsBienImmo(bienImmo: state.bienImmo);
-                        } else if (state is BienImmoEdit) {
-                          print("##### view  called ");
-
-                          return buildBienImmoEditForm(context, state.bienImmo);
-                        } else if (state is BienImmoError) {
-                          return InitialWidget();
-                        } else {
-                          return Container(
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              child:
-                                  Center(child: CircularProgressIndicator()));
-                        }
-                      },
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: MediaQuery.of(context).size.width * 0.012,
-                          horizontal: MediaQuery.of(context).size.width * 0.05),
-                      child: InkWell(
-                        onTap: () {
-                          context
-                              .read<AuthenticationBloc>()
-                              .add(AuthenticationSignOut());
+                                    ]),
+                              ),
+                            ),
+                          );
                         },
-                        child: Container(
-                          padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * 0.05),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: GRAY),
-                              borderRadius: BorderRadius.circular(13)),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const Icon(
-                                  Icons.logout_outlined,
-                                  color: MAINCOLOR,
-                                ),
-                                Text(
-                                  "Déconnexion",
-                                  style: defaultTextStyle(),
-                                )
-                              ]),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: MediaQuery.of(context).size.width * 0.012,
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.05),
+                        child: InkWell(
+                          onTap: () {
+                            context
+                                .read<AuthenticationBloc>()
+                                .add(AuthenticationSignOut());
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.05),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: GRAY),
+                                borderRadius: BorderRadius.circular(13)),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const Icon(
+                                    Icons.logout_outlined,
+                                    color: MAINCOLOR,
+                                  ),
+                                  Text(
+                                    "Déconnexion",
+                                    style: defaultTextStyle(),
+                                  )
+                                ]),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

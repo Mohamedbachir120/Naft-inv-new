@@ -25,6 +25,8 @@ import 'package:naftinv/synchronization.dart';
 import 'package:naftinv/unauthorized_screen.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'operations.dart';
 import 'package:path/path.dart';
 import 'dart:io' as io;
@@ -188,6 +190,10 @@ class AppView extends StatelessWidget {
                   ),
                   ModalRoute.withName('/'),
                 );
+                break;
+              case AuthenticationStatus.authFailedImmo:
+                print("##_ auth failed captured");
+
                 break;
               case AuthenticationStatus.authenticated:
                 _navigator.pushAndRemoveUntil<void>(
@@ -365,170 +371,194 @@ class ChoixStructurePage extends StatelessWidget {
                                       backgroundColor: Colors.white,
                                       title:
                                           Text('Gestion des immobilisations'),
-                                      content: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Container(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        0, 0, 0, 20),
-                                                alignment: Alignment.center,
-                                                child: EasyAutocomplete(
+                                      content: BlocListener<AuthenticationBloc,
+                                          AuthenticationState>(
+                                        listener: (context, state) {
+                                          if (state.status ==
+                                              AuthenticationStatus
+                                                  .authFailedImmo) {
+                                            print("##_ failed auth");
+                                            showTopSnackBar(
+                                              Overlay.of(context),
+                                              const CustomSnackBar.error(
+                                                message:
+                                                    'Username ou mot de passe incorrecte!',
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: Container(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Container(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          0, 0, 0, 20),
+                                                  alignment: Alignment.center,
+                                                  child: EasyAutocomplete(
+                                                    controller:
+                                                        structureController,
+                                                    decoration: InputDecoration(
+                                                        hintText:
+                                                            "Centre d'opération"),
+                                                    inputTextStyle:
+                                                        defaultTextStyle(
+                                                            color: Color(
+                                                                0xFF171059)),
+                                                    suggestions:
+                                                        state.structures,
+                                                    onChanged: (val) {
+                                                      context
+                                                          .read<
+                                                              ChoixStructureBloc>()
+                                                          .add(
+                                                              ChoixStructurePickStructure(
+                                                                  structure:
+                                                                      val));
+                                                    },
+                                                    onSubmitted: (val) {
+                                                      context
+                                                          .read<
+                                                              ChoixStructureBloc>()
+                                                          .add(
+                                                              ChoixStructurePickStructure(
+                                                                  structure:
+                                                                      val));
+                                                    },
+                                                  )),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      new BorderRadius.circular(
+                                                          25),
+                                                ),
+                                                child: TextFormField(
+                                                  controller: emailController,
+                                                  decoration:
+                                                      defaultInputDecoration(
+                                                    title: "Nom d'utilisateur",
+                                                  ),
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  style: defaultTextStyle(),
+                                                ),
+                                              ),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(25),
+                                                ),
+                                                child: TextFormField(
                                                   controller:
-                                                      structureController,
+                                                      passwordController,
                                                   decoration: InputDecoration(
-                                                      hintText:
-                                                          "Centre d'opération"),
-                                                  inputTextStyle:
-                                                      defaultTextStyle(
-                                                          color: Color(
-                                                              0xFF171059)),
-                                                  suggestions: state.structures,
-                                                  onChanged: (val) {
-                                                    context
-                                                        .read<
-                                                            ChoixStructureBloc>()
-                                                        .add(
-                                                            ChoixStructurePickStructure(
-                                                                structure:
-                                                                    val));
-                                                  },
-                                                  onSubmitted: (val) {
-                                                    context
-                                                        .read<
-                                                            ChoixStructureBloc>()
-                                                        .add(
-                                                            ChoixStructurePickStructure(
-                                                                structure:
-                                                                    val));
-
-                                                    
-                                                  },
-                                                )),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    new BorderRadius.circular(
-                                                        25),
-                                              ),
-                                              child: TextFormField(
-                                                controller: emailController,
-                                                decoration:
-                                                    defaultInputDecoration(
-                                                  title: "Nom d'utilisateur",
-                                                ),
-                                                keyboardType:
-                                                    TextInputType.emailAddress,
-                                                style: defaultTextStyle(),
-                                              ),
-                                            ),
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(25),
-                                              ),
-                                              child: TextFormField(
-                                                controller: passwordController,
-                                                decoration: InputDecoration(
-                                                  suffixIcon: IconButton(
-                                                    onPressed: () {},
-                                                    icon: const Icon(
-                                                      Icons.remove_red_eye,
-                                                      color: MAINCOLOR,
-                                                    ),
-                                                  ),
-                                                  labelText: "Mot de passe",
-                                                  fillColor: Colors.white,
-                                                  labelStyle:
-                                                      defaultTextStyle(),
-
-                                                  focusedBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide:
-                                                        BorderSide(color: GRAY),
-                                                  ),
-                                                  enabledBorder:
-                                                      UnderlineInputBorder(
-                                                    borderSide:
-                                                        BorderSide(color: GRAY),
-                                                  ),
-                                                  border: UnderlineInputBorder(
-                                                    borderSide:
-                                                        BorderSide(color: GRAY),
-                                                  ),
-                                                  //fillColor: Colors.green
-                                                ),
-                                                keyboardType:
-                                                    TextInputType.emailAddress,
-                                                style: const TextStyle(
-                                                  fontFamily: "Poppins",
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  backgroundColor: purple,
-                                                  textStyle: const TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                                onPressed: () async {
-                                                  context
-                                                      .read<
-                                                          AuthenticationBloc>()
-                                                      .add(SubmitImmobilisationAuthentication(
-                                                          matricule:
-                                                              emailController
-                                                                  .text,
-                                                          password:
-                                                              passwordController
-                                                                  .text,
-                                                          centre:
-                                                              structureController
-                                                                  .text));
-
-                                                  context
-                                                      .read<
-                                                          SynchronizationBloc>()
-                                                      .add(
-                                                          SynchronizationRefresh());
-                                                },
-                                                child: Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                    horizontal: 12,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    // ignore: prefer_const_literals_to_create_immutables
-                                                    children: <Widget>[
-                                                      Text(
-                                                        'Connexion',
-                                                        style: defaultTextStyle(
-                                                            fontSize: 14.0,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color:
-                                                                Colors.white),
+                                                    suffixIcon: IconButton(
+                                                      onPressed: () {},
+                                                      icon: const Icon(
+                                                        Icons.remove_red_eye,
+                                                        color: MAINCOLOR,
                                                       ),
-                                                    ],
+                                                    ),
+                                                    labelText: "Mot de passe",
+                                                    fillColor: Colors.white,
+                                                    labelStyle:
+                                                        defaultTextStyle(),
+
+                                                    focusedBorder:
+                                                        UnderlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: GRAY),
+                                                    ),
+                                                    enabledBorder:
+                                                        UnderlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: GRAY),
+                                                    ),
+                                                    border:
+                                                        UnderlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: GRAY),
+                                                    ),
+                                                    //fillColor: Colors.green
                                                   ),
-                                                )),
-                                          ],
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  style: const TextStyle(
+                                                    fontFamily: "Poppins",
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    backgroundColor: purple,
+                                                    textStyle: const TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  onPressed: () async {
+                                                    context
+                                                        .read<
+                                                            AuthenticationBloc>()
+                                                        .add(SubmitImmobilisationAuthentication(
+                                                            matricule:
+                                                                emailController
+                                                                    .text,
+                                                            password:
+                                                                passwordController
+                                                                    .text,
+                                                            centre:
+                                                                structureController
+                                                                    .text));
+
+                                                    context
+                                                        .read<
+                                                            SynchronizationBloc>()
+                                                        .add(
+                                                            SynchronizationRefresh());
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 12,
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      // ignore: prefer_const_literals_to_create_immutables
+                                                      children: <Widget>[
+                                                        Text(
+                                                          'Connexion',
+                                                          style:
+                                                              defaultTextStyle(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  color: Colors
+                                                                      .white),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );

@@ -21,7 +21,8 @@ enum AuthenticationStatus {
   uncheckedDevice,
   noInternet,
   authenticatedImmo,
-  permissionNotGaranted
+  permissionNotGaranted,
+  authFailedImmo
 }
 
 final class AuthenticationInitial extends AuthenticationState {

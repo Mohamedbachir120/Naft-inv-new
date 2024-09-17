@@ -56,33 +56,38 @@ class AuthenticationBloc
             deviceID: authenticationRepository.deviceId));
 
       case AuthenticationStatus.centreSelected:
-        emit(AuthenticationInitial(
+        return emit(AuthenticationInitial(
             status: AuthenticationStatus.centreSelected,
             centre: authenticationRepository.centre,
             user: null,
             deviceID: authenticationRepository.deviceId));
       case AuthenticationStatus.uncheckedDevice:
-        emit(AuthenticationInitial(
+        return emit(AuthenticationInitial(
             status: AuthenticationStatus.uncheckedDevice,
             centre: authenticationRepository.centre,
             user: null,
             deviceID: authenticationRepository.deviceId));
       case AuthenticationStatus.noInternet:
-        emit(AuthenticationInitial(
+        return emit(AuthenticationInitial(
             status: AuthenticationStatus.noInternet,
             centre: authenticationRepository.centre,
             user: null,
             deviceID: authenticationRepository.deviceId));
       case AuthenticationStatus.permissionNotGaranted:
-        emit(AuthenticationInitial(
+        return emit(AuthenticationInitial(
             status: AuthenticationStatus.permissionNotGaranted,
             centre: authenticationRepository.centre,
             user: null,
             deviceID: authenticationRepository.deviceId));
+      case AuthenticationStatus.authFailedImmo:
+        return emit(AuthenticationInitial(
+            status: AuthenticationStatus.authFailedImmo,
+            user: authenticationRepository.user,
+            centre: authenticationRepository.centre,
+            deviceID: authenticationRepository.deviceId));
       case AuthenticationStatus.authenticatedImmo:
-        emit(AuthenticationInitial(
-            status: AuthenticationStatus.authenticatedImmo
-            ,
+        return emit(AuthenticationInitial(
+            status: AuthenticationStatus.authenticatedImmo,
             user: authenticationRepository.user,
             centre: authenticationRepository.centre,
             deviceID: authenticationRepository.deviceId));

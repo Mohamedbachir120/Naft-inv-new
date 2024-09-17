@@ -124,12 +124,7 @@ class Bien_materiel {
       final response = await dio.post(
           '${LARAVEL_ADDRESS}api/create_bien/${imeiNo}',
           data: this.toJson());
-      print("ceci est la réponse du serveur ");
-      print(response);
 
-      if (response == true || response == 1) {
-        this.stockage = 1;
-      }
       this.stockage = 1;
 
       return true;
@@ -139,7 +134,7 @@ class Bien_materiel {
       //   db.insert('Bien_materiel', this.toMap(),
       //       conflictAlgorithm: ConflictAlgorithm.replace);
 
-      //   return true;
+        //   return true;
       // }
     } catch (e) {
       try {
