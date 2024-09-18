@@ -48,9 +48,7 @@ class SynchronizationRepository {
       return "${naturesQ[i]['FIM_ID']} ${naturesQ[i]['FIM_LIB']}";
     });
     if (deviceID != "" && structure != "") {
-      print("##_ device id exist and structure ");
       if (await User.check_user() != 0) {
-        print("##_ user authenticated ");
 
         List<Bien_materiel> biens = await Bien_materiel.all_objects(db);
         List<Non_Etiquete> sns = await Non_Etiquete.synchonized_objects(db);
@@ -175,7 +173,6 @@ class SynchronizationRepository {
 
     var maps = await db.query("Bien_materiel");
     // await db.query("Bien_materiel where code_bar  = '$code_bar'  ");
-    print("##_ $maps");
 
     bien.Store_Bien();
     localisations = localisations.map((e) {
@@ -233,8 +230,7 @@ class SynchronizationRepository {
             'Bearer ${await user.getToken()}';
         String imeiNo = await DeviceInformation.deviceIMEINumber;
 
-        var response = await dio.post(
-            '${LARAVEL_ADDRESS}api/save_many/$imeiNo',
+        var response = await dio.post('${LARAVEL_ADDRESS}api/save_many/$imeiNo',
             data: jsonEncode(objects));
 
         response = await dio.post(

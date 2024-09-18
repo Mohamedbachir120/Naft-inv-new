@@ -124,7 +124,7 @@ class BienImmoCubit extends Cubit<BienImmoState> {
 
       // Retry the original request after refreshing the token
       try {
-        var responseUpdate = await dio.post(
+        await dio.post(
             '${LARAVEL_ADDRESS}api/update_bien/${authenticationRepository.deviceId}',
             data: json.encode({
               "cop_id": authenticationRepository.user?.COP_ID,

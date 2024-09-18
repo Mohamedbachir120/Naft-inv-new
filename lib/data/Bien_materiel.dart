@@ -122,13 +122,11 @@ class Bien_materiel {
     try {
       dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
 
-      final response = await dio.post(
-          '${LARAVEL_ADDRESS}api/create_bien/$imeiNo',
-          data: toJson());
+      final response = await dio
+          .post('${LARAVEL_ADDRESS}api/create_bien/$imeiNo', data: toJson());
 
       stockage = 1;
 
-      return true;
       // } on DioError {
       //   print("erreur d'insertion");
       //   this.stockage = 0;
@@ -143,9 +141,8 @@ class Bien_materiel {
         dio.options.headers["Authorization"] =
             'Bearer ${await user.getToken()}';
 
-        final response = await dio.post(
-            '${LARAVEL_ADDRESS}api/create_bien/$imeiNo',
-            data: toJson());
+        final response = await dio
+            .post('${LARAVEL_ADDRESS}api/create_bien/$imeiNo', data: toJson());
         stockage = 1;
       } catch (e) {
         stockage = 0;
@@ -252,10 +249,9 @@ class Bien_materiel {
   }
 
   static Future<List<Bien_materiel>> all_objects(Database db) async {
-   
-
     final List<Map<String, dynamic>> maps = await db.query("Bien_materiel");
 
+    print("##_ all biens from func $maps");
     return List.generate(maps.length, (i) {
       return Bien_materiel(
           maps[i]["code_bar"],
