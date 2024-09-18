@@ -6,9 +6,11 @@ import 'package:naftinv/constante.dart';
 import 'package:naftinv/operations.dart';
 
 class LocalitePage extends StatelessWidget {
+  const LocalitePage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor:
           Colors.transparent, // Set to transparent for a fullscreen effect
       statusBarIconBrightness:
@@ -30,7 +32,7 @@ class LocalitePage extends StatelessWidget {
                   .toList();
               return Column(children: [
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: MAINCOLOR,
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(50),
@@ -43,7 +45,7 @@ class LocalitePage extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(
+                            const Flexible(
                               flex: 1,
                               child: Icon(
                                 Icons.arrow_back_ios,
@@ -56,12 +58,12 @@ class LocalitePage extends StatelessWidget {
                                   style: defaultTextStyle(
                                       color: Colors.white, fontSize: 18)),
                             ),
-                            Flexible(flex: 1, child: SizedBox())
+                            const Flexible(flex: 1, child: SizedBox())
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -140,7 +142,7 @@ class LocalitePage extends StatelessWidget {
                                   style: unactiveStyleElevated,
                                   child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.remove_circle,
                                         color: Colors.white,
                                         size: 24,
@@ -162,7 +164,7 @@ class LocalitePage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 25),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -177,7 +179,7 @@ class LocalitePage extends StatelessWidget {
                           },
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.camera_alt,
                                 color: purple,
                               ),
@@ -192,7 +194,7 @@ class LocalitePage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
@@ -201,16 +203,16 @@ class LocalitePage extends StatelessWidget {
                           color: Colors.grey.withOpacity(0.2),
                           spreadRadius: 3,
                           blurRadius: 4,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         )
                       ]),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Flexible(
+                      const Flexible(
                           flex: 1,
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(8.0),
                             child: Icon(Icons.search),
                           )),
                       Flexible(
@@ -221,7 +223,7 @@ class LocalitePage extends StatelessWidget {
                               context.read<SynchronizationBloc>().add(
                                   SynchronizationRequestSearch(keyword: value));
                             },
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               fillColor: Colors.white,
                               filled: true,
                               border: InputBorder.none,
@@ -232,9 +234,9 @@ class LocalitePage extends StatelessWidget {
                       Flexible(
                           flex: 1,
                           child: Container(
-                            margin: EdgeInsets.all(4),
+                            margin: const EdgeInsets.all(4),
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: purple, // Background color
                               shape: BoxShape.circle, // Circular shape
                             ),
@@ -244,7 +246,7 @@ class LocalitePage extends StatelessWidget {
                                       SynchronizationRequestSearch(
                                           keyword: ""));
                                 },
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.clear,
                                   color: Colors.white,
                                 )),
@@ -254,8 +256,8 @@ class LocalitePage extends StatelessWidget {
                 ),
                 ListView.builder(
                     shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    padding: EdgeInsets.only(bottom: 20),
+                    physics: const ScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: 20),
                     itemCount: localites.length,
                     itemBuilder: (context, index) {
                       return LocaliteWidget(
@@ -264,7 +266,7 @@ class LocalitePage extends StatelessWidget {
                     }),
               ]);
             } else {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
           },
         ),

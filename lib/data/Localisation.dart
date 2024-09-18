@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class Localisation {
-  static final TABLENAME = "T_E_LOCATION_LOC";
+  static const TABLENAME = "T_E_LOCATION_LOC";
 
   late final String code_bar;
   late final String designation;
@@ -26,24 +26,24 @@ class Localisation {
     List<Non_Etiquete>? nonEtiqu,
   }) {
     return Localisation(
-      codeBar ?? this.code_bar,
+      codeBar ?? code_bar,
       designation ?? this.designation,
-      copLib ?? this.cop_lib,
-      copId ?? this.cop_id,
+      copLib ?? cop_lib,
+      copId ?? cop_id,
       biens ?? this.biens,
       nonEtiqu ?? this.nonEtiqu,
     );
   }
 
-  static Future<Localisation> get_localisation(String code_bar) async {
+  static Future<Localisation> get_localisation(String codeBar) async {
     User user = await User.auth();
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query(
-        "${TABLENAME} where LOC_ID  = '$code_bar' and  COP_ID = '${user.COP_ID}' ");
-    List<Bien_materiel> biens = await get_linked_Object(code_bar);
-    List<Non_Etiquete> sns = await get_linked_SN(code_bar);
+        "$TABLENAME where LOC_ID  = '$codeBar' and  COP_ID = '${user.COP_ID}' ");
+    List<Bien_materiel> biens = await get_linked_Object(codeBar);
+    List<Non_Etiquete> sns = await get_linked_SN(codeBar);
 
     return Localisation(maps[0]['LOC_ID'], maps[0]['LOC_LIB'],
         maps[0]['COP_LIB'], maps[0]['COP_ID'], biens, sns);
@@ -70,9 +70,9 @@ class Localisation {
     final db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query(
-        "${TABLENAME} where LOC_ID  = '$code_bar' and  COP_ID = '${user.COP_ID}' ");
+        "$TABLENAME where LOC_ID  = '$code_bar' and  COP_ID = '${user.COP_ID}' ");
 
-    return (maps.length > 0);
+    return (maps.isNotEmpty);
   }
 
   Future<bool> exists() async {
@@ -85,7 +85,7 @@ class Localisation {
     final db = await database;
 
     final List<Map<String, dynamic>> maps =
-        await db.query("${TABLENAME} where COP_ID  = '${user.COP_ID}' ");
+        await db.query("$TABLENAME where COP_ID  = '${user.COP_ID}' ");
     return List.generate(maps.length, (i) async {
       List<Bien_materiel> biens = await get_linked_Object(maps[i]['LOC_ID']);
       List<Non_Etiquete> sns = await get_linked_SN(maps[i]['LOC_ID']);
@@ -95,14 +95,14 @@ class Localisation {
     });
   }
 
-  static Future<List<Localisation>> synchonized_objects(String code_bar) async {
+  static Future<List<Localisation>> synchonized_objects(String codeBar) async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
     final List<Map<String, dynamic>> maps =
         await db.query("$TABLENAME where cop_lib  = 0 ");
-    List<Bien_materiel> biens = await get_linked_Object(code_bar);
-    List<Non_Etiquete> sns = await get_linked_SN(code_bar);
+    List<Bien_materiel> biens = await get_linked_Object(codeBar);
+    List<Non_Etiquete> sns = await get_linked_SN(codeBar);
 
     return List.generate(maps.length, (i) {
       return Localisation(maps[i]['code_bar'], maps[i]['designation'],
@@ -110,12 +110,12 @@ class Localisation {
     });
   }
 
-  static Future<List<Bien_materiel>> get_linked_Object(String code_bar) async {
+  static Future<List<Bien_materiel>> get_linked_Object(String codeBar) async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
     final List<Map<String, dynamic>> maps = await db
-        .query("Bien_materiel where code_localisation  = '${code_bar}' ");
+        .query("Bien_materiel where code_localisation  = '$codeBar' ");
 
     return List.generate(maps.length, (i) {
       return Bien_materiel(
@@ -130,12 +130,12 @@ class Localisation {
     });
   }
 
-  static Future<List<Non_Etiquete>> get_linked_SN(String code_bar) async {
+  static Future<List<Non_Etiquete>> get_linked_SN(String codeBar) async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
     final List<Map<String, dynamic>> maps = await db
-        .query("Non_Etiquete where code_localisation  = '${code_bar}' ");
+        .query("Non_Etiquete where code_localisation  = '$codeBar' ");
 
     return List.generate(maps.length, (i) {
       return Non_Etiquete(
@@ -160,6 +160,6 @@ class Localisation {
 
   @override
   String toString() {
-    return 'Localisationcode bar: ${code_bar}';
+    return 'Localisationcode bar: $code_bar';
   }
 }

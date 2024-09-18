@@ -1,12 +1,10 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:dio/dio.dart';
 import 'package:naftinv/data/BienImmo.dart';
 import 'package:naftinv/main.dart';
 import 'package:naftinv/repositories/authentication_repository.dart';
-import 'package:naftinv/repositories/choix_structure_repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 part 'bien_immo_state.dart';

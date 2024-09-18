@@ -4,15 +4,14 @@ import 'package:naftinv/data/Localisation.dart';
 
 import 'package:naftinv/detailBien.dart';
 import 'package:naftinv/main.dart';
-import 'package:naftinv/data/Localisation.dart';
 
 class Create_Bien extends StatefulWidget {
   final Localisation localisation;
-  const Create_Bien({Key? key, required this.localisation}) : super(key: key);
+  const Create_Bien({super.key, required this.localisation});
 
   @override
   _Create_BienState createState() =>
-      _Create_BienState(localisation: this.localisation);
+      _Create_BienState(localisation: localisation);
 }
 
 class _Create_BienState extends State<Create_Bien> {
@@ -50,7 +49,7 @@ class _Create_BienState extends State<Create_Bien> {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                     child: Row(
-                      children: [
+                      children: const [
                         Icon(
                           Icons.add,
                           color: blue,
@@ -130,7 +129,7 @@ class _Create_BienState extends State<Create_Bien> {
                                       content: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
-                                        children: [
+                                        children: const [
                                           Icon(Icons.info,
                                               color: Colors.white, size: 25),
                                           Text(

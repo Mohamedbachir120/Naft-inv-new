@@ -1,6 +1,4 @@
-import 'dart:typed_data';
 
-import 'package:device_information/device_information.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +7,6 @@ import 'package:naftinv/Login.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/choix_structure/choix_structure_bloc.dart';
 import 'package:naftinv/blocs/cubit/bien_immo/bien_immo_cubit.dart';
-import 'package:naftinv/blocs/cubit/taux/taux_cubit.dart';
 import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/settings_bloc/settingsRepository.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
@@ -84,11 +81,10 @@ void main() async {
 
 class App extends StatelessWidget {
   const App(
-      {Key? key,
+      {super.key,
       required this.authenticationRepository,
       required this.choixStructureRepository,
-      required this.settingsrepository})
-      : super(key: key);
+      required this.settingsrepository});
 
   final AuthenticationRepository authenticationRepository;
   final ChoixStructureRepository choixStructureRepository;
@@ -133,6 +129,8 @@ class App extends StatelessWidget {
 
 class AppView extends StatelessWidget {
   final _navigatorKey = GlobalKey<NavigatorState>();
+
+  AppView({super.key});
 
   NavigatorState get _navigator => _navigatorKey.currentState!;
 
@@ -198,7 +196,7 @@ class AppView extends StatelessWidget {
               case AuthenticationStatus.authenticated:
                 _navigator.pushAndRemoveUntil<void>(
                   MaterialPageRoute<void>(
-                    builder: (_) => MyApp(),
+                    builder: (_) => const MyApp(),
                   ),
                   ModalRoute.withName('/home'),
                 );
@@ -260,7 +258,7 @@ class AppView extends StatelessWidget {
 }
 
 class ChoixStructurePage extends StatelessWidget {
-  ChoixStructurePage({Key? key}) : super(key: key);
+  ChoixStructurePage({super.key});
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController structureController = TextEditingController();
@@ -350,7 +348,7 @@ class ChoixStructurePage extends StatelessWidget {
                                     style: defaultTextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 18,
-                                        color: Color(0xFF171059)),
+                                        color: const Color(0xFF171059)),
                                   ),
                                 )
                               ],
@@ -370,7 +368,7 @@ class ChoixStructurePage extends StatelessWidget {
                                           fontWeight: FontWeight.w700),
                                       backgroundColor: Colors.white,
                                       title:
-                                          Text('Gestion des immobilisations'),
+                                          const Text('Gestion des immobilisations'),
                                       content: BlocListener<AuthenticationBloc,
                                           AuthenticationState>(
                                         listener: (context, state) {
@@ -401,12 +399,12 @@ class ChoixStructurePage extends StatelessWidget {
                                                   child: EasyAutocomplete(
                                                     controller:
                                                         structureController,
-                                                    decoration: InputDecoration(
+                                                    decoration: const InputDecoration(
                                                         hintText:
                                                             "Centre d'opération"),
                                                     inputTextStyle:
                                                         defaultTextStyle(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF171059)),
                                                     suggestions:
                                                         state.structures,
@@ -433,7 +431,7 @@ class ChoixStructurePage extends StatelessWidget {
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      new BorderRadius.circular(
+                                                      BorderRadius.circular(
                                                           25),
                                                 ),
                                                 child: TextFormField(
@@ -470,17 +468,17 @@ class ChoixStructurePage extends StatelessWidget {
                                                         defaultTextStyle(),
 
                                                     focusedBorder:
-                                                        UnderlineInputBorder(
+                                                        const UnderlineInputBorder(
                                                       borderSide: BorderSide(
                                                           color: GRAY),
                                                     ),
                                                     enabledBorder:
-                                                        UnderlineInputBorder(
+                                                        const UnderlineInputBorder(
                                                       borderSide: BorderSide(
                                                           color: GRAY),
                                                     ),
                                                     border:
-                                                        UnderlineInputBorder(
+                                                        const UnderlineInputBorder(
                                                       borderSide: BorderSide(
                                                           color: GRAY),
                                                     ),
@@ -493,7 +491,7 @@ class ChoixStructurePage extends StatelessWidget {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 20,
                                               ),
                                               ElevatedButton(
@@ -532,7 +530,7 @@ class ChoixStructurePage extends StatelessWidget {
                                                   },
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsets.symmetric(
+                                                        const EdgeInsets.symmetric(
                                                       vertical: 12,
                                                       horizontal: 12,
                                                     ),
@@ -564,7 +562,7 @@ class ChoixStructurePage extends StatelessWidget {
                                     );
                                   });
                             },
-                            icon: Icon(Icons.info_outline),
+                            icon: const Icon(Icons.info_outline),
                           )
                         ],
                       ),
@@ -574,7 +572,7 @@ class ChoixStructurePage extends StatelessWidget {
                         alignment: Alignment.center,
                         child: EasyAutocomplete(
                           inputTextStyle:
-                              defaultTextStyle(color: Color(0xFF171059)),
+                              defaultTextStyle(color: const Color(0xFF171059)),
                           suggestions: state.structures,
                           onChanged: (val) {
                             context.read<ChoixStructureBloc>().add(
@@ -589,12 +587,12 @@ class ChoixStructurePage extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.calendar_month,
                             size: 23,
                             color: Color(0xFF171059),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Text(
@@ -602,7 +600,7 @@ class ChoixStructurePage extends StatelessWidget {
                             style: defaultTextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 18,
-                                color: Color(0xFF171059)),
+                                color: const Color(0xFF171059)),
                           )
                         ],
                       ),
@@ -701,7 +699,7 @@ class ChoixStructurePage extends StatelessWidget {
                 ),
               )));
         } else {
-          return Text("");
+          return const Text("");
         }
       },
     );

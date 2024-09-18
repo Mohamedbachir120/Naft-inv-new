@@ -1,4 +1,3 @@
-import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/cubit/number_of_articles_cubit_cubit.dart';
 import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
-import 'package:naftinv/components/AvatarComponent.dart';
 import 'package:naftinv/constante.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Localisation.dart';
@@ -16,7 +14,6 @@ import 'package:naftinv/data/Non_Etiquete.dart';
 import 'package:naftinv/detailBien.dart';
 import 'package:naftinv/detailSn.dart';
 import 'package:naftinv/localites.dart';
-import 'package:naftinv/operations.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -29,7 +26,7 @@ class DetailLocalitePage extends StatelessWidget {
   TextEditingController marqueController = TextEditingController();
   TextEditingController modeleController = TextEditingController();
 
-  DetailLocalitePage({required this.localisation});
+  DetailLocalitePage({super.key, required this.localisation});
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -356,7 +353,7 @@ class DetailLocalitePage extends StatelessWidget {
                                                                 value:
                                                                     item, // Set the value to the current item, not state.modeScan
                                                                 child: Text(
-                                                                    "${valueState(item)}"),
+                                                                    valueState(item)),
                                                               );
                                                             }).toList(),
                                                             onChanged: (int?
@@ -497,7 +494,7 @@ class DetailLocalitePage extends StatelessWidget {
                                                               color: GRAY),
                                                           color: Colors.white,
                                                           borderRadius:
-                                                              new BorderRadius
+                                                              BorderRadius
                                                                   .circular(25),
                                                         ),
                                                         child: TextFormField(
@@ -636,7 +633,7 @@ class DetailLocalitePage extends StatelessWidget {
                                                               color: GRAY),
                                                           color: Colors.white,
                                                           borderRadius:
-                                                              new BorderRadius
+                                                              BorderRadius
                                                                   .circular(25),
                                                         ),
                                                         child: TextFormField(
@@ -668,7 +665,7 @@ class DetailLocalitePage extends StatelessWidget {
                                                               color: GRAY),
                                                           color: Colors.white,
                                                           borderRadius:
-                                                              new BorderRadius
+                                                              BorderRadius
                                                                   .circular(25),
                                                         ),
                                                         child: TextFormField(
@@ -700,7 +697,7 @@ class DetailLocalitePage extends StatelessWidget {
                                                               color: GRAY),
                                                           color: Colors.white,
                                                           borderRadius:
-                                                              new BorderRadius
+                                                              BorderRadius
                                                                   .circular(25),
                                                         ),
                                                         child: TextFormField(
@@ -772,8 +769,7 @@ class DetailLocalitePage extends StatelessWidget {
                                                                             BorderRadius.circular(25))),
                                                                 onPressed: (numSerieController.text.trim().length >
                                                                             3) &&
-                                                                        (stateAddSn.nature.length >
-                                                                            0)
+                                                                        (stateAddSn.nature.isNotEmpty)
                                                                     ? () {
                                                                         Non_Etiquete newSn = Non_Etiquete(
                                                                             numSerieController.text,
@@ -1040,12 +1036,12 @@ class BienWidget extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(25),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                     color: LIGHTGRAY,
                     spreadRadius: 1,
                     blurRadius: 15,
-                    offset: const Offset(0, 15))
+                    offset: Offset(0, 15))
               ]),
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
@@ -1070,13 +1066,13 @@ class BienWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "${formatDate(current.day)}",
+                                  formatDate(current.day),
                                   style: defaultTextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),
                                 ),
                                 Text(
-                                  "${formatDate(current.month)}",
+                                  formatDate(current.month),
                                   style: defaultTextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),
@@ -1166,12 +1162,12 @@ class SNWidget extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(25),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                     color: LIGHTGRAY,
                     spreadRadius: 1,
                     blurRadius: 15,
-                    offset: const Offset(0, 15))
+                    offset: Offset(0, 15))
               ]),
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
@@ -1196,13 +1192,13 @@ class SNWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "${formatDate(current.day)}",
+                                  formatDate(current.day),
                                   style: defaultTextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),
                                 ),
                                 Text(
-                                  "${formatDate(current.month)}",
+                                  formatDate(current.month),
                                   style: defaultTextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600),

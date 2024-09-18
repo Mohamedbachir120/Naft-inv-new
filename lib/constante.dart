@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:barcode_scan2/model/android_options.dart';
 import 'package:barcode_scan2/model/scan_options.dart';
@@ -48,8 +47,8 @@ Widget CustomBottomBarWidget(BuildContext context1, int index) {
   var fontWidth = MediaQuery.of(context1).size.width * 0.032;
 
   return Container(
-    margin: EdgeInsets.all(10),
-    padding: EdgeInsets.all(8),
+    margin: const EdgeInsets.all(10),
+    padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(
         color: MAINCOLOR, borderRadius: BorderRadius.circular(50)),
     child: SalomonBottomBar(
@@ -61,7 +60,7 @@ Widget CustomBottomBarWidget(BuildContext context1, int index) {
           case 0:
             Navigator.pushAndRemoveUntil(
               context1,
-              MaterialPageRoute(builder: (context1) => MyApp()),
+              MaterialPageRoute(builder: (context1) => const MyApp()),
               ModalRoute.withName('/'),
             );
             break;
@@ -69,24 +68,24 @@ Widget CustomBottomBarWidget(BuildContext context1, int index) {
           case 1:
             Navigator.push(
               context1,
-              MaterialPageRoute(builder: (context1) => LocalitePage()),
+              MaterialPageRoute(builder: (context1) => const LocalitePage()),
             );
             break;
           case 2:
             Navigator.push(
               context1,
-              MaterialPageRoute(builder: (context1) => BiensPage()),
+              MaterialPageRoute(builder: (context1) => const BiensPage()),
             );
             break;
           case 3:
             Navigator.push(
               context1,
-              MaterialPageRoute(builder: (context1) => SNsPage()),
+              MaterialPageRoute(builder: (context1) => const SNsPage()),
             );
             break;
           case 4:
             Navigator.push(context1,
-                MaterialPageRoute(builder: (context1) => ProfilPage()));
+                MaterialPageRoute(builder: (context1) => const ProfilPage()));
             break;
         }
       },
@@ -160,7 +159,7 @@ var activeStyleElevated = ElevatedButton.styleFrom(
 var unactiveStyleElevated = ElevatedButton.styleFrom(
   backgroundColor: MAINCOLOR,
   shape: RoundedRectangleBorder(
-      side: BorderSide(color: Colors.white, width: 2),
+      side: const BorderSide(color: Colors.white, width: 2),
       borderRadius: BorderRadius.circular(25)),
 );
 
@@ -181,10 +180,11 @@ String get_etat(int mode) {
 }
 
 String formatDate(int a) {
-  if (a >= 10)
+  if (a >= 10) {
     return "$a";
-  else
+  } else {
     return "0$a";
+  }
 }
 
 Future<void> scanBarcodeNormal(BuildContext context,
@@ -204,7 +204,7 @@ Future<void> scanBarcodeNormal(BuildContext context,
         options: ScanOptions(
           autoEnableFlash:
               context.read<SettingsBloc>().settingsrepository.flash,
-          android: AndroidOptions(
+          android: const AndroidOptions(
             aspectTolerance: 0.00,
             useAutoFocus: true,
           ),
@@ -261,7 +261,6 @@ Future<void> scanBarcodeNormal(BuildContext context,
               .user
               ?.INV_ID);
       var exist = await newBien.local_check();
-
       if (exist == false) {
         context
             .read<SynchronizationBloc>()
@@ -306,7 +305,7 @@ Future<void> scanBarcodeNormal(BuildContext context,
 Future<void> poursuivre_operation(BuildContext context) async {
   List<Bien_materiel> biens = await Bien_materiel.history();
 
-  if (biens.length >= 1) {
+  if (biens.isNotEmpty) {
     Localisation localisation =
         await Localisation.get_localisation(biens.last.code_localisation);
     Navigator.push(
@@ -318,7 +317,7 @@ Future<void> poursuivre_operation(BuildContext context) async {
       ),
     );
   } else {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
       content: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

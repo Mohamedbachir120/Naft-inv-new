@@ -20,7 +20,7 @@ class TauxCubit extends Cubit<TauxState> {
     try {
       User user = await User.auth();
 
-      _dio.options.headers["Authorization"] = 'Bearer ' + await user.getToken();
+      _dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
       String imeiNo = await DeviceInformation.deviceIMEINumber;
       print(authenticationRepository.year);
       final response = await _dio.get(

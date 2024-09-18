@@ -18,7 +18,7 @@ void main() {
 }
 
 class ChangeLecteur extends StatelessWidget {
-  const ChangeLecteur({Key? key}) : super(key: key);
+  const ChangeLecteur({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class ChangeLecteur extends StatelessWidget {
 }
 
 class ChangeLecteurPage extends StatefulWidget {
-  const ChangeLecteurPage({Key? key, required this.title}) : super(key: key);
+  const ChangeLecteurPage({super.key, required this.title});
 
   final String title;
 
@@ -41,14 +41,14 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
   late User user;
   static const Color blue = Color.fromRGBO(0, 73, 132, 1);
   static const Color yellow = Color.fromRGBO(255, 227, 24, 1);
-  var _currentIndex = 1;
+  final _currentIndex = 1;
 
   @override
   void initState() {
     super.initState();
   }
 
-  TextStyle textStyle = TextStyle(
+  TextStyle textStyle = const TextStyle(
     fontWeight: FontWeight.w500,
     fontSize: 16,
   );
@@ -58,7 +58,7 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
     final db = await database;
     final List<Map<String, dynamic>> devices =
         await db.rawQuery('SELECT * FROM "DEVICE"');
-    if (devices.length > 0) {
+    if (devices.isNotEmpty) {
       return devices[0]['SCANNER'];
     }
     return 0;
@@ -81,10 +81,10 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                 child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(15),
                   decoration:
-                      BoxDecoration(color: Color.fromARGB(255, 244, 246, 247)),
-                  child: Row(
+                      const BoxDecoration(color: Color.fromARGB(255, 244, 246, 247)),
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
@@ -103,26 +103,26 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(15),
                   width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: blue, width: 1.0)),
                   child: Column(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.camera_alt,
                         color: blue,
                         size: 28,
                       ),
-                      Text(
+                      const Text(
                         'Ancien lecteur',
                         style: TextStyle(
                             fontSize: 25,
                             color: blue,
                             fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Row(
@@ -144,14 +144,14 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                                   });
                                 },
                                 style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
+                                    backgroundColor: WidgetStateProperty.all(
                                         Colors.green)),
-                                child: Text(
+                                child: const Text(
                                   "Choisir",
                                   style: TextStyle(color: Colors.white),
                                 )),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Expanded(
@@ -171,11 +171,11 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          Icon(Icons.check,
+                                          const Icon(Icons.check,
                                               color: Colors.white, size: 25),
                                           Text(
-                                            " Code obtenu : ${barcodeScanRes}",
-                                            style: TextStyle(fontSize: 17.0),
+                                            " Code obtenu : $barcodeScanRes",
+                                            style: const TextStyle(fontSize: 17.0),
                                           ),
                                         ],
                                       ),
@@ -184,9 +184,9 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                                   },
                                   style: ButtonStyle(
                                       backgroundColor:
-                                          MaterialStateProperty.all(
+                                          WidgetStateProperty.all(
                                               Colors.amber)),
-                                  child: Text(
+                                  child: const Text(
                                     "Tester",
                                     style: TextStyle(color: Colors.white),
                                   ))),
@@ -195,7 +195,7 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                                   horizontal:
                                       MediaQuery.of(context).size.width *
                                           0.020),
-                              padding: EdgeInsets.all(0),
+                              padding: const EdgeInsets.all(0),
                               height:
                                   MediaQuery.of(context).size.height * 0.045,
                               width: MediaQuery.of(context).size.height * 0.045,
@@ -217,27 +217,27 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  padding: EdgeInsets.all(15),
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.all(15),
                   width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: blue, width: 1.0)),
                   child: Column(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.camera_outlined,
                         color: blue,
                         size: 28,
                       ),
-                      Text(
+                      const Text(
                         'Nouveau lecteur',
                         style: TextStyle(
                             fontSize: 25,
                             color: blue,
                             fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Row(
@@ -259,14 +259,14 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                                   });
                                 },
                                 style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
+                                    backgroundColor: WidgetStateProperty.all(
                                         Colors.green)),
-                                child: Text(
+                                child: const Text(
                                   "Choisir",
                                   style: TextStyle(color: Colors.white),
                                 )),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Expanded(
@@ -274,7 +274,7 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                               child: TextButton(
                                   onPressed: () async {
                                     final result = await BarcodeScanner.scan(
-                                      options: ScanOptions(
+                                      options: const ScanOptions(
                                         autoEnableFlash: true,
                                         android: AndroidOptions(
                                           aspectTolerance: 0.00,
@@ -290,11 +290,11 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          Icon(Icons.check,
+                                          const Icon(Icons.check,
                                               color: Colors.white, size: 25),
                                           Text(
-                                            " Code obtenu : ${barcodeScanRes}",
-                                            style: TextStyle(fontSize: 17.0),
+                                            " Code obtenu : $barcodeScanRes",
+                                            style: const TextStyle(fontSize: 17.0),
                                           ),
                                         ],
                                       ),
@@ -303,9 +303,9 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                                   },
                                   style: ButtonStyle(
                                       backgroundColor:
-                                          MaterialStateProperty.all(
+                                          WidgetStateProperty.all(
                                               Colors.amber)),
-                                  child: Text(
+                                  child: const Text(
                                     "Tester",
                                     style: TextStyle(color: Colors.white),
                                   ))),
@@ -314,7 +314,7 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                                   horizontal:
                                       MediaQuery.of(context).size.width *
                                           0.020),
-                              padding: EdgeInsets.all(0),
+                              padding: const EdgeInsets.all(0),
                               height:
                                   MediaQuery.of(context).size.height * 0.045,
                               width: MediaQuery.of(context).size.height * 0.045,
@@ -344,7 +344,7 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                   case 0:
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => MyApp()),
+                      MaterialPageRoute(builder: (context) => const MyApp()),
                       ModalRoute.withName('/'),
                     );
                     break;
@@ -352,13 +352,13 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
                   case 1:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ChangeLecteur()),
+                      MaterialPageRoute(builder: (context) => const ChangeLecteur()),
                     );
                     break;
                   case 2:
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => BiensPage()),
+                      MaterialPageRoute(builder: (context) => const BiensPage()),
                     );
                     break;
                 }
@@ -366,23 +366,23 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
               items: [
                 /// Home
                 SalomonBottomBarItem(
-                  icon: Icon(Icons.home),
-                  title: Text("Accueil"),
-                  selectedColor: Color.fromARGB(255, 4, 50, 88),
+                  icon: const Icon(Icons.home),
+                  title: const Text("Accueil"),
+                  selectedColor: const Color.fromARGB(255, 4, 50, 88),
                 ),
 
                 /// Search
                 SalomonBottomBarItem(
-                  icon: Icon(Icons.bar_chart),
-                  title: Text("Choix Lecteur"),
-                  selectedColor: Color.fromARGB(255, 4, 50, 88),
+                  icon: const Icon(Icons.bar_chart),
+                  title: const Text("Choix Lecteur"),
+                  selectedColor: const Color.fromARGB(255, 4, 50, 88),
                 ),
 
                 /// Profile
                 SalomonBottomBarItem(
-                  icon: Icon(Icons.storage),
-                  title: Text("Serveur"),
-                  selectedColor: Color.fromARGB(255, 4, 50, 88),
+                  icon: const Icon(Icons.storage),
+                  title: const Text("Serveur"),
+                  selectedColor: const Color.fromARGB(255, 4, 50, 88),
                 ),
               ],
             ),
@@ -390,7 +390,7 @@ class _ChangeLecteurPageState extends State<ChangeLecteurPage> {
         } else {
           return Scaffold(
             body: Container(
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

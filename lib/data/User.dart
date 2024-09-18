@@ -72,28 +72,31 @@ class User {
 
       final response = await dio.post(
         '${LARAVEL_ADDRESS}api/auth/signin',
-        data: {"email": this.matricule, "password": password, "code": imeiNo},
+        data: {"email": matricule, "password": password, "code": imeiNo},
       );
       final data = response.data;
-      this.token = data["token"];
-      this.refresh_token = data["refresh_token"];
-      db.insert('User', this!.toMap(),
+      print("##_ ${response.data}");
+      token = data["token"];
+      refresh_token = data["refresh_token"];
+      db.insert('User', toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     } catch (e) {
+      print("##_ $e");
+
       var dio = Dio();
 
       final response = await dio.post(
         '${LARAVEL_ADDRESS}api/auth/register',
         data: {
-          "name": this.matricule,
-          "email": this.matricule,
+          "name": matricule,
+          "email": matricule,
           "password": "a",
           "code": imeiNo
         },
       );
-      this.token = response.data["token"];
-      this.refresh_token = response.data["refresh_token"];
-      db.insert('User', this!.toMap(),
+      token = response.data["token"];
+      refresh_token = response.data["refresh_token"];
+      db.insert('User', toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
   }

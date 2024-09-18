@@ -24,7 +24,7 @@ class Settingsrepository {
     _controller.add(SettingStatus.pending);
     final List<Map<String, dynamic>> devices =
         await db.rawQuery('SELECT * FROM "DEVICE"');
-    if (devices.length > 0) {
+    if (devices.isNotEmpty) {
       lecteur = devices[0]["SCANNER"];
     }
     _controller.add(SettingStatus.success);

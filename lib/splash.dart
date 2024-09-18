@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:naftinv/homeImmobilisation.dart';
-import 'package:naftinv/localites.dart';
-import 'package:naftinv/main.dart';
 import 'package:naftinv/operations.dart';
-import 'package:naftinv/profilPage.dart';
 
 class SplashPage extends StatefulWidget {
+  const SplashPage({super.key});
+
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => SplashPage());
+    return MaterialPageRoute<void>(builder: (_) => const SplashPage());
   }
 
   @override
@@ -25,13 +23,13 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     _controller = AnimationController(vsync: this);
 
     // Navigate to the next screen after a delay
-    Timer(Duration(seconds: 1), () {
+    Timer(const Duration(seconds: 1), () {
       // Navigate to your main content screen
 
-      // Navigator.push(context,
-      //     MaterialPageRoute(builder: (BuildContext context) {
-      //   return HomeImmo();
-      // }));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return const MyApp();
+      }));
     });
   }
 

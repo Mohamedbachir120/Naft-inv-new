@@ -47,11 +47,13 @@ class SynchronizationRepository {
     natures = List.generate(naturesQ.length, (i) {
       return "${naturesQ[i]['FIM_ID']} ${naturesQ[i]['FIM_LIB']}";
     });
-    print(structure);
     if (deviceID != "" && structure != "") {
+      print("##_ device id exist and structure ");
       if (await User.check_user() != 0) {
-        List<Bien_materiel> biens = await Bien_materiel.all_objects();
-        List<Non_Etiquete> sns = await Non_Etiquete.synchonized_objects();
+        print("##_ user authenticated ");
+
+        List<Bien_materiel> biens = await Bien_materiel.all_objects(db);
+        List<Non_Etiquete> sns = await Non_Etiquete.synchonized_objects(db);
         final List<Map<String, dynamic>> maps =
             await db.query("T_E_LOCATION_LOC where COP_ID = '$structure' ");
         localisations = List.generate(maps.length, (i) {
@@ -72,6 +74,8 @@ class SynchronizationRepository {
         _controller.add(SynchronizationStatus.success);
       } else {
         try {
+          print("##_ getting data from server ");
+
           var dio = Dio();
           var response = await dio.post(
             '${LARAVEL_ADDRESS}api/auth/signin',
@@ -110,7 +114,7 @@ class SynchronizationRepository {
 
           var batch = db.batch();
           batch.execute(
-              "DELETE FROM T_E_LOCATION_LOC WHERE COP_ID = '${STRUCTURE}' ;");
+              "DELETE FROM T_E_LOCATION_LOC WHERE COP_ID = '$STRUCTURE' ;");
           batch.execute("DELETE FROM T_E_GROUPE_INV;");
 
           for (var item in localisations) {
@@ -166,8 +170,12 @@ class SynchronizationRepository {
     _controller.add(SynchronizationStatus.success);
   }
 
-  void addBien(Bien_materiel bien) {
+  void addBien(Bien_materiel bien) async {
     _controller.add(SynchronizationStatus.searching);
+
+    var maps = await db.query("Bien_materiel");
+    // await db.query("Bien_materiel where code_bar  = '$code_bar'  ");
+    print("##_ $maps");
 
     bien.Store_Bien();
     localisations = localisations.map((e) {
@@ -196,19 +204,19 @@ class SynchronizationRepository {
 
   Future<void> synchronize() async {
     _controller.add(SynchronizationStatus.loading);
-    List<Bien_materiel> objects = await Bien_materiel.synchonized_objects();
-    List<Non_Etiquete> object2 = await Non_Etiquete.synchonized_objects();
+    List<Bien_materiel> objects = await Bien_materiel.synchonized_objects(db);
+    List<Non_Etiquete> object2 = await Non_Etiquete.synchonized_objects(db);
     User user = await User.auth();
     Dio dio = Dio();
     try {
-      dio.options.headers["Authorization"] = 'Bearer ' + await user.getToken();
+      dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
       String imeiNo = await DeviceInformation.deviceIMEINumber;
 
-      var response = await dio.post('${LARAVEL_ADDRESS}api/save_many/${imeiNo}',
+      var response = await dio.post('${LARAVEL_ADDRESS}api/save_many/$imeiNo',
           data: jsonEncode(objects));
 
       response = await dio.post(
-          '${LARAVEL_ADDRESS}api/save_manyNonEtiqu/${imeiNo}',
+          '${LARAVEL_ADDRESS}api/save_manyNonEtiqu/$imeiNo',
           data: jsonEncode(object2));
 
       if (response.toString() == "true") {
@@ -226,11 +234,11 @@ class SynchronizationRepository {
         String imeiNo = await DeviceInformation.deviceIMEINumber;
 
         var response = await dio.post(
-            '${LARAVEL_ADDRESS}api/save_many/${imeiNo}',
+            '${LARAVEL_ADDRESS}api/save_many/$imeiNo',
             data: jsonEncode(objects));
 
         response = await dio.post(
-            '${LARAVEL_ADDRESS}api/save_manyNonEtiqu/${imeiNo}',
+            '${LARAVEL_ADDRESS}api/save_manyNonEtiqu/$imeiNo',
             data: jsonEncode(object2));
 
         if (response.toString() == "true") {

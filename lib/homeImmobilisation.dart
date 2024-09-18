@@ -5,13 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:naftinv/blocs/choix_structure/choix_structure_bloc.dart';
 import 'package:naftinv/blocs/cubit/bien_immo/bien_immo_cubit.dart';
 import 'package:naftinv/blocs/cubit/password/password_cubit.dart';
 import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
-import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/components/AvatarComponent.dart';
 import 'package:naftinv/constante.dart';
 import 'package:naftinv/data/BienImmo.dart';
@@ -26,7 +23,7 @@ class HomeImmo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor:
           Colors.transparent, // Set to transparent for a fullscreen effect
       statusBarIconBrightness:
@@ -68,7 +65,7 @@ class HomeImmo extends StatelessWidget {
                     children: [
                       Container(
                         height: MediaQuery.of(context).size.width * 0.4,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             color: MAINCOLOR,
                             borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(50),
@@ -97,7 +94,7 @@ class HomeImmo extends StatelessWidget {
                                       Flexible(
                                         flex: 5,
                                         child: Container(
-                                          padding: EdgeInsets.all(10),
+                                          padding: const EdgeInsets.all(10),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -125,7 +122,7 @@ class HomeImmo extends StatelessWidget {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                     ),
-                                                    Icon(
+                                                    const Icon(
                                                       Icons
                                                           .location_on_outlined,
                                                       color: GRAY,
@@ -173,7 +170,7 @@ class HomeImmo extends StatelessWidget {
                                                         children: [
                                                           Row(
                                                             children: [
-                                                              Icon(Icons
+                                                              const Icon(Icons
                                                                   .settings),
                                                               Text(
                                                                 "Paramétrer votre application",
@@ -204,7 +201,7 @@ class HomeImmo extends StatelessWidget {
                                                                   flex: 1,
                                                                   child: Row(
                                                                     children: [
-                                                                      Icon(
+                                                                      const Icon(
                                                                         Icons
                                                                             .flash_on,
                                                                         color:
@@ -277,7 +274,7 @@ class HomeImmo extends StatelessWidget {
                                                                   flex: 1,
                                                                   child: Row(
                                                                     children: [
-                                                                      Icon(
+                                                                      const Icon(
                                                                         Icons
                                                                             .barcode_reader,
                                                                         color:
@@ -349,7 +346,7 @@ class HomeImmo extends StatelessWidget {
                                                                   flex: 1,
                                                                   child: Row(
                                                                     children: [
-                                                                      Icon(
+                                                                      const Icon(
                                                                         Icons
                                                                             .check_circle_outline,
                                                                         color:
@@ -370,7 +367,7 @@ class HomeImmo extends StatelessWidget {
                                                                     alignment:
                                                                         Alignment
                                                                             .center,
-                                                                    padding: EdgeInsets.symmetric(
+                                                                    padding: const EdgeInsets.symmetric(
                                                                         vertical:
                                                                             4,
                                                                         horizontal:
@@ -392,7 +389,7 @@ class HomeImmo extends StatelessWidget {
                                                                           Container(),
                                                                       iconSize:
                                                                           0,
-                                                                      hint: Text(
+                                                                      hint: const Text(
                                                                           'Select an option'), // Hint when no item is selected
                                                                       value: state
                                                                           .modeScan, // The currently selected item
@@ -407,7 +404,7 @@ class HomeImmo extends StatelessWidget {
                                                                           value:
                                                                               item, // Set the value to the current item, not state.modeScan
                                                                           child:
-                                                                              Text("${valueState(item)}"),
+                                                                              Text(valueState(item)),
                                                                         );
                                                                       }).toList(),
                                                                       onChanged:
@@ -428,14 +425,14 @@ class HomeImmo extends StatelessWidget {
                                                       ),
                                                     );
                                                   } else {
-                                                    return CircularProgressIndicator();
+                                                    return const CircularProgressIndicator();
                                                   }
                                                 },
                                               ),
                                             );
                                           });
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.settings,
                                       color: YELLOW,
                                       size: 32,
@@ -449,7 +446,7 @@ class HomeImmo extends StatelessWidget {
                       ),
                       Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                            const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                         child: Row(
                           children: [
                             Expanded(
@@ -469,7 +466,7 @@ class HomeImmo extends StatelessWidget {
                                                 .read<SettingsBloc>()
                                                 .settingsrepository
                                                 .flash,
-                                            android: AndroidOptions(
+                                            android: const AndroidOptions(
                                               aspectTolerance: 0.00,
                                               useAutoFocus: true,
                                             ),
@@ -531,7 +528,7 @@ class HomeImmo extends StatelessWidget {
                         ],
                       ),
                       Container(
-                        margin: EdgeInsets.fromLTRB(25, 10, 25, 0),
+                        margin: const EdgeInsets.fromLTRB(25, 10, 25, 0),
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(25),
@@ -540,16 +537,16 @@ class HomeImmo extends StatelessWidget {
                                 color: Colors.grey.withOpacity(0.2),
                                 spreadRadius: 3,
                                 blurRadius: 4,
-                                offset: Offset(0, 3),
+                                offset: const Offset(0, 3),
                               )
                             ]),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(
+                            const Flexible(
                                 flex: 1,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: EdgeInsets.all(8.0),
                                   child: Icon(
                                     Icons.edit,
                                     color: MAINCOLOR,
@@ -574,9 +571,9 @@ class HomeImmo extends StatelessWidget {
                             Flexible(
                                 flex: 1,
                                 child: Container(
-                                  margin: EdgeInsets.all(4),
+                                  margin: const EdgeInsets.all(4),
                                   alignment: Alignment.center,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: purple, // Background color
                                     shape: BoxShape.circle, // Circular shape
                                   ),
@@ -599,7 +596,7 @@ class HomeImmo extends StatelessWidget {
                                           );
                                         }
                                       },
-                                      icon: Icon(
+                                      icon: const Icon(
                                         Icons.check,
                                         color: Colors.white,
                                       )),
@@ -610,7 +607,7 @@ class HomeImmo extends StatelessWidget {
                       BlocBuilder<BienImmoCubit, BienImmoState>(
                         builder: (context, state) {
                           if (state is BienImmoInitial) {
-                            return InitialWidget();
+                            return const InitialWidget();
                           } else if (state is BienImmoLoaded) {
                             return ViewDetailsBienImmo(
                                 bienImmo: state.bienImmo);
@@ -623,13 +620,13 @@ class HomeImmo extends StatelessWidget {
                             return buildBienImmoEditForm(
                                 context, state.bienImmo);
                           } else if (state is BienImmoError) {
-                            return InitialWidget();
+                            return const InitialWidget();
                           } else {
-                            return Container(
+                            return SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 0.4,
                                 child:
-                                    Center(child: CircularProgressIndicator()));
+                                    const Center(child: CircularProgressIndicator()));
                           }
                         },
                       ),
@@ -664,7 +661,7 @@ class HomeImmo extends StatelessWidget {
                                           fontWeight: FontWeight.w700,
                                         ),
                                         backgroundColor: Colors.white,
-                                        title: Text('Changer le mot de passe'),
+                                        title: const Text('Changer le mot de passe'),
                                         content: BlocListener<
                                             ChangePasswordCubit,
                                             ChangePasswordState>(
@@ -723,17 +720,17 @@ class HomeImmo extends StatelessWidget {
                                                       labelStyle:
                                                           defaultTextStyle(),
                                                       focusedBorder:
-                                                          UnderlineInputBorder(
+                                                          const UnderlineInputBorder(
                                                         borderSide: BorderSide(
                                                             color: GRAY),
                                                       ),
                                                       enabledBorder:
-                                                          UnderlineInputBorder(
+                                                          const UnderlineInputBorder(
                                                         borderSide: BorderSide(
                                                             color: GRAY),
                                                       ),
                                                       border:
-                                                          UnderlineInputBorder(
+                                                          const UnderlineInputBorder(
                                                         borderSide: BorderSide(
                                                             color: GRAY),
                                                       ),
@@ -745,7 +742,7 @@ class HomeImmo extends StatelessWidget {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(height: 20),
+                                                const SizedBox(height: 20),
 
                                                 // New Password Input Field
                                                 Container(
@@ -771,17 +768,17 @@ class HomeImmo extends StatelessWidget {
                                                       labelStyle:
                                                           defaultTextStyle(),
                                                       focusedBorder:
-                                                          UnderlineInputBorder(
+                                                          const UnderlineInputBorder(
                                                         borderSide: BorderSide(
                                                             color: GRAY),
                                                       ),
                                                       enabledBorder:
-                                                          UnderlineInputBorder(
+                                                          const UnderlineInputBorder(
                                                         borderSide: BorderSide(
                                                             color: GRAY),
                                                       ),
                                                       border:
-                                                          UnderlineInputBorder(
+                                                          const UnderlineInputBorder(
                                                         borderSide: BorderSide(
                                                             color: GRAY),
                                                       ),
@@ -793,7 +790,7 @@ class HomeImmo extends StatelessWidget {
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(height: 20),
+                                                const SizedBox(height: 20),
 
                                                 // Submit Button
                                                 ElevatedButton(
@@ -838,7 +835,7 @@ class HomeImmo extends StatelessWidget {
                                                   },
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsets.symmetric(
+                                                        const EdgeInsets.symmetric(
                                                       vertical: 12,
                                                       horizontal: 12,
                                                     ),
@@ -954,7 +951,7 @@ class InitialWidget extends StatelessWidget {
           child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.info_outline,
             color: Colors.redAccent,
           ),
@@ -978,7 +975,7 @@ class ViewDetailsBienImmo extends StatelessWidget {
       decoration: BoxDecoration(
           border: Border.all(color: Colors.black12),
           borderRadius: BorderRadius.circular(25)),
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       margin: EdgeInsets.symmetric(
           vertical: 10, horizontal: MediaQuery.of(context).size.width * 0.05),
       child: Column(
@@ -986,7 +983,7 @@ class ViewDetailsBienImmo extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.bar_chart_rounded),
+              const Icon(Icons.bar_chart_rounded),
               Text(
                 '  CODE BAR:',
                 style: defaultTextStyle(fontWeight: FontWeight.w700),
@@ -994,15 +991,15 @@ class ViewDetailsBienImmo extends StatelessWidget {
             ],
           ),
           Text(
-            "${bienImmo.AST_CB}",
+            bienImmo.AST_CB,
             style: defaultTextStyle(color: purple),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
             children: [
-              Icon(Icons.copy),
+              const Icon(Icons.copy),
               Text(
                 '  LIBELLÉ:',
                 style: defaultTextStyle(fontWeight: FontWeight.w700),
@@ -1013,12 +1010,12 @@ class ViewDetailsBienImmo extends StatelessWidget {
             "${bienImmo.AST_LIB}",
             style: defaultTextStyle(color: purple),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
             children: [
-              Icon(Icons.branding_watermark_outlined),
+              const Icon(Icons.branding_watermark_outlined),
               Text(
                 '  MARQUE:',
                 style: defaultTextStyle(fontWeight: FontWeight.w700),
@@ -1029,12 +1026,12 @@ class ViewDetailsBienImmo extends StatelessWidget {
             "${bienImmo.AST_MARQUE}",
             style: defaultTextStyle(color: purple),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
             children: [
-              Icon(Icons.badge_rounded),
+              const Icon(Icons.badge_rounded),
               Text(
                 '  MODÉLE:',
                 style: defaultTextStyle(fontWeight: FontWeight.w700),
@@ -1045,12 +1042,12 @@ class ViewDetailsBienImmo extends StatelessWidget {
             "${bienImmo.AST_MODELE}",
             style: defaultTextStyle(color: purple),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
             children: [
-              Icon(Icons.numbers),
+              const Icon(Icons.numbers),
               Text(
                 '  NUMÉRO DE SERIE:',
                 style: defaultTextStyle(fontWeight: FontWeight.w700),
@@ -1061,12 +1058,12 @@ class ViewDetailsBienImmo extends StatelessWidget {
             "${bienImmo.AST_SERIAL_NEMBER}",
             style: defaultTextStyle(color: purple),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
             children: [
-              Icon(Icons.person_2_outlined),
+              const Icon(Icons.person_2_outlined),
               Text(
                 '  AFFECTÉ A:',
                 style: defaultTextStyle(fontWeight: FontWeight.w700),
@@ -1077,7 +1074,7 @@ class ViewDetailsBienImmo extends StatelessWidget {
             "${bienImmo.EMP_FULLNAME_AMU} - ${bienImmo.EMP_ID_AMU}",
             style: defaultTextStyle(color: purple),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -1108,11 +1105,11 @@ Widget buildFieldRow(IconData icon, String label, String value) {
       Row(
         children: [
           Icon(icon),
-          Text('  $label', style: TextStyle(fontWeight: FontWeight.w700)),
+          Text('  $label', style: const TextStyle(fontWeight: FontWeight.w700)),
         ],
       ),
-      Text(value, style: TextStyle(color: Colors.purple)),
-      SizedBox(height: 10),
+      Text(value, style: const TextStyle(color: Colors.purple)),
+      const SizedBox(height: 10),
     ],
   );
 }
@@ -1144,7 +1141,7 @@ Widget buildBienImmoEditForm(BuildContext context, BienImmo bienImmo) {
     decoration: BoxDecoration(
         border: Border.all(color: Colors.black12),
         borderRadius: BorderRadius.circular(25)),
-    padding: EdgeInsets.all(10),
+    padding: const EdgeInsets.all(10),
     margin: EdgeInsets.symmetric(
         vertical: 10, horizontal: MediaQuery.of(context).size.width * 0.05),
     child: Column(
@@ -1164,7 +1161,7 @@ Widget buildBienImmoEditForm(BuildContext context, BienImmo bienImmo) {
         buildEditableFieldRow(
             context, 'Matricule Véhicule:', matriculeCarController),
 
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
           children: [
             Expanded(
@@ -1178,7 +1175,7 @@ Widget buildBienImmoEditForm(BuildContext context, BienImmo bienImmo) {
                     style: defaultTextStyle(color: Colors.white),
                   )),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Expanded(
@@ -1219,7 +1216,7 @@ Widget buildEditableFieldRow(
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text('$label', style: TextStyle(fontWeight: FontWeight.w700)),
+      Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
       Row(
         children: [
           Expanded(
@@ -1227,9 +1224,9 @@ Widget buildEditableFieldRow(
               controller: controller,
               enabled: !isDisabled,
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black12),
+                      borderSide: const BorderSide(color: Colors.black12),
                       borderRadius: BorderRadius.circular(25))),
             ),
           ),
@@ -1248,7 +1245,7 @@ Widget buildEditableFieldRow(
                                 .read<SettingsBloc>()
                                 .settingsrepository
                                 .flash,
-                            android: AndroidOptions(
+                            android: const AndroidOptions(
                               aspectTolerance: 0.00,
                               useAutoFocus: true,
                             ),
@@ -1266,11 +1263,11 @@ Widget buildEditableFieldRow(
                     }
                     print("####### ${controller.text}");
                   },
-                  icon: Icon(Icons.camera_alt_outlined))
-              : SizedBox.shrink()
+                  icon: const Icon(Icons.camera_alt_outlined))
+              : const SizedBox.shrink()
         ],
       ),
-      SizedBox(height: 10),
+      const SizedBox(height: 10),
     ],
   );
 }

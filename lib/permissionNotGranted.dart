@@ -5,7 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'main.dart';
 
 class PermissionNotGranted extends StatefulWidget {
-  const PermissionNotGranted({Key? key}) : super(key: key);
+  const PermissionNotGranted({super.key});
 
   @override
   State<PermissionNotGranted> createState() => _PermissionNotGrantedState();
@@ -22,10 +22,11 @@ class _PermissionNotGrantedState extends State<PermissionNotGranted> {
           context,
           MaterialPageRoute(
               builder: (context) => ChoixStructurePage(),
-              settings: RouteSettings()),
+              settings: const RouteSettings()),
           (route) => false);
       return true;
     }
+    return null;
   }
 
   @override
@@ -39,10 +40,10 @@ class _PermissionNotGrantedState extends State<PermissionNotGranted> {
             children: [
               Image.asset("assets/permission.jpg"),
               Container(
-                margin: EdgeInsets.all(10),
-                child: Card(
+                margin: const EdgeInsets.all(10),
+                child: const Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(10.0),
                     child: Text(
                       "L'application ne peut pas accèder à votre code IMEI veuillez cliquer sur autoriser afin d'utiliser l'application",
                       style: TextStyle(color: MAINCOLOR, fontSize: 15),
@@ -59,7 +60,7 @@ class _PermissionNotGrantedState extends State<PermissionNotGranted> {
                   onPressed: () async {
                     askPermission();
                   },
-                  child: Text(
+                  child: const Text(
                     "Autoriser",
                     style: TextStyle(color: Colors.white),
                   ))

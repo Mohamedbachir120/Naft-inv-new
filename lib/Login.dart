@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/constante.dart';
-import 'package:naftinv/data/User.dart';
-import 'package:naftinv/main.dart';
 
-import 'operations.dart';
-import 'dart:async';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 
 class LoginPage extends StatelessWidget {
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+
+  LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +60,11 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 30),
+                      margin: const EdgeInsets.only(top: 30),
                       height: MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          image: DecorationImage(
+                          image: const DecorationImage(
                               fit: BoxFit.contain,
                               image: AssetImage(
                                 "assets/Logo_NAFTAL.png",
@@ -114,7 +109,7 @@ class LoginPage extends StatelessWidget {
                           Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: new BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(25),
                             ),
                             child: TextFormField(
                               controller: emailController,
@@ -148,13 +143,13 @@ class LoginPage extends StatelessWidget {
                                 fillColor: Colors.white,
                                 labelStyle: const TextStyle(color: GRAY),
 
-                                focusedBorder: UnderlineInputBorder(
+                                focusedBorder: const UnderlineInputBorder(
                                   borderSide: BorderSide(color: GRAY),
                                 ),
-                                enabledBorder: UnderlineInputBorder(
+                                enabledBorder: const UnderlineInputBorder(
                                   borderSide: BorderSide(color: GRAY),
                                 ),
-                                border: UnderlineInputBorder(
+                                border: const UnderlineInputBorder(
                                   borderSide: BorderSide(color: GRAY),
                                 ),
                                 //fillColor: Colors.green
@@ -201,7 +196,7 @@ class LoginPage extends StatelessWidget {
                                     .add(SynchronizationRefresh());
                               },
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   vertical: 12,
                                   horizontal: 12,
                                 ),
@@ -270,13 +265,13 @@ InputDecoration defaultInputDecoration({required String title}) {
     hintText: title,
     labelStyle: defaultTextStyle(),
 
-    focusedBorder: UnderlineInputBorder(
+    focusedBorder: const UnderlineInputBorder(
       borderSide: BorderSide(color: GRAY),
     ),
-    enabledBorder: UnderlineInputBorder(
+    enabledBorder: const UnderlineInputBorder(
       borderSide: BorderSide(color: GRAY),
     ),
-    border: UnderlineInputBorder(
+    border: const UnderlineInputBorder(
       borderSide: BorderSide(color: GRAY),
     ),
     fillColor: Colors.white,

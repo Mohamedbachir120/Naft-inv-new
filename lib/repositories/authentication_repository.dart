@@ -2,14 +2,11 @@ import 'dart:async';
 
 import 'package:device_information/device_information.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/data/User.dart';
 import 'package:naftinv/main.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'dart:io' as io;
 
 class AuthenticationRepository {
   AuthenticationRepository({required this.db});
@@ -37,9 +34,9 @@ class AuthenticationRepository {
         Dio dio = Dio();
         try {
           final List<Map<String, dynamic>> devices = await db
-              .query("DEVICE where IMEI = '${imeiNo}' and IS_VALID = 1");
+              .query("DEVICE where IMEI = '$imeiNo' and IS_VALID = 1");
 
-          if (devices.length == 0) {
+          if (devices.isEmpty) {
             var response =
                 await dio.get("${LARAVEL_ADDRESS}api/is_enabled?code=$imeiNo");
             if (response.data["is_enabled"] == 0) {
@@ -107,7 +104,7 @@ class AuthenticationRepository {
 
     final List<Map<String, dynamic>> maps =
         await db.query("T_E_LOCATION_LOC where COP_ID = '$centre'; ");
-    if (maps.length > 0) {
+    if (maps.isNotEmpty) {
       _controller.add(AuthenticationStatus.centreSelected);
     }
   }
@@ -120,7 +117,7 @@ class AuthenticationRepository {
       final List<Map<String, dynamic>> maps = await db.query(
           "T_E_GROUPE_INV where EMP_ID = '$matricule' and YEAR = $year and COP_ID = '$centre' ");
 
-      if (maps.length > 0) {
+      if (maps.isNotEmpty) {
         print("correct auth user found");
         user = User(
             maps[0]["EMP_ID"],

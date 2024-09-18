@@ -15,7 +15,7 @@ class ChoixStructureBloc
       : super(ChoixStructureInitial(
             selectedStructures: "",
             status: ChoixStructureStatus.initial,
-            structures: [],
+            structures: const [],
             year: DateTime.now().year)) {
     on<ChoixStructureStatusChanged>(_onChoixStructureStatusChanged);
     on<ChoixStructurePickStructure>(_onChoixStructurePickStructure);
@@ -44,13 +44,13 @@ class ChoixStructureBloc
         return emit(ChoixStructureInitial(
             status: ChoixStructureStatus.initial,
             year: DateTime.now().year,
-            structures: [],
+            structures: const [],
             selectedStructures: ""));
       case ChoixStructureStatus.pending:
         return emit(ChoixStructureInitial(
             status: ChoixStructureStatus.pending,
             year: DateTime.now().year,
-            structures: [],
+            structures: const [],
             selectedStructures: ""));
       case ChoixStructureStatus.loaded:
         return emit(ChoixStructureInitial(
@@ -62,7 +62,7 @@ class ChoixStructureBloc
         return emit(ChoixStructureInitial(
             status: ChoixStructureStatus.failed,
             year: DateTime.now().year,
-            structures: [],
+            structures: const [],
             selectedStructures: ""));
       case ChoixStructureStatus.editing:
         return emit(ChoixStructureInitial(

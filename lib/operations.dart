@@ -1,43 +1,19 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:device_information/device_information.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:naftinv/ChangeLecteur.dart';
-import 'package:naftinv/all_non_etique.dart';
-import 'package:naftinv/all_objects.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/cubit/taux/taux_cubit.dart';
 import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/components/AvatarComponent.dart';
 import 'package:naftinv/constante.dart';
-import 'package:naftinv/create_Non_etiqu.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Localisation.dart';
-import 'package:naftinv/data/Non_Etiquete.dart';
-import 'package:naftinv/data/User.dart';
 import 'package:naftinv/detailLocalite.dart';
-import 'package:naftinv/detailBien.dart';
-import 'package:naftinv/detail_operation.dart';
-import 'package:naftinv/history.dart';
-import 'package:dio/dio.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:naftinv/localites.dart';
-import 'package:naftinv/mode_manuel.dart';
-import 'package:naftinv/repositories/authentication_repository.dart';
-import 'package:naftinv/repositories/synchronization_repository.dart';
-import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:skeleton_animation/skeleton_animation.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
-import 'main.dart';
+import 'package:naftinv/localites.dart';
+import 'package:skeleton_animation/skeleton_animation.dart';
 
 bool check_format(int type, String value) {
   if (type == 0) {
@@ -56,6 +32,8 @@ bool check_format(int type, String value) {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -391,7 +369,7 @@ class MyApp extends StatelessWidget {
                                                                             ].map((int item) {
                                                                               return DropdownMenuItem<int>(
                                                                                 value: item, // Set the value to the current item, not state.modeScan
-                                                                                child: Text("${valueState(item)}"),
+                                                                                child: Text(valueState(item)),
                                                                               );
                                                                             }).toList(),
                                                                             onChanged:
@@ -650,6 +628,8 @@ class MyApp extends StatelessWidget {
 }
 
 class SkeleteonOperations extends StatelessWidget {
+  const SkeleteonOperations({super.key});
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -723,12 +703,12 @@ class LocaliteWidget extends StatelessWidget {
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(25),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                     color: LIGHTGRAY,
                     spreadRadius: 1,
                     blurRadius: 15,
-                    offset: const Offset(0, 15))
+                    offset: Offset(0, 15))
               ]),
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 4),
           margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),

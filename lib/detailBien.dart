@@ -7,14 +7,10 @@ import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/cubit/number_of_articles_cubit_cubit.dart';
 import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
-import 'package:naftinv/components/AvatarComponent.dart';
 import 'package:naftinv/constante.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
-import 'package:naftinv/data/Localisation.dart';
 import 'package:naftinv/data/Non_Etiquete.dart';
 import 'package:naftinv/detailSn.dart';
-import 'package:naftinv/localites.dart';
-import 'package:naftinv/operations.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -26,10 +22,10 @@ class DetailBienPage extends StatelessWidget {
   TextEditingController numSerieController = TextEditingController();
   TextEditingController marqueController = TextEditingController();
   TextEditingController modeleController = TextEditingController();
-  DetailBienPage({required this.bien});
+  DetailBienPage({super.key, required this.bien});
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor:
           Colors.transparent, // Set to transparent for a fullscreen effect
       statusBarIconBrightness:
@@ -39,7 +35,7 @@ class DetailBienPage extends StatelessWidget {
     ));
 
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       bottomNavigationBar: CustomBottomBarWidget(context, 2),
       body: SingleChildScrollView(
         child: BlocBuilder<SynchronizationBloc, SynchronizationState>(
@@ -47,7 +43,7 @@ class DetailBienPage extends StatelessWidget {
             if (state is SynchronizationInitial) {
               return Column(children: [
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: MAINCOLOR,
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(50),
@@ -68,7 +64,7 @@ class DetailBienPage extends StatelessWidget {
                                       Navigator.pop(context);
                                     }
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.arrow_back_ios,
                                     color: YELLOW,
                                   )),
@@ -80,12 +76,12 @@ class DetailBienPage extends StatelessWidget {
                                   style: defaultTextStyle(
                                       color: Colors.white, fontSize: 16)),
                             ),
-                            Flexible(flex: 1, child: Text(""))
+                            const Flexible(flex: 1, child: Text(""))
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -101,7 +97,7 @@ class DetailBienPage extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.camera_alt,
                                           color: Colors.white,
                                           size: 24,
@@ -150,7 +146,7 @@ class DetailBienPage extends StatelessWidget {
                                                         children: [
                                                           Row(
                                                             children: [
-                                                              Icon(Icons
+                                                              const Icon(Icons
                                                                   .settings),
                                                               Text(
                                                                 "Paramétrer votre application",
@@ -181,7 +177,7 @@ class DetailBienPage extends StatelessWidget {
                                                                   flex: 1,
                                                                   child: Row(
                                                                     children: [
-                                                                      Icon(
+                                                                      const Icon(
                                                                         Icons
                                                                             .flash_on,
                                                                         color:
@@ -255,7 +251,7 @@ class DetailBienPage extends StatelessWidget {
                                                                   flex: 1,
                                                                   child: Row(
                                                                     children: [
-                                                                      Icon(
+                                                                      const Icon(
                                                                         Icons
                                                                             .barcode_reader,
                                                                         color:
@@ -327,7 +323,7 @@ class DetailBienPage extends StatelessWidget {
                                                                   flex: 1,
                                                                   child: Row(
                                                                     children: [
-                                                                      Icon(
+                                                                      const Icon(
                                                                         Icons
                                                                             .check_circle_outline,
                                                                         color:
@@ -348,7 +344,7 @@ class DetailBienPage extends StatelessWidget {
                                                                     alignment:
                                                                         Alignment
                                                                             .center,
-                                                                    padding: EdgeInsets.symmetric(
+                                                                    padding: const EdgeInsets.symmetric(
                                                                         vertical:
                                                                             4,
                                                                         horizontal:
@@ -370,7 +366,7 @@ class DetailBienPage extends StatelessWidget {
                                                                           Container(),
                                                                       iconSize:
                                                                           0,
-                                                                      hint: Text(
+                                                                      hint: const Text(
                                                                           'Select an option'), // Hint when no item is selected
                                                                       value: state
                                                                           .modeScan, // The currently selected item
@@ -385,7 +381,7 @@ class DetailBienPage extends StatelessWidget {
                                                                           value:
                                                                               item, // Set the value to the current item, not state.modeScan
                                                                           child:
-                                                                              Text("${valueState(item)}"),
+                                                                              Text(valueState(item)),
                                                                         );
                                                                       }).toList(),
                                                                       onChanged:
@@ -406,7 +402,7 @@ class DetailBienPage extends StatelessWidget {
                                                       ),
                                                     );
                                                   } else {
-                                                    return CircularProgressIndicator();
+                                                    return const CircularProgressIndicator();
                                                   }
                                                 },
                                               ),
@@ -418,7 +414,7 @@ class DetailBienPage extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.settings,
                                           color: Colors.white,
                                           size: 24,
@@ -441,7 +437,7 @@ class DetailBienPage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 7, horizontal: 25),
+                  padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -497,7 +493,7 @@ class DetailBienPage extends StatelessWidget {
                                                       children: [
                                                         Row(
                                                           children: [
-                                                            Icon(
+                                                            const Icon(
                                                               Icons.add_box,
                                                               color: YELLOW,
                                                             ),
@@ -513,7 +509,7 @@ class DetailBienPage extends StatelessWidget {
                                                         ),
                                                         Container(
                                                           padding:
-                                                              EdgeInsets.all(8),
+                                                              const EdgeInsets.all(8),
                                                           margin: EdgeInsets.symmetric(
                                                               vertical: MediaQuery.of(
                                                                           context)
@@ -526,7 +522,7 @@ class DetailBienPage extends StatelessWidget {
                                                                 color: GRAY),
                                                             color: Colors.white,
                                                             borderRadius:
-                                                                new BorderRadius
+                                                                BorderRadius
                                                                     .circular(
                                                                     25),
                                                           ),
@@ -587,7 +583,7 @@ class DetailBienPage extends StatelessWidget {
                                                               focusNode:
                                                                   focusNode,
                                                               decoration:
-                                                                  InputDecoration(
+                                                                  const InputDecoration(
                                                                 hintText:
                                                                     'Nature',
                                                                 border:
@@ -653,7 +649,7 @@ class DetailBienPage extends StatelessWidget {
                                                         ),
                                                         Container(
                                                           padding:
-                                                              EdgeInsets.all(8),
+                                                              const EdgeInsets.all(8),
                                                           margin: EdgeInsets.symmetric(
                                                               vertical: MediaQuery.of(
                                                                           context)
@@ -666,7 +662,7 @@ class DetailBienPage extends StatelessWidget {
                                                                 color: GRAY),
                                                             color: Colors.white,
                                                             borderRadius:
-                                                                new BorderRadius
+                                                                BorderRadius
                                                                     .circular(
                                                                     25),
                                                           ),
@@ -686,7 +682,7 @@ class DetailBienPage extends StatelessWidget {
                                                         ),
                                                         Container(
                                                           padding:
-                                                              EdgeInsets.all(8),
+                                                              const EdgeInsets.all(8),
                                                           margin: EdgeInsets.symmetric(
                                                               vertical: MediaQuery.of(
                                                                           context)
@@ -699,7 +695,7 @@ class DetailBienPage extends StatelessWidget {
                                                                 color: GRAY),
                                                             color: Colors.white,
                                                             borderRadius:
-                                                                new BorderRadius
+                                                                BorderRadius
                                                                     .circular(
                                                                     25),
                                                           ),
@@ -719,7 +715,7 @@ class DetailBienPage extends StatelessWidget {
                                                         ),
                                                         Container(
                                                           padding:
-                                                              EdgeInsets.all(8),
+                                                              const EdgeInsets.all(8),
                                                           margin: EdgeInsets.symmetric(
                                                               vertical: MediaQuery.of(
                                                                           context)
@@ -732,7 +728,7 @@ class DetailBienPage extends StatelessWidget {
                                                                 color: GRAY),
                                                             color: Colors.white,
                                                             borderRadius:
-                                                                new BorderRadius
+                                                                BorderRadius
                                                                     .circular(
                                                                     25),
                                                           ),
@@ -751,7 +747,7 @@ class DetailBienPage extends StatelessWidget {
                                                           ),
                                                         ),
                                                         Container(
-                                                          padding: EdgeInsets
+                                                          padding: const EdgeInsets
                                                               .fromLTRB(
                                                                   10, 5, 0, 0),
                                                           alignment: Alignment
@@ -761,7 +757,7 @@ class DetailBienPage extends StatelessWidget {
                                                                   MainAxisAlignment
                                                                       .center,
                                                               children: [
-                                                                Icon(Icons
+                                                                const Icon(Icons
                                                                     .format_list_numbered),
                                                                 Text(
                                                                   "Nombre d'article ",
@@ -795,7 +791,7 @@ class DetailBienPage extends StatelessWidget {
                                                                 child:
                                                                     ElevatedButton(
                                                                   style: ElevatedButton.styleFrom(
-                                                                      padding: EdgeInsets.symmetric(
+                                                                      padding: const EdgeInsets.symmetric(
                                                                           vertical:
                                                                               12),
                                                                       backgroundColor:
@@ -805,8 +801,7 @@ class DetailBienPage extends StatelessWidget {
                                                                               BorderRadius.circular(25))),
                                                                   onPressed: (numSerieController.text.trim().length >
                                                                               3) &&
-                                                                          (stateAddSn.nature.length >
-                                                                              0)
+                                                                          (stateAddSn.nature.isNotEmpty)
                                                                       ? () {
                                                                           Non_Etiquete newSn = Non_Etiquete(
                                                                               numSerieController.text,
@@ -857,7 +852,7 @@ class DetailBienPage extends StatelessWidget {
                                             ),
                                           );
                                         } else {
-                                          return SizedBox();
+                                          return const SizedBox();
                                         }
                                       },
                                     ),
@@ -873,7 +868,7 @@ class DetailBienPage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.fromLTRB(25, 10, 25, 20),
+                  margin: const EdgeInsets.fromLTRB(25, 10, 25, 20),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(25),
@@ -882,16 +877,16 @@ class DetailBienPage extends StatelessWidget {
                           color: Colors.grey.withOpacity(0.2),
                           spreadRadius: 3,
                           blurRadius: 4,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         )
                       ]),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Flexible(
+                      const Flexible(
                           flex: 1,
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(8.0),
                             child: Icon(
                               Icons.edit,
                               color: MAINCOLOR,
@@ -915,9 +910,9 @@ class DetailBienPage extends StatelessWidget {
                       Flexible(
                           flex: 1,
                           child: Container(
-                            margin: EdgeInsets.all(4),
+                            margin: const EdgeInsets.all(4),
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: purple, // Background color
                               shape: BoxShape.circle, // Circular shape
                             ),
@@ -970,7 +965,7 @@ class DetailBienPage extends StatelessWidget {
                                     );
                                   }
                                 },
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.check,
                                   color: Colors.white,
                                 )),
@@ -979,7 +974,7 @@ class DetailBienPage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 7, horizontal: 25),
+                  padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -994,7 +989,7 @@ class DetailBienPage extends StatelessWidget {
                           },
                           child: Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.sync_alt,
                                 color: YELLOW,
                               ),
@@ -1027,7 +1022,7 @@ class DetailBienPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.inventory_2_outlined,
                               color: YELLOW,
                             ),
@@ -1036,7 +1031,7 @@ class DetailBienPage extends StatelessWidget {
                               style: defaultTextStyle(color: Colors.white),
                             ),
                             Text(
-                              "${bien.code_bar}",
+                              bien.code_bar,
                               style: defaultTextStyle(color: YELLOW),
                             )
                           ],
@@ -1060,7 +1055,7 @@ class DetailBienPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.calendar_month,
                               color: GRAY,
                             ),
@@ -1069,7 +1064,7 @@ class DetailBienPage extends StatelessWidget {
                               style: defaultTextStyle(color: GRAY),
                             ),
                             Text(
-                              "${bien.date_scan}",
+                              bien.date_scan,
                               style: defaultTextStyle(color: GRAY),
                             )
                           ],
@@ -1097,7 +1092,7 @@ class DetailBienPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.home,
                               color: GRAY,
                             ),
@@ -1130,7 +1125,7 @@ class DetailBienPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.person,
                               color: GRAY,
                             ),
@@ -1150,7 +1145,7 @@ class DetailBienPage extends StatelessWidget {
                 ),
               ]);
             } else {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }
           },
         ),

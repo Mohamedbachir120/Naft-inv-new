@@ -69,7 +69,7 @@ class Non_Etiquete {
     final List<Map<String, dynamic>> maps = await db.query(
         "Non_Etiquete where num_serie  = '$num_serie' and code_localisation ='$code_localisation' ");
 
-    return (maps.length > 0);
+    return (maps.isNotEmpty);
   }
 
   Future<bool> net_check() async {
@@ -81,8 +81,8 @@ class Non_Etiquete {
       String imeiNo = await DeviceInformation.deviceIMEINumber;
 
       final response = await dio.post(
-          '${LARAVEL_ADDRESS}api/existeNon_Etique/${imeiNo}',
-          data: this.toJson());
+          '${LARAVEL_ADDRESS}api/existeNon_Etique/$imeiNo',
+          data: toJson());
       if (response.toString() == "true") {
         return true;
       } else {
@@ -101,7 +101,7 @@ class Non_Etiquete {
   }
 
   String get_state() {
-    switch (this.etat) {
+    switch (etat) {
       case 1:
         return "Bon";
       case 2:
@@ -131,7 +131,7 @@ class Non_Etiquete {
           data: toJson());
       print(response.data);
 
-      this.stockage = 1;
+      stockage = 1;
 
       return true;
     } catch (e) {
@@ -141,28 +141,28 @@ class Non_Etiquete {
             'Bearer ${await user.getToken()}';
 
         await dio.post('${LARAVEL_ADDRESS}api/create_NonEtiqu/$imeiNo',
-            data: this.toJson());
-        this.stockage = 1;
+            data: toJson());
+        stockage = 1;
       } catch (e) {
-        this.stockage = 0;
+        stockage = 0;
       }
     }
 
-    db.insert('Non_Etiquete', this.toMap(),
+    db.insert('Non_Etiquete', toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     return true;
   }
 
   Store_Non_Etique_Soft() async {
-    this.date_scan = date_format();
+    date_scan = date_format();
 
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
     try {
-      if (this.stockage == 0) {
+      if (stockage == 0) {
         db.rawUpdate(
-            'UPDATE Non_Etiquete SET etat = ${MODE_SCAN} where num_serie = \'${this.num_serie}\' ');
+            'UPDATE Non_Etiquete SET etat = $MODE_SCAN where num_serie = \'$num_serie\' ');
         return true;
       } else {
         var connectivityResult = await (Connectivity().checkConnectivity());
@@ -174,24 +174,24 @@ class Non_Etiquete {
             String imeiNo = await DeviceInformation.deviceIMEINumber;
 
             dio.options.headers["Authorization"] =
-                'Bearer ' + await user.getToken();
+                'Bearer ${await user.getToken()}';
             final response = await dio.post(
-                '${LARAVEL_ADDRESS}create_NonEtiqu/${imeiNo}',
-                data: this.toJson());
+                '${LARAVEL_ADDRESS}create_NonEtiqu/$imeiNo',
+                data: toJson());
 
             if (response.toString() == "true") {
               db.rawUpdate(
-                  'UPDATE Non_Etiquete SET etat = ${MODE_SCAN} where num_serie = \'${this.num_serie}\' ');
+                  'UPDATE Non_Etiquete SET etat = $MODE_SCAN where num_serie = \'$num_serie\' ');
               return true;
             } else {
               return false;
             }
-          } on DioError {
+          } on DioException {
             return false;
           }
         } else {
           db.rawUpdate(
-              'UPDATE Non_Etiquete SET etat = ${MODE_SCAN} where num_serie = \'${this.num_serie}\' ');
+              'UPDATE Non_Etiquete SET etat = $MODE_SCAN where num_serie = \'$num_serie\' ');
           return true;
         }
       }
@@ -235,9 +235,8 @@ class Non_Etiquete {
     });
   }
 
-  static Future<List<Non_Etiquete>> synchonized_objects() async {
-    final database = openDatabase(join(await getDatabasesPath(), DBNAME));
-    final db = await database;
+  static Future<List<Non_Etiquete>> synchonized_objects(Database db) async {
+  
 
     final List<Map<String, dynamic>> maps = await db.query("Non_Etiquete ");
     print(maps);
@@ -279,6 +278,7 @@ class Non_Etiquete {
     });
   }
 
+  @override
   String toString() {
     return '''{ "num_serie": "$num_serie",
             "codelocalisation": "$code_localisation",

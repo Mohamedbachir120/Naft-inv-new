@@ -14,7 +14,7 @@ class Bien_materiel {
 
   */
   String date_format() {
-    DateTime day = DateTime.parse(this.date_scan);
+    DateTime day = DateTime.parse(date_scan);
 
     return "${day.day}-${day.month}-${day.year}    ${day.hour}:${day.minute}";
   }
@@ -55,10 +55,11 @@ class Bien_materiel {
   Future<bool> local_check() async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
+    final List<Map<String, dynamic>> maps =
+        await db.query("Bien_materiel where code_bar  = '$code_bar'  ");
+    // await db.query("Bien_materiel");
 
-    final List<Map<String, dynamic>> maps = await db.query(
-        "Bien_materiel where code_bar  = '$code_bar' and code_localisation ='$code_localisation' ");
-    return (maps.length > 0);
+    return maps.isNotEmpty;
   }
 
   Future<bool> net_check() async {
@@ -70,12 +71,12 @@ class Bien_materiel {
         User user = await User.auth();
         Dio dio = Dio();
         dio.options.headers["Authorization"] =
-            'Bearer ' + await user.getToken();
+            'Bearer ${await user.getToken()}';
         String imeiNo = await DeviceInformation.deviceIMEINumber;
 
         final response = await dio.post(
-          '${LARAVEL_ADDRESS}api/existeBien/${imeiNo}',
-          data: this.toJson(),
+          '${LARAVEL_ADDRESS}api/existeBien/$imeiNo',
+          data: toJson(),
         );
         if (response.toString() == "true") {
           return true;
@@ -98,7 +99,7 @@ class Bien_materiel {
   }
 
   String get_state() {
-    switch (this.etat) {
+    switch (etat) {
       case 1:
         return "Bon";
       case 2:
@@ -119,13 +120,13 @@ class Bien_materiel {
     Dio dio = Dio();
     String imeiNo = await DeviceInformation.deviceIMEINumber;
     try {
-      dio.options.headers["Authorization"] = 'Bearer ' + await user.getToken();
+      dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
 
       final response = await dio.post(
-          '${LARAVEL_ADDRESS}api/create_bien/${imeiNo}',
-          data: this.toJson());
+          '${LARAVEL_ADDRESS}api/create_bien/$imeiNo',
+          data: toJson());
 
-      this.stockage = 1;
+      stockage = 1;
 
       return true;
       // } on DioError {
@@ -134,36 +135,36 @@ class Bien_materiel {
       //   db.insert('Bien_materiel', this.toMap(),
       //       conflictAlgorithm: ConflictAlgorithm.replace);
 
-        //   return true;
+      //   return true;
       // }
     } catch (e) {
       try {
         await refreshToken(db);
         dio.options.headers["Authorization"] =
-            'Bearer ' + await user.getToken();
+            'Bearer ${await user.getToken()}';
 
         final response = await dio.post(
-            '${LARAVEL_ADDRESS}api/create_bien/${imeiNo}',
-            data: this.toJson());
-        this.stockage = 1;
+            '${LARAVEL_ADDRESS}api/create_bien/$imeiNo',
+            data: toJson());
+        stockage = 1;
       } catch (e) {
-        this.stockage = 0;
+        stockage = 0;
       }
     }
-    await db.insert('Bien_materiel', this.toMap(),
+    await db.insert('Bien_materiel', toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     return true;
   }
 
   Future<bool> Store_Bien_Soft() async {
-    this.date_scan = date_format();
+    date_scan = date_format();
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
     try {
-      if (this.stockage == 0) {
+      if (stockage == 0) {
         db.rawUpdate(
-            'UPDATE Bien_materiel SET etat = ${MODE_SCAN} where code_bar = \'${this.code_bar}\' ');
+            'UPDATE Bien_materiel SET etat = $MODE_SCAN where code_bar = \'$code_bar\' ');
         return true;
       } else {
         var connectivityResult = await (Connectivity().checkConnectivity());
@@ -173,26 +174,26 @@ class Bien_materiel {
             User user = await User.auth();
             Dio dio = Dio();
             dio.options.headers["Authorization"] =
-                'Bearer ' + await user.getToken();
+                'Bearer ${await user.getToken()}';
             String imeiNo = await DeviceInformation.deviceIMEINumber;
 
             final response = await dio.post(
                 '${LARAVEL_ADDRESS}api/create_bien/$imeiNo',
-                data: this.toJson());
+                data: toJson());
             if (response.toString() == "true") {
               db.rawUpdate(
-                  'UPDATE Bien_materiel SET etat = ${MODE_SCAN} where code_bar = \'${this.code_bar}\' ');
+                  'UPDATE Bien_materiel SET etat = $MODE_SCAN where code_bar = \'$code_bar\' ');
               return true;
             } else {
               return false;
             }
-          } on DioError {
+          } on DioException {
             print("error");
             return false;
           }
         } else {
           db.rawUpdate(
-              'UPDATE Bien_materiel SET etat = ${MODE_SCAN} where code_bar = \'${this.code_bar}\' ');
+              'UPDATE Bien_materiel SET etat = $MODE_SCAN where code_bar = \'$code_bar\' ');
           return true;
         }
       }
@@ -230,7 +231,7 @@ class Bien_materiel {
     });
   }
 
-  static Future<List<Bien_materiel>> synchonized_objects() async {
+  static Future<List<Bien_materiel>> synchonized_objects(Database db) async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
@@ -250,9 +251,8 @@ class Bien_materiel {
     });
   }
 
-  static Future<List<Bien_materiel>> all_objects() async {
-    final database = openDatabase(join(await getDatabasesPath(), DBNAME));
-    final db = await database;
+  static Future<List<Bien_materiel>> all_objects(Database db) async {
+   
 
     final List<Map<String, dynamic>> maps = await db.query("Bien_materiel");
 
@@ -283,6 +283,7 @@ class Bien_materiel {
     return true;
   }
 
+  @override
   String toString() {
     return '''{ "code_bar": "$code_bar",
             "codelocalisation": "$code_localisation",

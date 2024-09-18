@@ -6,8 +6,8 @@ class Avatarcomponent extends StatelessWidget {
   final Color color;
   final Color backgroundColor;
   final String text;
-  Avatarcomponent(
-      {required this.height,
+  const Avatarcomponent(
+      {super.key, required this.height,
       required this.backgroundColor,
       required this.color,
       required this.text});

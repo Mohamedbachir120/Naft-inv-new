@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:naftinv/constante.dart';
 
 class UnauthorizedScreen extends StatefulWidget {
-  UnauthorizedScreen({Key? key, required this.code}) : super(key: key);
-  late final String code;
+  const UnauthorizedScreen({super.key, required this.code});
+  final String code;
   @override
   State<UnauthorizedScreen> createState() =>
       _UnauthorizedScreenState(code: code);
@@ -28,12 +28,12 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset("assets/restricted.jpg"),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Center(
                   child: Text(
                 code,
-                style: TextStyle(color: MAINCOLOR, fontSize: 18),
+                style: const TextStyle(color: MAINCOLOR, fontSize: 18),
               )),
             ),
             Container(
@@ -44,29 +44,29 @@ class _UnauthorizedScreenState extends State<UnauthorizedScreen> {
 
                     showDialog(
                         context: context,
-                        builder: (_) => AlertDialog(
+                        builder: (_) => const AlertDialog(
                               content: Text(
                                 "le code a été copié",
                                 textAlign: TextAlign.center,
                               ),
                             ));
-                    Timer(Duration(milliseconds: 500),
+                    Timer(const Duration(milliseconds: 500),
                         () => Navigator.pop(context));
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.copy,
                     color: Colors.white,
                   ),
-                  label: Text(
+                  label: const Text(
                     "Copier",
                     style: TextStyle(color: Colors.white),
                   )),
             ),
             Container(
-              margin: EdgeInsets.only(top: 10),
-              child: Card(
+              margin: const EdgeInsets.only(top: 10),
+              child: const Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(8.0),
                   child: Text(
                     "Vous n'êtes pas autorisé à utiliser cette application veuillez communiquer le code ci-dessus avec votre ING",
                     style: TextStyle(color: MAINCOLOR, fontSize: 18),

@@ -1,6 +1,4 @@
-import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +30,7 @@ class ProfilPage extends StatelessWidget {
                   content: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(Icons.sync, color: Colors.black87, size: 25),
+                      const Icon(Icons.sync, color: Colors.black87, size: 25),
                       Text(
                         "Synchronisation en cours",
                         style: defaultTextStyle(
@@ -40,7 +38,7 @@ class ProfilPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  backgroundColor: Color.fromARGB(255, 214, 214, 214),
+                  backgroundColor: const Color.fromARGB(255, 214, 214, 214),
                 ));
                 break;
               case SynchronizationStatus.synchronized:
@@ -48,7 +46,7 @@ class ProfilPage extends StatelessWidget {
                   content: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(Icons.check, color: Colors.white, size: 25),
+                      const Icon(Icons.check, color: Colors.white, size: 25),
                       Text(
                         "Synchronisation success",
                         style: defaultTextStyle(
@@ -64,7 +62,7 @@ class ProfilPage extends StatelessWidget {
                   content: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Icon(Icons.clear, color: Colors.white, size: 25),
+                      const Icon(Icons.clear, color: Colors.white, size: 25),
                       Text(
                         "Synchronisation failed",
                         style: defaultTextStyle(
@@ -125,7 +123,7 @@ class ProfilPage extends StatelessWidget {
                                 size: Size(MediaQuery.of(context).size.width,
                                     MediaQuery.of(context).size.width * 0.6),
                                 painter: RhombicPainter(),
-                                child: Container(
+                                child: SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   height:
                                       MediaQuery.of(context).size.width * 0.6,
@@ -174,7 +172,7 @@ class ProfilPage extends StatelessWidget {
                                               ),
                                             );
                                           } else {
-                                            return SizedBox();
+                                            return const SizedBox();
                                           }
                                         },
                                       )
@@ -284,7 +282,7 @@ class ProfilPage extends StatelessWidget {
                 ),
               );
             } else {
-              return LoadingProfileWidget();
+              return const LoadingProfileWidget();
             }
           },
         ),
@@ -343,7 +341,7 @@ class LoadingProfileWidget extends StatelessWidget {
                       size: Size(MediaQuery.of(context).size.width,
                           MediaQuery.of(context).size.width * 0.6),
                       painter: RhombicPainter(),
-                      child: Container(
+                      child: SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.width * 0.6,
                         child: Column(

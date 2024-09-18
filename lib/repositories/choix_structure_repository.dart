@@ -1,12 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:naftinv/blocs/choix_structure/choix_structure_bloc.dart';
-import 'package:naftinv/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'dart:io' as io;
 
 class ChoixStructureRepository {
   ChoixStructureRepository({required this.db});

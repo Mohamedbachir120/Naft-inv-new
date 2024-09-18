@@ -3,7 +3,7 @@ import 'package:naftinv/constante.dart';
 import 'package:naftinv/main.dart';
 
 class NoInternet extends StatelessWidget {
-  const NoInternet({Key? key}) : super(key: key);
+  const NoInternet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,8 @@ class NoInternet extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset("assets/noInternet.png"),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
               child: Text(
                 "Impossible d'établir la connexion",
                 style: TextStyle(
@@ -36,10 +36,10 @@ class NoInternet extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => ChoixStructurePage(
                               ),
-                          settings: RouteSettings()),
+                          settings: const RouteSettings()),
                       (route) => false);
                 },
-                child: Text(
+                child: const Text(
                   "Réessayer",
                   style: TextStyle(color: Colors.white),
                 ))

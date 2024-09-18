@@ -5,14 +5,13 @@ import 'package:naftinv/detailBien.dart';
 import 'package:naftinv/main.dart';
 
 class Update_Bien extends StatefulWidget {
-  const Update_Bien({Key? key, required this.bien, required this.localisation})
-      : super(key: key);
+  const Update_Bien({super.key, required this.bien, required this.localisation});
   final Bien_materiel bien;
   final Localisation localisation;
 
   @override
   _Update_BienState createState() =>
-      _Update_BienState(bien: this.bien, localisation: this.localisation);
+      _Update_BienState(bien: bien, localisation: localisation);
 }
 
 class _Update_BienState extends State<Update_Bien> {
@@ -54,7 +53,7 @@ class _Update_BienState extends State<Update_Bien> {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                     child: Row(
-                      children: [
+                      children: const [
                         Icon(
                           Icons.edit,
                           color: blue,
@@ -91,7 +90,7 @@ class _Update_BienState extends State<Update_Bien> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                children: [
+                                children: const [
                                   Icon(Icons.rate_review),
                                   SizedBox(
                                     width: 10,
@@ -186,7 +185,7 @@ class _Update_BienState extends State<Update_Bien> {
                                       content: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
-                                        children: [
+                                        children: const [
                                           Icon(Icons.info,
                                               color: Colors.white, size: 25),
                                           Text(

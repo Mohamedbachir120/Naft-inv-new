@@ -14,10 +14,10 @@ import 'package:sqflite/sqflite.dart';
 class Create_Non_etiqu extends StatefulWidget {
   final String localite;
 
-  const Create_Non_etiqu({required this.localite});
+  const Create_Non_etiqu({super.key, required this.localite});
   @override
   _Create_Non_etiquState createState() =>
-      _Create_Non_etiquState(localite: this.localite);
+      _Create_Non_etiquState(localite: localite);
 }
 
 String generateRandomString(int len) {
@@ -100,7 +100,7 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                               gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
-                                  colors: [
+                                  colors: const [
                                 Color.fromRGBO(235, 242, 250, 1),
                                 Color.fromRGBO(235, 242, 250, 0.7),
                                 Color.fromRGBO(235, 242, 250, 0.5)
@@ -109,7 +109,7 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                           padding: EdgeInsets.symmetric(
                               horizontal: 10, vertical: 20),
                           child: Row(
-                            children: [
+                            children: const [
                               Icon(
                                 Icons.add,
                                 color: blue,
@@ -302,7 +302,7 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                                 alignment: Alignment.centerLeft,
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
+                                    children: const [
                                       Icon(Icons.format_list_numbered),
                                       Text(
                                         "Nombre d'article ",
@@ -341,24 +341,19 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
 
                                         if (cond &&
                                             natureController.text
-                                                    .trim()
-                                                    .length >
-                                                0 &&
+                                                    .trim().isNotEmpty &&
                                             num_versionController.text
-                                                    .trim()
-                                                    .length >
-                                                0 &&
+                                                    .trim().isNotEmpty &&
                                             (localite != "" ||
-                                                codeBar.text.trim().length >
-                                                    0)) {
+                                                codeBar.text.trim().isNotEmpty)) {
                                           User user = await User.auth();
-                                          var num_serie = (num_versionController
+                                          var numSerie = (num_versionController
                                                       .text.length <
                                                   5)
                                               ? generateRandomString(12)
                                               : num_versionController.text;
                                           Non_Etiquete etiqu = Non_Etiquete(
-                                              num_serie,
+                                              numSerie,
                                               MODE_SCAN,
                                               DateTime.now().toIso8601String(),
                                               localite == ""
@@ -390,7 +385,7 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                                               content: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.start,
-                                                children: [
+                                                children: const [
                                                   Icon(Icons.info,
                                                       color: Colors.white,
                                                       size: 25),
@@ -410,7 +405,7 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                                             content: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
-                                              children: [
+                                              children: const [
                                                 Icon(Icons.info,
                                                     color: Colors.white,
                                                     size: 25),
@@ -440,7 +435,7 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    children: const [
                       Padding(
                         padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                         child: SizedBox(

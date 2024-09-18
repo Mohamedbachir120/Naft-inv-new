@@ -7,8 +7,7 @@ import 'package:naftinv/repositories/authentication_repository.dart';
 import 'package:naftinv/repositories/synchronization_repository.dart';
 
 class SynchronizationPage extends StatelessWidget {
-  const SynchronizationPage({Key? key, required this.authenticationRepository})
-      : super(key: key);
+  const SynchronizationPage({super.key, required this.authenticationRepository});
   final AuthenticationRepository authenticationRepository;
   @override
   Widget build(BuildContext context) {
@@ -32,7 +31,7 @@ class SynchronizationPage extends StatelessWidget {
             }
           }
         },
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.95,
           child: Lottie.asset('assets/105673-sync-data.json',
               height: MediaQuery.of(context).size.height * 0.95),

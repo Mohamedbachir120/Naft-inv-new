@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
 
 import 'package:naftinv/main.dart';
 import 'package:naftinv/repositories/authentication_repository.dart';
@@ -54,7 +53,7 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
 
       emit(ChangePasswordSuccess("Password changed successfully!"));
     } catch (e) {
-      print("#_ error ${e}");
+      print("#_ error $e");
 
       // Check for token expiration error (e.g., statusCode 401)
       // Token expired, call refreshToken and retry
@@ -77,7 +76,7 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
         emit(ChangePasswordSuccess(
             "Password changed successfully after token refresh!"));
       } catch (e) {
-        print("#_ ${e}");
+        print("#_ $e");
         emit(ChangePasswordFailure(
             "Failed after token refresh: ${e.toString()}"));
       }
