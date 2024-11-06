@@ -11,6 +11,7 @@ enum SynchronizationStatus {
   success,
   failed,
   synchronized,
+  locationServiceDisabled
 }
 
 final class SynchronizationInitial extends SynchronizationState {
@@ -22,6 +23,8 @@ final class SynchronizationInitial extends SynchronizationState {
   final String filter;
   final Localisation? localisation;
   final List<String> natures;
+  final double? pos1;
+  final double? pos2;
 
   SynchronizationInitial(
       {required this.equipes,
@@ -31,5 +34,7 @@ final class SynchronizationInitial extends SynchronizationState {
       required this.filter,
       required this.keyword,
       required this.localisation,
-      required this.natures});
+      required this.natures,
+      required this.pos1,
+      required this.pos2});
 }

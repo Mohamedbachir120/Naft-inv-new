@@ -184,7 +184,6 @@ class AuthenticationRepository {
     } catch (e) {
       _controller.add(AuthenticationStatus.authFailedImmo);
 
-      print("##_ ${e.toString()}");
     }
   }
 }

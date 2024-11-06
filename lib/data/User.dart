@@ -75,13 +75,11 @@ class User {
         data: {"email": matricule, "password": password, "code": imeiNo},
       );
       final data = response.data;
-      print("##_ ${response.data}");
       token = data["token"];
       refresh_token = data["refresh_token"];
       db.insert('User', toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     } catch (e) {
-      print("##_ $e");
 
       var dio = Dio();
 

@@ -1,6 +1,10 @@
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:naftinv/all_non_etique.dart';
+import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
+import 'package:naftinv/constante.dart';
 import 'package:naftinv/data/Non_Etiquete.dart';
 import 'package:naftinv/data/User.dart';
 import 'package:naftinv/operations.dart';
@@ -341,11 +345,12 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
 
                                         if (cond &&
                                             natureController.text
-                                                    .trim().isNotEmpty &&
-                                            num_versionController.text
-                                                    .trim().isNotEmpty &&
+                                                .trim()
+                                                .isNotEmpty &&
                                             (localite != "" ||
-                                                codeBar.text.trim().isNotEmpty)) {
+                                                codeBar.text
+                                                    .trim()
+                                                    .isNotEmpty)) {
                                           User user = await User.auth();
                                           var numSerie = (num_versionController
                                                       .text.length <
@@ -365,7 +370,15 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                                               marqueController.text,
                                               modeleController.text,
                                               natureController.text,
-                                              _value);
+                                              _value,
+                                              context
+                                                  .read<SynchronizationBloc>()
+                                                  .synchronizationRepository
+                                                  .pos1,
+                                              context
+                                                  .read<SynchronizationBloc>()
+                                                  .synchronizationRepository
+                                                  .pos2);
 
                                           etiqu.date_scan = etiqu.date_format();
 

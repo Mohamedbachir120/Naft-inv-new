@@ -1,4 +1,5 @@
 import 'package:device_information/device_information.dart';
+import 'package:intl/intl.dart';
 import 'package:naftinv/data/User.dart';
 import 'package:naftinv/main.dart';
 import 'package:sqflite/sqflite.dart';
@@ -28,6 +29,8 @@ class Bien_materiel {
   late String CODE_COP;
   late String matricule;
   String? inv_id;
+  final double? latitude;
+  final double? longitude;
 
   Bien_materiel(
       this.code_bar,
@@ -37,7 +40,35 @@ class Bien_materiel {
       this.stockage,
       this.CODE_COP,
       this.matricule,
-      this.inv_id);
+      this.inv_id,
+      this.latitude,
+      this.longitude);
+
+  Bien_materiel copyWith({
+    String? code_bar,
+    int? etat,
+    String? date_scan,
+    String? code_localisation,
+    int? stockage,
+    String? CODE_COP,
+    String? matricule,
+    String? inv_id,
+    double? latitude,
+    double? longitude,
+  }) {
+    return Bien_materiel(
+      code_bar ?? this.code_bar,
+      etat ?? this.etat,
+      date_scan ?? this.date_scan,
+      code_localisation ?? this.code_localisation,
+      stockage ?? this.stockage,
+      CODE_COP ?? this.CODE_COP,
+      matricule ?? this.matricule,
+      inv_id ?? this.inv_id,
+      latitude ?? this.latitude,
+      longitude ?? this.longitude,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -48,18 +79,23 @@ class Bien_materiel {
       "date_scan": date_scan,
       "matricule": matricule,
       "stockage": stockage,
-      'inv_id': inv_id
+      'inv_id': inv_id,
+      'latitude': latitude,
+      'longitude': longitude
     };
   }
 
   Future<bool> local_check() async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
-    final List<Map<String, dynamic>> maps =
-        await db.query("Bien_materiel where code_bar  = '$code_bar'  ");
-    // await db.query("Bien_materiel");
+    final List<Map<String, dynamic>> maps = await db.query("Bien_materiel ");
 
-    return maps.isNotEmpty;
+    return maps
+        .where((ele) =>
+            ele['code_localisation'] == code_localisation &&
+            ele["code_bar"] == code_bar)
+        .toList()
+        .isNotEmpty;
   }
 
   Future<bool> net_check() async {
@@ -124,17 +160,7 @@ class Bien_materiel {
 
       final response = await dio
           .post('${LARAVEL_ADDRESS}api/create_bien/$imeiNo', data: toJson());
-
       stockage = 1;
-
-      // } on DioError {
-      //   print("erreur d'insertion");
-      //   this.stockage = 0;
-      //   db.insert('Bien_materiel', this.toMap(),
-      //       conflictAlgorithm: ConflictAlgorithm.replace);
-
-      //   return true;
-      // }
     } catch (e) {
       try {
         await refreshToken(db);
@@ -204,10 +230,12 @@ class Bien_materiel {
         "codelocalisation": code_localisation,
         "code_cop": CODE_COP,
         "etat": etat,
-        "date_scan": date_scan,
+        "date_scan": DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now()),
         "matricule": matricule,
         "stockage": stockage,
-        "inv_ID": inv_id
+        "inv_ID": inv_id,
+        "latitude": latitude,
+        "longitude": longitude
       };
   static Future<List<Bien_materiel>> history() async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
@@ -224,7 +252,9 @@ class Bien_materiel {
           maps[i]["stockage"],
           maps[i]["CODE_COP"],
           maps[i]["matricule"],
-          maps[i]["inv_id"]);
+          maps[i]["inv_id"],
+          maps[i]['latitude'],
+          maps[i]['longitude']);
     });
   }
 
@@ -244,14 +274,15 @@ class Bien_materiel {
           maps[i]["stockage"],
           maps[i]["CODE_COP"],
           maps[i]["matricule"],
-          maps[i]["inv_id"]);
+          maps[i]["inv_id"],
+          maps[i]['latitude'],
+          maps[i]['longitude']);
     });
   }
 
   static Future<List<Bien_materiel>> all_objects(Database db) async {
     final List<Map<String, dynamic>> maps = await db.query("Bien_materiel");
 
-    print("##_ all biens from func $maps");
     return List.generate(maps.length, (i) {
       return Bien_materiel(
           maps[i]["code_bar"],
@@ -261,7 +292,9 @@ class Bien_materiel {
           maps[i]["stockage"],
           maps[i]["CODE_COP"],
           maps[i]["matricule"],
-          maps[i]["inv_id"]);
+          maps[i]["inv_id"],
+          maps[i]['latitude'],
+          maps[i]['longitude']);
     });
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:naftinv/Login.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:naftinv/blocs/cubit/number_of_articles_cubit_cubit.dart';
 import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/constante.dart';
+import 'package:naftinv/create_Non_etiqu.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Non_Etiquete.dart';
 import 'package:naftinv/detailBien.dart';
@@ -71,7 +73,8 @@ class DetailSnPage extends StatelessWidget {
                             ),
                             Flexible(
                               flex: 3,
-                              child: Text(sn.num_serie,
+                              child: Text(sn.nature,
+                                  overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
                                   style: defaultTextStyle(
                                       color: Colors.white, fontSize: 16)),
@@ -344,7 +347,8 @@ class DetailSnPage extends StatelessWidget {
                                                                     alignment:
                                                                         Alignment
                                                                             .center,
-                                                                    padding: const EdgeInsets.symmetric(
+                                                                    padding: const EdgeInsets
+                                                                        .symmetric(
                                                                         vertical:
                                                                             4,
                                                                         horizontal:
@@ -437,7 +441,8 @@ class DetailSnPage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 25),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 7, horizontal: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -509,7 +514,8 @@ class DetailSnPage extends StatelessWidget {
                                                         ),
                                                         Container(
                                                           padding:
-                                                              const EdgeInsets.all(8),
+                                                              const EdgeInsets
+                                                                  .all(8),
                                                           margin: EdgeInsets.symmetric(
                                                               vertical: MediaQuery.of(
                                                                           context)
@@ -524,7 +530,7 @@ class DetailSnPage extends StatelessWidget {
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                    25),
+                                                                        25),
                                                           ),
                                                           child: TextFormField(
                                                             initialValue: state
@@ -649,7 +655,8 @@ class DetailSnPage extends StatelessWidget {
                                                         ),
                                                         Container(
                                                           padding:
-                                                              const EdgeInsets.all(8),
+                                                              const EdgeInsets
+                                                                  .all(8),
                                                           margin: EdgeInsets.symmetric(
                                                               vertical: MediaQuery.of(
                                                                           context)
@@ -664,7 +671,7 @@ class DetailSnPage extends StatelessWidget {
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                    25),
+                                                                        25),
                                                           ),
                                                           child: TextFormField(
                                                             controller:
@@ -682,7 +689,8 @@ class DetailSnPage extends StatelessWidget {
                                                         ),
                                                         Container(
                                                           padding:
-                                                              const EdgeInsets.all(8),
+                                                              const EdgeInsets
+                                                                  .all(8),
                                                           margin: EdgeInsets.symmetric(
                                                               vertical: MediaQuery.of(
                                                                           context)
@@ -697,7 +705,7 @@ class DetailSnPage extends StatelessWidget {
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                    25),
+                                                                        25),
                                                           ),
                                                           child: TextFormField(
                                                             controller:
@@ -715,7 +723,8 @@ class DetailSnPage extends StatelessWidget {
                                                         ),
                                                         Container(
                                                           padding:
-                                                              const EdgeInsets.all(8),
+                                                              const EdgeInsets
+                                                                  .all(8),
                                                           margin: EdgeInsets.symmetric(
                                                               vertical: MediaQuery.of(
                                                                           context)
@@ -730,7 +739,7 @@ class DetailSnPage extends StatelessWidget {
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                    25),
+                                                                        25),
                                                           ),
                                                           child: TextFormField(
                                                             controller:
@@ -747,8 +756,9 @@ class DetailSnPage extends StatelessWidget {
                                                           ),
                                                         ),
                                                         Container(
-                                                          padding: const EdgeInsets
-                                                              .fromLTRB(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .fromLTRB(
                                                                   10, 5, 0, 0),
                                                           alignment: Alignment
                                                               .centerLeft,
@@ -791,7 +801,8 @@ class DetailSnPage extends StatelessWidget {
                                                                 child:
                                                                     ElevatedButton(
                                                                   style: ElevatedButton.styleFrom(
-                                                                      padding: const EdgeInsets.symmetric(
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
                                                                           vertical:
                                                                               12),
                                                                       backgroundColor:
@@ -799,12 +810,15 @@ class DetailSnPage extends StatelessWidget {
                                                                       shape: RoundedRectangleBorder(
                                                                           borderRadius:
                                                                               BorderRadius.circular(25))),
-                                                                  onPressed: (numSerieController.text.trim().length >
-                                                                              3) &&
-                                                                          (stateAddSn.nature.isNotEmpty)
-                                                                      ? () {
+                                                                  onPressed: (stateAddSn
+                                                                          .nature
+                                                                          .isNotEmpty)
+                                                                      ? () async {
+                                                                          var numSerie = (numSerieController.text.length < 5)
+                                                                              ? generateRandomString(12)
+                                                                              : numSerieController.text;
                                                                           Non_Etiquete newSn = Non_Etiquete(
-                                                                              numSerieController.text,
+                                                                              numSerie,
                                                                               context.read<SettingsBloc>().settingsrepository.modeScan,
                                                                               DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
                                                                               state.localisation!.code_bar,
@@ -814,7 +828,9 @@ class DetailSnPage extends StatelessWidget {
                                                                               marqueController.text,
                                                                               modeleController.text,
                                                                               stateAddSn.nature,
-                                                                              stateAddSn.numberOfArticles);
+                                                                              stateAddSn.numberOfArticles,
+                                                                              null,
+                                                                              null);
                                                                           syncBloc
                                                                               .add(SynchronizationAddSn(sn: newSn));
                                                                           Navigator.pop(
@@ -915,7 +931,7 @@ class DetailSnPage extends StatelessWidget {
                               shape: BoxShape.circle, // Circular shape
                             ),
                             child: IconButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (BienMaterielRegex.hasMatch(
                                       codeBarController.text.trim())) {
                                     Bien_materiel newBien = Bien_materiel(
@@ -939,7 +955,15 @@ class DetailSnPage extends StatelessWidget {
                                             .read<AuthenticationBloc>()
                                             .authenticationRepository
                                             .user
-                                            ?.INV_ID);
+                                            ?.INV_ID,
+                                        context
+                                            .read<SynchronizationBloc>()
+                                            .synchronizationRepository
+                                            .pos1,
+                                        context
+                                            .read<SynchronizationBloc>()
+                                            .synchronizationRepository
+                                            .pos2);
                                     context.read<SynchronizationBloc>().add(
                                         SynchronizationAddBien(bien: newBien));
                                     showTopSnackBar(
@@ -972,7 +996,8 @@ class DetailSnPage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 25),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 7, horizontal: 25),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -1025,11 +1050,11 @@ class DetailSnPage extends StatelessWidget {
                               color: YELLOW,
                             ),
                             Text(
-                              "Numéro de série",
+                              "Nature de bien",
                               style: defaultTextStyle(color: Colors.white),
                             ),
                             Text(
-                              sn.num_serie,
+                              sn.nature,
                               style: defaultTextStyle(color: YELLOW),
                             )
                           ],

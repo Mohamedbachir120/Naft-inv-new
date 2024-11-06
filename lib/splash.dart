@@ -26,10 +26,10 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     Timer(const Duration(seconds: 1), () {
       // Navigate to your main content screen
 
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) {
-        return const MyApp();
-      }));
+      // Navigator.push(context,
+      //     MaterialPageRoute(builder: (BuildContext context) {
+      //   return const MyApp();
+      // }));
     });
   }
 

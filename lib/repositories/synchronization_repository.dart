@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:device_information/device_information.dart';
 import 'package:dio/dio.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
+import 'package:naftinv/constante.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Equipe.dart';
 import 'package:naftinv/data/Localisation.dart';
@@ -26,6 +28,10 @@ class SynchronizationRepository {
   List<Localisation> original = [];
   List<String> natures = [];
   Localisation? defaultLocalisation;
+  double? pos1;
+  double? pos2;
+  Timer? _positionTimer;
+
   final _controller = StreamController<SynchronizationStatus>();
 
   Stream<SynchronizationStatus> get status async* {
@@ -34,6 +40,50 @@ class SynchronizationRepository {
     }
 
     yield* _controller.stream;
+  }
+
+  Future<void> startPositionUpdates() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      // Notify the user that location services are disabled
+      print("## Location services are disabled.");
+      _controller.add(SynchronizationStatus.locationServiceDisabled);
+      return;
+    }
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print('## Location permissions are denied');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately
+      print('## Location permissions are permanently denied');
+      return;
+    }
+
+    // If permission is granted, start the timer to retrieve the position
+
+    _positionTimer?.cancel(); // Cancel any previous timer if active
+    _positionTimer = Timer.periodic(Duration(seconds: 3), (_) async {
+      Position? position = await GetPosition();
+      print(position);
+      pos1 = position?.latitude;
+      pos2 = position?.longitude;
+
+      // Notify listeners (Bloc) about the updated position
+      _controller.add(SynchronizationStatus.found);
+
+      _controller.add(SynchronizationStatus.synchronized);
+    });
+  }
+
+  void stopPositionUpdates() {
+    _positionTimer?.cancel();
   }
 
   Future<void> getStatus() async {
@@ -47,11 +97,12 @@ class SynchronizationRepository {
     natures = List.generate(naturesQ.length, (i) {
       return "${naturesQ[i]['FIM_ID']} ${naturesQ[i]['FIM_LIB']}";
     });
+    List<Bien_materiel> biens = await Bien_materiel.all_objects(db);
+    List<Non_Etiquete> sns = await Non_Etiquete.synchonized_objects(db);
     if (deviceID != "" && structure != "") {
       if (await User.check_user() != 0) {
-
-        List<Bien_materiel> biens = await Bien_materiel.all_objects(db);
-        List<Non_Etiquete> sns = await Non_Etiquete.synchonized_objects(db);
+        print(
+            "##_ user Authenticated on Sync get status object found ${sns.length} ${biens.length}");
         final List<Map<String, dynamic>> maps =
             await db.query("T_E_LOCATION_LOC where COP_ID = '$structure' ");
         localisations = List.generate(maps.length, (i) {
@@ -67,12 +118,13 @@ class SynchronizationRepository {
                   .where((ele) => ele.code_localisation == maps[i]['LOC_ID'])
                   .toList());
         });
+        print("${localisations}");
         original = localisations;
-        print(original);
         _controller.add(SynchronizationStatus.success);
       } else {
         try {
-          print("##_ getting data from server ");
+          print(
+              "##_ user unAuthenticated on Sync get status object found ${sns.length} ${biens.length}");
 
           var dio = Dio();
           var response = await dio.post(
@@ -88,9 +140,20 @@ class SynchronizationRepository {
               queryParameters: {'code': deviceID});
           List temp = response.data;
           localisations = List.generate(temp.length, (i) {
-            return Localisation(temp[i]['loc_ID'], temp[i]['loc_LIB'],
-                temp[i]['cop_LIB'], temp[i]['cop_ID'], [], []);
+            return Localisation(
+                temp[i]['loc_ID'],
+                temp[i]['loc_LIB'],
+                temp[i]['cop_LIB'],
+                temp[i]['cop_ID'],
+                biens
+                    .where((ele) => ele.code_localisation == temp[i]['loc_ID'])
+                    .toList(),
+                sns
+                    .where((ele) => ele.code_localisation == temp[i]['loc_ID'])
+                    .toList());
           });
+          print("${localisations}");
+
           original = localisations;
 
           response = await dio.get(
@@ -128,7 +191,6 @@ class SynchronizationRepository {
 
           _controller.add(SynchronizationStatus.success);
         } catch (e) {
-          print(e.toString());
           _controller.add(SynchronizationStatus.failed);
         }
       }
@@ -171,24 +233,31 @@ class SynchronizationRepository {
   void addBien(Bien_materiel bien) async {
     _controller.add(SynchronizationStatus.searching);
 
-    var maps = await db.query("Bien_materiel");
     // await db.query("Bien_materiel where code_bar  = '$code_bar'  ");
 
-    bien.Store_Bien();
     localisations = localisations.map((e) {
-      if (e.code_bar == bien.code_localisation) {
+      if (e.code_bar == bien.code_localisation &&
+          e.biens
+              .where((bienSearch) => bienSearch.code_bar == bien.code_bar)
+              .toList()
+              .isEmpty) {
         e = e.copyWith(biens: [bien, ...e.biens]);
+        _controller.add(SynchronizationStatus.success);
+        Bien_materiel stored = bien.copyWith(latitude: pos1, longitude: pos2);
+        print("## ${stored.latitude} ${stored.longitude}");
+        stored.Store_Bien();
+
         return e;
       } else {
         return e;
       }
     }).toList();
-    _controller.add(SynchronizationStatus.success);
   }
 
   void addSn(Non_Etiquete sn) {
     _controller.add(SynchronizationStatus.searching);
-    sn.Store_Non_Etique();
+    Non_Etiquete newSn = sn.copyWith(latitude: pos1, longitude: pos2);
+    newSn.Store_Non_Etique();
     localisations = localisations.map((e) {
       if (e.code_bar == sn.code_localisation) {
         return e.copyWith(nonEtiqu: [sn, ...e.nonEtiqu]);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:naftinv/Login.dart';
 import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:naftinv/blocs/cubit/number_of_articles_cubit_cubit.dart';
 import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/constante.dart';
+import 'package:naftinv/create_Non_etiqu.dart';
 import 'package:naftinv/data/Bien_materiel.dart';
 import 'package:naftinv/data/Localisation.dart';
 import 'package:naftinv/data/Non_Etiquete.dart';
@@ -353,7 +355,8 @@ class DetailLocalitePage extends StatelessWidget {
                                                                 value:
                                                                     item, // Set the value to the current item, not state.modeScan
                                                                 child: Text(
-                                                                    valueState(item)),
+                                                                    valueState(
+                                                                        item)),
                                                               );
                                                             }).toList(),
                                                             onChanged: (int?
@@ -767,12 +770,16 @@ class DetailLocalitePage extends StatelessWidget {
                                                                     shape: RoundedRectangleBorder(
                                                                         borderRadius:
                                                                             BorderRadius.circular(25))),
-                                                                onPressed: (numSerieController.text.trim().length >
-                                                                            3) &&
-                                                                        (stateAddSn.nature.isNotEmpty)
-                                                                    ? () {
+                                                                onPressed: (stateAddSn
+                                                                        .nature
+                                                                        .isNotEmpty)
+                                                                    ? () async {
+                                                                        var numSerie = (numSerieController.text.length <
+                                                                                5)
+                                                                            ? generateRandomString(12)
+                                                                            : numSerieController.text;
                                                                         Non_Etiquete newSn = Non_Etiquete(
-                                                                            numSerieController.text,
+                                                                            numSerie,
                                                                             context.read<SettingsBloc>().settingsrepository.modeScan,
                                                                             DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
                                                                             state.localisation!.code_bar,
@@ -782,7 +789,9 @@ class DetailLocalitePage extends StatelessWidget {
                                                                             marqueController.text,
                                                                             modeleController.text,
                                                                             stateAddSn.nature,
-                                                                            stateAddSn.numberOfArticles);
+                                                                            stateAddSn.numberOfArticles,
+                                                                            context.read<SynchronizationBloc>().synchronizationRepository.pos1,
+                                                                            context.read<SynchronizationBloc>().synchronizationRepository.pos2);
                                                                         syncBloc
                                                                             .add(SynchronizationAddSn(sn: newSn));
                                                                         Navigator.pop(
@@ -912,7 +921,7 @@ class DetailLocalitePage extends StatelessWidget {
                               shape: BoxShape.circle, // Circular shape
                             ),
                             child: IconButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   if (BienMaterielRegex.hasMatch(
                                       codeBarController.text.trim())) {
                                     context.read<SynchronizationBloc>().add(
@@ -941,7 +950,17 @@ class DetailLocalitePage extends StatelessWidget {
                                                     .read<AuthenticationBloc>()
                                                     .authenticationRepository
                                                     .user
-                                                    ?.INV_ID)));
+                                                    ?.INV_ID,
+                                                context
+                                                    .read<SynchronizationBloc>()
+                                                    .synchronizationRepository
+                                                    .pos1,
+                                                context
+                                                    .read<SynchronizationBloc>()
+                                                    .synchronizationRepository
+                                                    .pos2)));
+                                    print(
+                                        "## getting pos ${context.read<SynchronizationBloc>().synchronizationRepository.pos1}");
                                     showTopSnackBar(
                                       Overlay.of(context),
                                       const CustomSnackBar.success(

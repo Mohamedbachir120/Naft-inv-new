@@ -1,4 +1,3 @@
-
 import 'package:barcode_scan2/model/android_options.dart';
 import 'package:barcode_scan2/model/scan_options.dart';
 import 'package:barcode_scan2/platform_wrapper.dart';
@@ -6,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:naftinv/all_non_etique.dart';
@@ -259,7 +259,9 @@ Future<void> scanBarcodeNormal(BuildContext context,
               .read<AuthenticationBloc>()
               .authenticationRepository
               .user
-              ?.INV_ID);
+              ?.INV_ID,
+          null,
+          null);
       var exist = await newBien.local_check();
       if (exist == false) {
         context
@@ -332,4 +334,33 @@ Future<void> poursuivre_operation(BuildContext context) async {
     ));
     scanBarcodeNormal(context);
   }
+}
+
+Future<Position?> GetPosition() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  // Check if location services are enabled
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    return null;
+  }
+
+  // Check for location permissions
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return null;
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    return null;
+  }
+
+  Position position = await Geolocator.getCurrentPosition(
+    locationSettings: LocationSettings(),
+  );
+  return position;
 }

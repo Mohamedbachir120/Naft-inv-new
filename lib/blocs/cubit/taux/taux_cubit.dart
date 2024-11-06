@@ -29,17 +29,19 @@ class TauxCubit extends Cubit<TauxState> {
       print(response.data);
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
-        final double? taux = data['taux'] as double?;
+        final double? taux = data['taux'] is int
+            ? (data['taux'] as int).toDouble()
+            : data['taux'] as double?;
         if (taux != null) {
-          emit(TauxState(taux: taux));
+          emit(TauxState(taux: taux, diffDays: data['diffInDays']));
         } else {
           emit(TauxState(taux: 0, error: 'Key "taux" not found'));
         }
       } else {
+
         emit(TauxState(taux: 0, error: 'Failed to load data'));
       }
     } catch (e) {
-      print(e.toString());
       emit(TauxState(taux: 0, error: 'Error: $e'));
     }
   }

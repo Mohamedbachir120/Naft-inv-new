@@ -114,8 +114,8 @@ class Localisation {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
-    final List<Map<String, dynamic>> maps = await db
-        .query("Bien_materiel where code_localisation  = '$codeBar' ");
+    final List<Map<String, dynamic>> maps =
+        await db.query("Bien_materiel where code_localisation  = '$codeBar' ");
 
     return List.generate(maps.length, (i) {
       return Bien_materiel(
@@ -126,7 +126,9 @@ class Localisation {
           maps[i]['stockage'],
           maps[i]['CODE_COP'],
           maps[i]['matricule'],
-          maps[i]['inv_id']);
+          maps[i]['inv_id'],
+          maps[i]['latitude'],
+          maps[i]['longitude']);
     });
   }
 
@@ -134,8 +136,8 @@ class Localisation {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
-    final List<Map<String, dynamic>> maps = await db
-        .query("Non_Etiquete where code_localisation  = '$codeBar' ");
+    final List<Map<String, dynamic>> maps =
+        await db.query("Non_Etiquete where code_localisation  = '$codeBar' ");
 
     return List.generate(maps.length, (i) {
       return Non_Etiquete(
@@ -149,7 +151,9 @@ class Localisation {
           maps[i]["marque"],
           maps[i]["modele"],
           maps[i]["nature"],
-          maps[i]["nombre"]);
+          maps[i]["nombre"],
+          maps[i]["latitude"],
+          maps[i]["longitude"]);
     });
   }
 
@@ -160,6 +164,6 @@ class Localisation {
 
   @override
   String toString() {
-    return 'Localisationcode bar: $code_bar';
+    return '##_ $code_bar : $designation \n';
   }
 }

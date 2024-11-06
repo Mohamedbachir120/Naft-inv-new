@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -86,7 +85,7 @@ class ProfilPage extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.fromLTRB(
                           MediaQuery.of(context).size.width * 0.05,
-                          MediaQuery.of(context).size.width * 0.05,
+                          MediaQuery.of(context).size.width * 0.09,
                           MediaQuery.of(context).size.width * 0.05,
                           0),
                       child: Row(
@@ -277,7 +276,32 @@ class ProfilPage extends StatelessWidget {
                               ]),
                         ),
                       ),
-                    )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.copyright, color: GRAY),
+                          Text(
+                            "DCSI 2024 All rights reserved",
+                            style: defaultTextStyle(color: GRAY),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 7),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Version 3.0.2",
+                            style: defaultTextStyle(color: MAINCOLOR),
+                          )
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               );

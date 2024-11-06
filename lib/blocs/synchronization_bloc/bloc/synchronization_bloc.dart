@@ -29,7 +29,9 @@ class SynchronizationBloc
             localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.initial,
             filter: synchronizationRepository.filter,
-            keyword: synchronizationRepository.keyword)) {
+            keyword: synchronizationRepository.keyword,
+            pos1: synchronizationRepository.pos1,
+            pos2: synchronizationRepository.pos2)) {
     on<SynchronizationStatusChanged>(_onSynchronizationStatusChanged);
     on<SynchronizationRequestSearch>(_onSynchronizationRequestSearch);
     on<SynchronizationRequestFilter>(_onSynchronizationRequestFilter);
@@ -43,6 +45,7 @@ class SynchronizationBloc
         synchronizationRepository.status.listen(
       (status) => add(SynchronizationStatusChanged(status: status)),
     );
+    synchronizationRepository.startPositionUpdates();
   }
   late StreamSubscription<SynchronizationStatus>
       _synchronizationStatusSubscription;
@@ -70,7 +73,9 @@ class SynchronizationBloc
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
             keyword: synchronizationRepository.keyword,
-            natures: synchronizationRepository.natures));
+            natures: synchronizationRepository.natures,
+            pos1: synchronizationRepository.pos1,
+            pos2: synchronizationRepository.pos2));
       case SynchronizationStatus.loading:
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
@@ -80,7 +85,9 @@ class SynchronizationBloc
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
             keyword: synchronizationRepository.keyword,
-            natures: synchronizationRepository.natures));
+            natures: synchronizationRepository.natures,
+            pos1: synchronizationRepository.pos1,
+            pos2: synchronizationRepository.pos2));
       case SynchronizationStatus.success:
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
@@ -90,7 +97,9 @@ class SynchronizationBloc
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
             keyword: synchronizationRepository.keyword,
-            natures: synchronizationRepository.natures));
+            natures: synchronizationRepository.natures,
+            pos1: synchronizationRepository.pos1,
+            pos2: synchronizationRepository.pos2));
       case SynchronizationStatus.failed:
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
@@ -100,7 +109,9 @@ class SynchronizationBloc
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
             keyword: synchronizationRepository.keyword,
-            natures: synchronizationRepository.natures));
+            natures: synchronizationRepository.natures,
+            pos1: synchronizationRepository.pos1,
+            pos2: synchronizationRepository.pos2));
       case SynchronizationStatus.searching:
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
@@ -110,7 +121,9 @@ class SynchronizationBloc
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
             keyword: synchronizationRepository.keyword,
-            natures: synchronizationRepository.natures));
+            natures: synchronizationRepository.natures,
+            pos1: synchronizationRepository.pos1,
+            pos2: synchronizationRepository.pos2));
       case SynchronizationStatus.found:
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
@@ -120,7 +133,9 @@ class SynchronizationBloc
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
             keyword: synchronizationRepository.keyword,
-            natures: synchronizationRepository.natures));
+            natures: synchronizationRepository.natures,
+            pos1: synchronizationRepository.pos1,
+            pos2: synchronizationRepository.pos2));
       case SynchronizationStatus.synchronized:
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
@@ -130,7 +145,21 @@ class SynchronizationBloc
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
             keyword: synchronizationRepository.keyword,
-            natures: synchronizationRepository.natures));
+            natures: synchronizationRepository.natures,
+            pos1: synchronizationRepository.pos1,
+            pos2: synchronizationRepository.pos2));
+      case SynchronizationStatus.locationServiceDisabled:
+        return emit(SynchronizationInitial(
+            localisation: synchronizationRepository.defaultLocalisation,
+            equipes: synchronizationRepository.equipes,
+            localites: synchronizationRepository.localisations,
+            status: SynchronizationStatus.locationServiceDisabled,
+            centre: authenticationRepository.centre,
+            filter: synchronizationRepository.filter,
+            keyword: synchronizationRepository.keyword,
+            natures: synchronizationRepository.natures,
+            pos1: null,
+            pos2: null));
     }
   }
 

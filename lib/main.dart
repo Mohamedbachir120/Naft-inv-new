@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -190,7 +189,6 @@ class AppView extends StatelessWidget {
                 );
                 break;
               case AuthenticationStatus.authFailedImmo:
-                print("##_ auth failed captured");
 
                 break;
               case AuthenticationStatus.authenticated:
@@ -367,15 +365,14 @@ class ChoixStructurePage extends StatelessWidget {
                                               0.04,
                                           fontWeight: FontWeight.w700),
                                       backgroundColor: Colors.white,
-                                      title:
-                                          const Text('Gestion des immobilisations'),
+                                      title: const Text(
+                                          'Gestion des immobilisations'),
                                       content: BlocListener<AuthenticationBloc,
                                           AuthenticationState>(
                                         listener: (context, state) {
                                           if (state.status ==
                                               AuthenticationStatus
                                                   .authFailedImmo) {
-                                            print("##_ failed auth");
                                             showTopSnackBar(
                                               Overlay.of(context),
                                               const CustomSnackBar.error(
@@ -399,9 +396,10 @@ class ChoixStructurePage extends StatelessWidget {
                                                   child: EasyAutocomplete(
                                                     controller:
                                                         structureController,
-                                                    decoration: const InputDecoration(
-                                                        hintText:
-                                                            "Centre d'opération"),
+                                                    decoration:
+                                                        const InputDecoration(
+                                                            hintText:
+                                                                "Centre d'opération"),
                                                     inputTextStyle:
                                                         defaultTextStyle(
                                                             color: const Color(
@@ -431,8 +429,7 @@ class ChoixStructurePage extends StatelessWidget {
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          25),
+                                                      BorderRadius.circular(25),
                                                 ),
                                                 child: TextFormField(
                                                   controller: emailController,
@@ -529,8 +526,8 @@ class ChoixStructurePage extends StatelessWidget {
                                                             SynchronizationRefresh());
                                                   },
                                                   child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
                                                       vertical: 12,
                                                       horizontal: 12,
                                                     ),

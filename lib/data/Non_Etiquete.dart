@@ -1,4 +1,5 @@
 import 'package:device_information/device_information.dart';
+import 'package:intl/intl.dart';
 import 'package:naftinv/data/User.dart';
 import 'package:naftinv/main.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,6 +26,9 @@ class Non_Etiquete {
   late String marque;
   late String modele;
   late String nature;
+  late double? latitude;
+  late double? longitude;
+
   int nombre = 1;
 
   Non_Etiquete(
@@ -38,7 +42,40 @@ class Non_Etiquete {
       this.marque,
       this.modele,
       this.nature,
-      this.nombre);
+      this.nombre,
+      this.latitude,
+      this.longitude);
+  Non_Etiquete copyWith({
+    String? num_serie,
+    int? etat,
+    String? date_scan,
+    String? code_localisation,
+    int? stockage,
+    String? CODE_COP,
+    String? matricule,
+    String? marque,
+    String? modele,
+    String? nature,
+    double? latitude,
+    double? longitude,
+    int? nombre,
+  }) {
+    return Non_Etiquete(
+      num_serie ?? this.num_serie,
+      etat ?? this.etat,
+      date_scan ?? this.date_scan,
+      code_localisation ?? this.code_localisation,
+      stockage ?? this.stockage,
+      CODE_COP ?? this.CODE_COP,
+      matricule ?? this.matricule,
+      marque ?? this.marque,
+      modele ?? this.modele,
+      nature ?? this.nature,
+      nombre ?? this.nombre,
+      latitude ?? this.latitude,
+      longitude ?? this.longitude,
+    );
+  }
 
   String date_format() {
     DateTime day = DateTime.now();
@@ -58,7 +95,9 @@ class Non_Etiquete {
       "marque": marque,
       "modele": modele,
       "nature": nature,
-      "nombre": nombre
+      "nombre": nombre,
+      "latitude": latitude,
+      "longitude": longitude
     };
   }
 
@@ -132,8 +171,6 @@ class Non_Etiquete {
       print(response.data);
 
       stockage = 1;
-
-      return true;
     } catch (e) {
       try {
         await refreshToken(db);
@@ -205,13 +242,15 @@ class Non_Etiquete {
         "codelocalisation": code_localisation,
         "code_cop": CODE_COP,
         "etat": etat,
-        "date_scan": date_scan,
+        "date_scan": DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now()),
         "matricule": matricule,
         "stockage": stockage,
         "marque": marque,
         "modele": modele,
         "nature": nature,
-        "nombre": nombre
+        "nombre": nombre,
+        "latitude": latitude,
+        "longitude": longitude
       };
   static Future<List<Non_Etiquete>> history() async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
@@ -231,13 +270,13 @@ class Non_Etiquete {
           maps[i]["marque"],
           maps[i]["modele"],
           maps[i]["nature"],
-          maps[i]["nombre"]);
+          maps[i]["nombre"],
+          maps[i]['latitude'],
+          maps[i]['longitude']);
     });
   }
 
   static Future<List<Non_Etiquete>> synchonized_objects(Database db) async {
-  
-
     final List<Map<String, dynamic>> maps = await db.query("Non_Etiquete ");
     print(maps);
     return List.generate(maps.length, (i) {
@@ -252,7 +291,9 @@ class Non_Etiquete {
           maps[i]["marque"],
           maps[i]["modele"],
           maps[i]["nature"],
-          maps[i]["nombre"]);
+          maps[i]["nombre"],
+          maps[i]['latitude'],
+          maps[i]['longitude']);
     });
   }
 
@@ -274,7 +315,9 @@ class Non_Etiquete {
           maps[i]["marque"],
           maps[i]["modele"],
           maps[i]["nature"],
-          maps[i]["nombre"]);
+          maps[i]["nombre"],
+          maps[i]['latitude'],
+          maps[i]['longitude']);
     });
   }
 
