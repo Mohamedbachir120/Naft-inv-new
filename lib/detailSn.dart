@@ -817,20 +817,25 @@ class DetailSnPage extends StatelessWidget {
                                                                           var numSerie = (numSerieController.text.length < 5)
                                                                               ? generateRandomString(12)
                                                                               : numSerieController.text;
-                                                                          Non_Etiquete newSn = Non_Etiquete(
-                                                                              numSerie,
-                                                                              context.read<SettingsBloc>().settingsrepository.modeScan,
-                                                                              DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
-                                                                              state.localisation!.code_bar,
-                                                                              1,
-                                                                              state.localisation!.cop_id,
-                                                                              context.read<AuthenticationBloc>().authenticationRepository.user!.matricule,
-                                                                              marqueController.text,
-                                                                              modeleController.text,
-                                                                              stateAddSn.nature,
-                                                                              stateAddSn.numberOfArticles,
-                                                                              null,
-                                                                              null);
+                                                                          Non_Etiquete
+                                                                              newSn =
+                                                                              Non_Etiquete(
+                                                                            numSerie,
+                                                                            context.read<SettingsBloc>().settingsrepository.modeScan,
+                                                                            DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
+                                                                            state.localisation!.code_bar,
+                                                                            1,
+                                                                            state.localisation!.cop_id,
+                                                                            context.read<AuthenticationBloc>().authenticationRepository.user!.matricule,
+                                                                            marqueController.text,
+                                                                            modeleController.text,
+                                                                            stateAddSn.nature,
+                                                                            stateAddSn.numberOfArticles,
+                                                                            null,
+                                                                            null,
+                                                                            context.read<AuthenticationBloc>().authenticationRepository.user!.INV_ID,
+                                                                            context.read<SynchronizationBloc>().synchronizationRepository.deviceID,
+                                                                          );
                                                                           syncBloc
                                                                               .add(SynchronizationAddSn(sn: newSn));
                                                                           Navigator.pop(
@@ -963,7 +968,11 @@ class DetailSnPage extends StatelessWidget {
                                         context
                                             .read<SynchronizationBloc>()
                                             .synchronizationRepository
-                                            .pos2);
+                                            .pos2,
+                                        context
+                                            .read<SynchronizationBloc>()
+                                            .synchronizationRepository
+                                            .deviceID);
                                     context.read<SynchronizationBloc>().add(
                                         SynchronizationAddBien(bien: newBien));
                                     showTopSnackBar(

@@ -31,6 +31,7 @@ class Bien_materiel {
   String? inv_id;
   final double? latitude;
   final double? longitude;
+  final String? device_ID;
 
   Bien_materiel(
       this.code_bar,
@@ -42,20 +43,21 @@ class Bien_materiel {
       this.matricule,
       this.inv_id,
       this.latitude,
-      this.longitude);
+      this.longitude,
+      this.device_ID);
 
-  Bien_materiel copyWith({
-    String? code_bar,
-    int? etat,
-    String? date_scan,
-    String? code_localisation,
-    int? stockage,
-    String? CODE_COP,
-    String? matricule,
-    String? inv_id,
-    double? latitude,
-    double? longitude,
-  }) {
+  Bien_materiel copyWith(
+      {String? code_bar,
+      int? etat,
+      String? date_scan,
+      String? code_localisation,
+      int? stockage,
+      String? CODE_COP,
+      String? matricule,
+      String? inv_id,
+      double? latitude,
+      double? longitude,
+      String? device_ID}) {
     return Bien_materiel(
       code_bar ?? this.code_bar,
       etat ?? this.etat,
@@ -67,6 +69,7 @@ class Bien_materiel {
       inv_id ?? this.inv_id,
       latitude ?? this.latitude,
       longitude ?? this.longitude,
+      device_ID ?? this.device_ID,
     );
   }
 
@@ -81,7 +84,8 @@ class Bien_materiel {
       "stockage": stockage,
       'inv_id': inv_id,
       'latitude': latitude,
-      'longitude': longitude
+      'longitude': longitude,
+      "device_ID": device_ID
     };
   }
 
@@ -155,6 +159,7 @@ class Bien_materiel {
     User user = await User.auth();
     Dio dio = Dio();
     String imeiNo = await DeviceInformation.deviceIMEINumber;
+    print(toString());
     try {
       dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
 
@@ -235,7 +240,8 @@ class Bien_materiel {
         "stockage": stockage,
         "inv_ID": inv_id,
         "latitude": latitude,
-        "longitude": longitude
+        "longitude": longitude,
+        "device_ID": device_ID
       };
   static Future<List<Bien_materiel>> history() async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
@@ -254,7 +260,8 @@ class Bien_materiel {
           maps[i]["matricule"],
           maps[i]["inv_id"],
           maps[i]['latitude'],
-          maps[i]['longitude']);
+          maps[i]['longitude'],
+          maps[i]["device_ID"]);
     });
   }
 
@@ -276,7 +283,8 @@ class Bien_materiel {
           maps[i]["matricule"],
           maps[i]["inv_id"],
           maps[i]['latitude'],
-          maps[i]['longitude']);
+          maps[i]['longitude'],
+          maps[i]["device_ID"]);
     });
   }
 
@@ -294,7 +302,8 @@ class Bien_materiel {
           maps[i]["matricule"],
           maps[i]["inv_id"],
           maps[i]['latitude'],
-          maps[i]['longitude']);
+          maps[i]['longitude'],
+          maps[i]["device_ID"]);
     });
   }
 
@@ -316,11 +325,8 @@ class Bien_materiel {
   String toString() {
     return '''{ "code_bar": "$code_bar",
             "codelocalisation": "$code_localisation",
-            "code_cop": "$CODE_COP",
-            "etat": $etat,
-            "date_scan": "$date_scan",
-            "matricule": "$matricule",
-            "stockage": $stockage }''';
+            "device_id": $device_ID 
+            "inv_id" : $inv_id}''';
   }
 
   Future<void> refreshToken(Database db) async {

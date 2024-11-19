@@ -830,7 +830,9 @@ class DetailBienPage extends StatelessWidget {
                                                                               stateAddSn.nature,
                                                                               stateAddSn.numberOfArticles,
                                                                               null,
-                                                                              null);
+                                                                              null,
+                                                                              context.read<AuthenticationBloc>().authenticationRepository.user!.INV_ID,
+                                                                              context.read<SynchronizationBloc>().synchronizationRepository.deviceID);
                                                                           syncBloc
                                                                               .add(SynchronizationAddSn(sn: newSn));
                                                                           Navigator.pop(
@@ -965,7 +967,11 @@ class DetailBienPage extends StatelessWidget {
                                         context
                                             .read<SynchronizationBloc>()
                                             .synchronizationRepository
-                                            .pos2);
+                                            .pos2,
+                                        context
+                                            .read<SynchronizationBloc>()
+                                            .synchronizationRepository
+                                            .deviceID);
                                     context.read<SynchronizationBloc>().add(
                                         SynchronizationAddBien(bien: newBien));
                                     showTopSnackBar(

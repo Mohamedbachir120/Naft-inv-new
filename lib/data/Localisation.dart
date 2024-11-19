@@ -128,7 +128,8 @@ class Localisation {
           maps[i]['matricule'],
           maps[i]['inv_id'],
           maps[i]['latitude'],
-          maps[i]['longitude']);
+          maps[i]['longitude'],
+          maps[i]['device_ID']);
     });
   }
 
@@ -153,7 +154,9 @@ class Localisation {
           maps[i]["nature"],
           maps[i]["nombre"],
           maps[i]["latitude"],
-          maps[i]["longitude"]);
+          maps[i]["longitude"],
+          maps[i]["inv_ID"],
+          maps[i]["device_ID"]);
     });
   }
 

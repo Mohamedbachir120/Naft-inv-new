@@ -28,6 +28,8 @@ class Non_Etiquete {
   late String nature;
   late double? latitude;
   late double? longitude;
+  late String? inv_ID;
+  late String? device_ID;
 
   int nombre = 1;
 
@@ -44,37 +46,41 @@ class Non_Etiquete {
       this.nature,
       this.nombre,
       this.latitude,
-      this.longitude);
-  Non_Etiquete copyWith({
-    String? num_serie,
-    int? etat,
-    String? date_scan,
-    String? code_localisation,
-    int? stockage,
-    String? CODE_COP,
-    String? matricule,
-    String? marque,
-    String? modele,
-    String? nature,
-    double? latitude,
-    double? longitude,
-    int? nombre,
-  }) {
+      this.longitude,
+      this.inv_ID,
+      this.device_ID);
+  Non_Etiquete copyWith(
+      {String? num_serie,
+      int? etat,
+      String? date_scan,
+      String? code_localisation,
+      int? stockage,
+      String? CODE_COP,
+      String? matricule,
+      String? marque,
+      String? modele,
+      String? nature,
+      double? latitude,
+      double? longitude,
+      int? nombre,
+      String? inv_ID,
+      String? device_ID}) {
     return Non_Etiquete(
-      num_serie ?? this.num_serie,
-      etat ?? this.etat,
-      date_scan ?? this.date_scan,
-      code_localisation ?? this.code_localisation,
-      stockage ?? this.stockage,
-      CODE_COP ?? this.CODE_COP,
-      matricule ?? this.matricule,
-      marque ?? this.marque,
-      modele ?? this.modele,
-      nature ?? this.nature,
-      nombre ?? this.nombre,
-      latitude ?? this.latitude,
-      longitude ?? this.longitude,
-    );
+        num_serie ?? this.num_serie,
+        etat ?? this.etat,
+        date_scan ?? this.date_scan,
+        code_localisation ?? this.code_localisation,
+        stockage ?? this.stockage,
+        CODE_COP ?? this.CODE_COP,
+        matricule ?? this.matricule,
+        marque ?? this.marque,
+        modele ?? this.modele,
+        nature ?? this.nature,
+        nombre ?? this.nombre,
+        latitude ?? this.latitude,
+        longitude ?? this.longitude,
+        inv_ID ?? this.inv_ID,
+        device_ID ?? this.device_ID);
   }
 
   String date_format() {
@@ -97,7 +103,9 @@ class Non_Etiquete {
       "nature": nature,
       "nombre": nombre,
       "latitude": latitude,
-      "longitude": longitude
+      "longitude": longitude,
+      "inv_ID": inv_ID,
+      "device_ID": device_ID
     };
   }
 
@@ -164,7 +172,7 @@ class Non_Etiquete {
       dio.options.headers['Accept'] = '*/*';
       dio.options.headers['Content-Type'] = 'application/json';
       dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
-
+      print(toString());
       final response = await dio.post(
           '${LARAVEL_ADDRESS}api/create_NonEtiqu/$imeiNo',
           data: toJson());
@@ -250,7 +258,9 @@ class Non_Etiquete {
         "nature": nature,
         "nombre": nombre,
         "latitude": latitude,
-        "longitude": longitude
+        "longitude": longitude,
+        "inv_ID": inv_ID,
+        "device_ID": device_ID
       };
   static Future<List<Non_Etiquete>> history() async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
@@ -272,7 +282,9 @@ class Non_Etiquete {
           maps[i]["nature"],
           maps[i]["nombre"],
           maps[i]['latitude'],
-          maps[i]['longitude']);
+          maps[i]['longitude'],
+          maps[i]['inv_ID'],
+          maps[i]['device_ID']);
     });
   }
 
@@ -293,7 +305,9 @@ class Non_Etiquete {
           maps[i]["nature"],
           maps[i]["nombre"],
           maps[i]['latitude'],
-          maps[i]['longitude']);
+          maps[i]['longitude'],
+          maps[i]['inv_ID'],
+          maps[i]['device_ID']);
     });
   }
 
@@ -317,7 +331,9 @@ class Non_Etiquete {
           maps[i]["nature"],
           maps[i]["nombre"],
           maps[i]['latitude'],
-          maps[i]['longitude']);
+          maps[i]['longitude'],
+          maps[i]['inv_ID'],
+          maps[i]['device_ID']);
     });
   }
 
@@ -325,15 +341,8 @@ class Non_Etiquete {
   String toString() {
     return '''{ "num_serie": "$num_serie",
             "codelocalisation": "$code_localisation",
-            "code_cop": "$CODE_COP",
-            "etat": $etat,
-            "date_scan": "$date_scan",
-            "matricule": "$matricule",
-            "stockage": $stockage,
-             "marque": "$marque" ,
-            "modele": "$modele" ,
-            "nature" : "$nature" ,
-            "nombre" : $nombre
+            "inv_ID" : $inv_ID
+            "device_ID": $device_ID
 
             
             }''';

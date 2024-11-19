@@ -87,7 +87,8 @@ class SynchronizationRepository {
   }
 
   Future<void> getStatus() async {
-    String deviceID = await DeviceInformation.deviceIMEINumber;
+    deviceID = await DeviceInformation.deviceIMEINumber;
+    print("## geting device ID $deviceID");
     String structure = await User.getStructure();
 
     final List<Map<String, dynamic>> naturesQ = await db.query(

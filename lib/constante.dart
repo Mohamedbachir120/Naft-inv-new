@@ -261,7 +261,11 @@ Future<void> scanBarcodeNormal(BuildContext context,
               .user
               ?.INV_ID,
           null,
-          null);
+          null,
+          context
+              .read<SynchronizationBloc>()
+              .synchronizationRepository
+              .deviceID);
       var exist = await newBien.local_check();
       if (exist == false) {
         context

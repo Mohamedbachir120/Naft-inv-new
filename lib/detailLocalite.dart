@@ -791,7 +791,9 @@ class DetailLocalitePage extends StatelessWidget {
                                                                             stateAddSn.nature,
                                                                             stateAddSn.numberOfArticles,
                                                                             context.read<SynchronizationBloc>().synchronizationRepository.pos1,
-                                                                            context.read<SynchronizationBloc>().synchronizationRepository.pos2);
+                                                                            context.read<SynchronizationBloc>().synchronizationRepository.pos2,
+                                                                            context.read<AuthenticationBloc>().authenticationRepository.user!.INV_ID,
+                                                                            context.read<SynchronizationBloc>().synchronizationRepository.deviceID);
                                                                         syncBloc
                                                                             .add(SynchronizationAddSn(sn: newSn));
                                                                         Navigator.pop(
@@ -958,7 +960,11 @@ class DetailLocalitePage extends StatelessWidget {
                                                 context
                                                     .read<SynchronizationBloc>()
                                                     .synchronizationRepository
-                                                    .pos2)));
+                                                    .pos2,
+                                                context
+                                                    .read<SynchronizationBloc>()
+                                                    .synchronizationRepository
+                                                    .deviceID)));
                                     print(
                                         "## getting pos ${context.read<SynchronizationBloc>().synchronizationRepository.pos1}");
                                     showTopSnackBar(

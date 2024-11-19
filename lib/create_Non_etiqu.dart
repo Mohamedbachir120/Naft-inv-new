@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:naftinv/all_non_etique.dart';
+import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/constante.dart';
 import 'package:naftinv/data/Non_Etiquete.dart';
@@ -378,7 +379,12 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                                               context
                                                   .read<SynchronizationBloc>()
                                                   .synchronizationRepository
-                                                  .pos2);
+                                                  .pos2,
+                                              user.INV_ID,
+                                              context
+                                                  .read<SynchronizationBloc>()
+                                                  .synchronizationRepository
+                                                  .deviceID);
 
                                           etiqu.date_scan = etiqu.date_format();
 
