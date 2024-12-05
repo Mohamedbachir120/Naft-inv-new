@@ -1,6 +1,7 @@
 import 'package:device_information/device_information.dart';
 import 'package:intl/intl.dart';
 import 'package:naftinv/data/User.dart';
+import 'package:naftinv/logs/LogFileHandler.dart';
 import 'package:naftinv/main.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -151,37 +152,62 @@ class Bien_materiel {
     return "";
   }
 
-  Future<bool> Store_Bien() async {
-    print("store bien called");
+  Future<bool> storeBien() async {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
     User user = await User.auth();
     Dio dio = Dio();
     String imeiNo = await DeviceInformation.deviceIMEINumber;
-    print(toString());
-    try {
-      dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
+    final logHandler = LogFileHandler();
 
-      final response = await dio
-          .post('${LARAVEL_ADDRESS}api/create_bien/$imeiNo', data: toJson());
-      stockage = 1;
+    await logHandler.initializeLogFile();
+    await logHandler.writeLog('Attempting to store: ${toJson()}');
+
+    try {
+      // Store the object in SQLite first
+      await db.insert('Bien_materiel', toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      await logHandler.writeLog('Stored in SQLite successfully.');
+
+      // Check network connectivity
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        // No internet connection, mark as pending synchronization
+        await logHandler
+            .writeLog('No internet connection. Data saved locally.');
+        return false;
+      }
+
+      // If connected to the internet, send data to the server
+      dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
+      final response = await dio.post(
+        '${LARAVEL_ADDRESS}api/create_bien/$imeiNo',
+        data: toJson(),
+      );
+      await logHandler.writeLog('Data sent to server: ${response.data}');
+      return true;
     } catch (e) {
+      // Handle errors
+      await logHandler.writeLog('Error: $e');
+
+      // Try refreshing token and resending data
       try {
         await refreshToken(db);
         dio.options.headers["Authorization"] =
             'Bearer ${await user.getToken()}';
-
-        final response = await dio
-            .post('${LARAVEL_ADDRESS}api/create_bien/$imeiNo', data: toJson());
-        stockage = 1;
-      } catch (e) {
-        stockage = 0;
+        final response = await dio.post(
+          '${LARAVEL_ADDRESS}api/create_bien/$imeiNo',
+          data: toJson(),
+        );
+        await logHandler
+            .writeLog('Data resent to server after refresh: ${response.data}');
+        return true;
+      } catch (finalError) {
+        await logHandler.writeLog('Final error: $finalError');
+        return false;
       }
     }
-    await db.insert('Bien_materiel', toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    return true;
   }
 
   Future<bool> Store_Bien_Soft() async {
@@ -216,7 +242,6 @@ class Bien_materiel {
               return false;
             }
           } on DioException {
-            print("error");
             return false;
           }
         } else {
@@ -269,9 +294,8 @@ class Bien_materiel {
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
-    final List<Map<String, dynamic>> maps =
-        await db.query("Bien_materiel where stockage  = 0 ");
-
+    final List<Map<String, dynamic>> maps = await db.query("Bien_materiel");
+    print("### bien $maps");
     return List.generate(maps.length, (i) {
       return Bien_materiel(
           maps[i]["code_bar"],
@@ -323,7 +347,7 @@ class Bien_materiel {
 
   @override
   String toString() {
-    return '''{ "code_bar": "$code_bar",
+    return '''#### { "code_bar": "$code_bar",
             "codelocalisation": "$code_localisation",
             "device_id": $device_ID 
             "inv_id" : $inv_id}''';
@@ -342,10 +366,7 @@ class Bien_materiel {
 
       db.insert('User', user.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print("############# Token refreshed successfully.");
-    } catch (e) {
-      print("############### Error refreshing token: ${e.toString()}");
-    }
+    } catch (e) {}
   }
 }
 

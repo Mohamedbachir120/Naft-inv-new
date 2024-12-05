@@ -27,8 +27,8 @@ class Create_Non_etiqu extends StatefulWidget {
 
 String generateRandomString(int len) {
   var r = Random();
-  return String.fromCharCodes(
-      List.generate(len, (index) => r.nextInt(33) + 89));
+  return "AUTO_GENERATED_" +
+      String.fromCharCodes(List.generate(len, (index) => r.nextInt(33) + 89));
 }
 
 class _Create_Non_etiquState extends State<Create_Non_etiqu> {
@@ -50,7 +50,6 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
 
   @override
   void initState() {
-    print(localite);
     super.initState();
   }
 
@@ -361,7 +360,7 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                                           Non_Etiquete etiqu = Non_Etiquete(
                                               numSerie,
                                               MODE_SCAN,
-                                              DateTime.now().toIso8601String(),
+                                              date_format(),
                                               localite == ""
                                                   ? codeBar.text
                                                   : localite,
@@ -385,8 +384,6 @@ class _Create_Non_etiquState extends State<Create_Non_etiqu> {
                                                   .read<SynchronizationBloc>()
                                                   .synchronizationRepository
                                                   .deviceID);
-
-                                          etiqu.date_scan = etiqu.date_format();
 
                                           bool stored =
                                               await etiqu.Store_Non_Etique();

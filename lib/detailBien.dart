@@ -571,7 +571,6 @@ class DetailBienPage extends StatelessWidget {
                                                           },
                                                           onSelected: (String
                                                               selection) {
-                                                            print(selection);
                                                             debugPrint(
                                                                 'You just selected $selection');
                                                           },
@@ -820,7 +819,7 @@ class DetailBienPage extends StatelessWidget {
                                                                           Non_Etiquete newSn = Non_Etiquete(
                                                                               numSerie,
                                                                               context.read<SettingsBloc>().settingsrepository.modeScan,
-                                                                              DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
+                                                                              date_format(),
                                                                               state.localisation!.code_bar,
                                                                               1,
                                                                               state.localisation!.cop_id,

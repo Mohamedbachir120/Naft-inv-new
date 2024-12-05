@@ -49,15 +49,12 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
         ),
         data: data,
       );
-      print("#_ server response ${response.data}");
 
       emit(ChangePasswordSuccess("Password changed successfully!"));
     } catch (e) {
-      print("#_ error $e");
-
       // Check for token expiration error (e.g., statusCode 401)
       // Token expired, call refreshToken and retry
-      print("#_ Token expired, refreshing...");
+
       await refreshToken();
 
       // Retry the password update after refreshing the token
@@ -71,12 +68,10 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
             "password": newPassword,
           }),
         );
-        print("#_ ${LARAVEL_ADDRESS}api/update_password");
-        print("#_ ${response.data}");
+
         emit(ChangePasswordSuccess(
             "Password changed successfully after token refresh!"));
       } catch (e) {
-        print("#_ $e");
         emit(ChangePasswordFailure(
             "Failed after token refresh: ${e.toString()}"));
       }
@@ -85,7 +80,6 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
 
   Future<void> refreshToken() async {
     try {
-      print("#_ refresh token called");
       var response = await dio.post('${LARAVEL_ADDRESS}api/auth/refresh_token',
           data: {
             "refresh_token": authenticationRepository.user?.refresh_token
@@ -98,9 +92,6 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
       authenticationRepository.db.insert(
           'User', authenticationRepository.user!.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print("#_ Token refreshed successfully.");
-    } catch (e) {
-      print("#_ Error refreshing token: ${e.toString()}");
-    }
+    } catch (e) {}
   }
 }

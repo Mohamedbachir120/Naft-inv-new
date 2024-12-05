@@ -22,11 +22,9 @@ class TauxCubit extends Cubit<TauxState> {
 
       _dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
       String imeiNo = await DeviceInformation.deviceIMEINumber;
-      print(authenticationRepository.year);
       final response = await _dio.get(
           '${LARAVEL_ADDRESS}api/taux_progress?code=$imeiNo&cop=${user.COP_ID}&date=${authenticationRepository.year}1231');
 
-      print(response.data);
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
         final double? taux = data['taux'] is int
@@ -38,11 +36,12 @@ class TauxCubit extends Cubit<TauxState> {
           emit(TauxState(taux: 0, error: 'Key "taux" not found'));
         }
       } else {
-
         emit(TauxState(taux: 0, error: 'Failed to load data'));
       }
     } catch (e) {
-      emit(TauxState(taux: 0, error: 'Error: $e'));
+      if (!isClosed) {
+        emit(TauxState(taux: 0, error: 'Error: $e'));
+      }
     }
   }
 }

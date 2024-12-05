@@ -5,6 +5,7 @@ import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/components/AvatarComponent.dart';
 import 'package:naftinv/constante.dart';
+import 'package:naftinv/main.dart';
 
 class ProfilPage extends StatelessWidget {
   const ProfilPage({super.key});
@@ -23,6 +24,7 @@ class ProfilPage extends StatelessWidget {
       body: BlocListener<SynchronizationBloc, SynchronizationState>(
         listener: (context, state) {
           if (state is SynchronizationInitial) {
+            print("###  ${state.status}");
             switch (state.status) {
               case SynchronizationStatus.loading:
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -163,7 +165,7 @@ class ProfilPage extends StatelessWidget {
                                                     color: Colors.white,
                                                   ),
                                                   Text(
-                                                    "   ${state.localites.expand((loc) => loc.biens).toList().length}   Articles scanés",
+                                                    "   ${context.read<SynchronizationBloc>().synchronizationRepository.localisations.expand((loc) => loc.biens).toList().length + context.read<SynchronizationBloc>().synchronizationRepository.localisations.expand((loc) => loc.nonEtiqu).toList().length}   Articles scanés",
                                                     style: defaultTextStyle(
                                                         color: Colors.white),
                                                   )
@@ -296,7 +298,7 @@ class ProfilPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Version 3.0.3",
+                            "Version $CurrentVersion",
                             style: defaultTextStyle(color: MAINCOLOR),
                           )
                         ],

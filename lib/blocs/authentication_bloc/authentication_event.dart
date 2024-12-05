@@ -7,6 +7,9 @@ class AuthenticationStatusChanged extends AuthenticationEvent {
   final AuthenticationStatus status;
   AuthenticationStatusChanged({required this.status});
 }
+class AuthenticationRefresh extends AuthenticationEvent {
+  AuthenticationRefresh();
+}
 
 class SubmitAuthentication extends AuthenticationEvent {
   final String matricule;

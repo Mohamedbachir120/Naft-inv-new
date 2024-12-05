@@ -22,7 +22,8 @@ enum AuthenticationStatus {
   noInternet,
   authenticatedImmo,
   permissionNotGaranted,
-  authFailedImmo
+  authFailedImmo,
+  incorrectVersion
 }
 
 final class AuthenticationInitial extends AuthenticationState {

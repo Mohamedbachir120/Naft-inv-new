@@ -97,7 +97,7 @@ class DetailLocalitePage extends StatelessWidget {
                               style: defaultTextStyle(color: Colors.white),
                             ),
                             Text(
-                              "${state.localites.firstWhere((e) => e.code_bar == localisation.code_bar).biens.length + state.localites.firstWhere((e) => e.code_bar == localisation.code_bar).nonEtiqu.length} Articles",
+                              "${context.read<SynchronizationBloc>().synchronizationRepository.localisations.firstWhere((e) => e.code_bar == localisation.code_bar).biens.length + context.read<SynchronizationBloc>().synchronizationRepository.localisations.firstWhere((e) => e.code_bar == localisation.code_bar).nonEtiqu.length} Articles",
                               style: defaultTextStyle(color: GRAY),
                             )
                           ],
@@ -539,7 +539,6 @@ class DetailLocalitePage extends StatelessWidget {
                                                         },
                                                         onSelected:
                                                             (String selection) {
-                                                          print(selection);
                                                           debugPrint(
                                                               'You just selected $selection');
                                                         },
@@ -781,7 +780,7 @@ class DetailLocalitePage extends StatelessWidget {
                                                                         Non_Etiquete newSn = Non_Etiquete(
                                                                             numSerie,
                                                                             context.read<SettingsBloc>().settingsrepository.modeScan,
-                                                                            DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now()),
+                                                                            date_format(),
                                                                             state.localisation!.code_bar,
                                                                             1,
                                                                             state.localisation!.cop_id,
@@ -1004,7 +1003,7 @@ class DetailLocalitePage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "${state.localites.firstWhere((e) => e.code_bar == localisation.code_bar).biens.length + state.localites.firstWhere((e) => e.code_bar == localisation.code_bar).nonEtiqu.length}",
+                            "${context.read<SynchronizationBloc>().synchronizationRepository.localisations.firstWhere((e) => e.code_bar == localisation.code_bar).biens.length + context.read<SynchronizationBloc>().synchronizationRepository.localisations.firstWhere((e) => e.code_bar == localisation.code_bar).nonEtiqu.length}",
                             style: defaultTextStyle(
                                 color: YELLOW,
                                 fontSize: 46,
@@ -1173,7 +1172,9 @@ class SNWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime current = DateTime.parse(sn.date_scan);
+    DateFormat inputFormat = DateFormat("dd-MM-yyyy HH:mm");
+
+    DateTime current = inputFormat.parse(sn.date_scan);
     return InkWell(
       onTap: () {
         Navigator.of(context).push(

@@ -26,7 +26,6 @@ class SynchronizationBloc
             localisation: synchronizationRepository.defaultLocalisation,
             centre: authenticationRepository.centre,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.initial,
             filter: synchronizationRepository.filter,
             keyword: synchronizationRepository.keyword,
@@ -68,7 +67,6 @@ class SynchronizationBloc
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.initial,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
@@ -80,7 +78,6 @@ class SynchronizationBloc
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.loading,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
@@ -92,7 +89,6 @@ class SynchronizationBloc
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.success,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
@@ -104,7 +100,6 @@ class SynchronizationBloc
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.failed,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
@@ -116,7 +111,6 @@ class SynchronizationBloc
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.searching,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
@@ -128,7 +122,6 @@ class SynchronizationBloc
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.found,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
@@ -140,7 +133,6 @@ class SynchronizationBloc
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.synchronized,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
@@ -152,7 +144,6 @@ class SynchronizationBloc
         return emit(SynchronizationInitial(
             localisation: synchronizationRepository.defaultLocalisation,
             equipes: synchronizationRepository.equipes,
-            localites: synchronizationRepository.localisations,
             status: SynchronizationStatus.locationServiceDisabled,
             centre: authenticationRepository.centre,
             filter: synchronizationRepository.filter,
@@ -173,9 +164,9 @@ class SynchronizationBloc
     synchronizationRepository.activeFilter(event.filter);
   }
 
-  void _onSynchronizationAddBien(
-      SynchronizationAddBien event, Emitter<SynchronizationState> emit) {
-    synchronizationRepository.addBien(event.bien);
+  Future<void> _onSynchronizationAddBien(
+      SynchronizationAddBien event, Emitter<SynchronizationState> emit) async {
+    await synchronizationRepository.addBien(event.bien);
   }
 
   void _onSynchronizationAddSn(

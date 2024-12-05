@@ -7,11 +7,11 @@ import 'package:naftinv/repositories/authentication_repository.dart';
 import 'package:naftinv/repositories/synchronization_repository.dart';
 
 class SynchronizationPage extends StatelessWidget {
-  const SynchronizationPage({super.key, required this.authenticationRepository});
+  const SynchronizationPage(
+      {super.key, required this.authenticationRepository});
   final AuthenticationRepository authenticationRepository;
   @override
   Widget build(BuildContext context) {
-    print("builder called");
     return BlocProvider(
       create: (context) => SynchronizationBloc(
           synchronizationRepository: SynchronizationRepository(

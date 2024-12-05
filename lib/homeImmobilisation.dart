@@ -485,9 +485,7 @@ class HomeImmo extends StatelessWidget {
                                     } on PlatformException {
                                       barcodeScanRes =
                                           'Failed to get platform version.';
-                                      print("####### ");
                                     }
-                                    print("####### ");
                                     context
                                         .read<BienImmoCubit>()
                                         .findBien(barcodeScanRes.trim());
@@ -615,7 +613,6 @@ class HomeImmo extends StatelessWidget {
                             return ViewDetailsBienImmo(
                                 bienImmo: state.bienImmo);
                           } else if (state is BienImmoEdit) {
-                            print("##### view  called ");
 
                             return buildBienImmoEditForm(
                                 context, state.bienImmo);
@@ -1259,9 +1256,7 @@ Widget buildEditableFieldRow(
                       }
                     } on PlatformException {
                       controller.text = 'Failed to get platform version.';
-                      print("####### ${controller.text}");
                     }
-                    print("####### ${controller.text}");
                   },
                   icon: const Icon(Icons.camera_alt_outlined))
               : const SizedBox.shrink()

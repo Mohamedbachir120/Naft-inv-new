@@ -17,7 +17,6 @@ enum SynchronizationStatus {
 final class SynchronizationInitial extends SynchronizationState {
   final SynchronizationStatus status;
   final List<Equipe> equipes;
-  final List<Localisation> localites;
   final String centre;
   final String keyword;
   final String filter;
@@ -28,7 +27,6 @@ final class SynchronizationInitial extends SynchronizationState {
 
   SynchronizationInitial(
       {required this.equipes,
-      required this.localites,
       required this.status,
       required this.centre,
       required this.filter,

@@ -25,7 +25,7 @@ class SNsPage extends StatelessWidget {
         child: BlocBuilder<SynchronizationBloc, SynchronizationState>(
           builder: (context, state) {
             if (state is SynchronizationInitial) {
-              final sns = state.localites
+              final sns = context.read<SynchronizationBloc>().synchronizationRepository.localisations
                   .expand((loc) => loc.nonEtiqu)
                   .where((e) =>
                       state.keyword.isEmpty ||

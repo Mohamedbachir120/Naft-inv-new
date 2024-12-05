@@ -19,6 +19,7 @@ import 'package:naftinv/repositories/synchronization_repository.dart';
 import 'package:naftinv/splash.dart';
 import 'package:naftinv/synchronization.dart';
 import 'package:naftinv/unauthorized_screen.dart';
+import 'package:naftinv/wrongApkVersion.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -37,6 +38,7 @@ const LARAVEL_ADDRESS = "https://naftinventaire.naftal.dz/";
 int MODE_SCAN = 1;
 int YEAR = DateTime.now().year;
 
+const CurrentVersion = "3.0.5";
 var STRUCTURE = "";
 const DBNAME = "naftinv_scan.db";
 
@@ -48,7 +50,6 @@ Future<Database> initializeDatabase() async {
   bool dbExistsScan = await io.File(dbPathScan).exists();
 
   if (!dbExistsScan) {
-    print("Database creation");
     // Copy from asset8
     ByteData data = await rootBundle.load(join("assets", "naftal_scan.db"));
     List<int> bytes =
@@ -56,9 +57,7 @@ Future<Database> initializeDatabase() async {
 
     // Write and flush the bytes written
     await io.File(dbPathScan).writeAsBytes(bytes, flush: true);
-  } else {
-    print("Database already exists");
-  }
+  } else {}
 
   // Open the database
   return openDatabase(dbPathScan);
@@ -179,6 +178,7 @@ class AppView extends StatelessWidget {
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
+            print(state.status);
             switch (state.status) {
               case AuthenticationStatus.init:
                 _navigator.pushAndRemoveUntil<void>(
@@ -189,7 +189,6 @@ class AppView extends StatelessWidget {
                 );
                 break;
               case AuthenticationStatus.authFailedImmo:
-
                 break;
               case AuthenticationStatus.authenticated:
                 _navigator.pushAndRemoveUntil<void>(
@@ -244,6 +243,13 @@ class AppView extends StatelessWidget {
                     builder: (_) => HomeImmo(),
                   ),
                   ModalRoute.withName('/homeImmo'),
+                );
+              case AuthenticationStatus.incorrectVersion:
+                _navigator.pushAndRemoveUntil<void>(
+                  MaterialPageRoute<void>(
+                    builder: (_) => WrongApkVersion(),
+                  ),
+                  ModalRoute.withName('/wrongApk'),
                 );
             }
           },
@@ -578,6 +584,8 @@ class ChoixStructurePage extends StatelessWidget {
                           onSubmitted: (val) {
                             context.read<ChoixStructureBloc>().add(
                                 ChoixStructurePickStructure(structure: val));
+
+                            print("### $val");
                           },
                         )),
                     Container(
@@ -633,8 +641,15 @@ class ChoixStructurePage extends StatelessWidget {
                                 ),
                                 onPressed: () async {
                                   try {
+                                    print("### ${state.selectedStructures}");
                                     if (state.selectedStructures
-                                        .contains("-")) {
+                                            .contains("-") &&
+                                        context
+                                            .read<ChoixStructureBloc>()
+                                            .choixStructureRepository
+                                            .structures
+                                            .contains(
+                                                state.selectedStructures)) {
                                       context.read<ChoixStructureBloc>().add(
                                           ChoixStructurePickStructure(
                                               structure: state
@@ -656,8 +671,8 @@ class ChoixStructurePage extends StatelessWidget {
                                                             .indexOf("-") -
                                                         1)));
                                   } catch (e) {
-                                    print(e.toString());
                                     Show_Error(context);
+                                    print("#### $e");
                                   }
                                 },
                                 child: const Padding(

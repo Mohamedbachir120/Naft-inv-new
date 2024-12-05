@@ -25,7 +25,7 @@ class BiensPage extends StatelessWidget {
         child: BlocBuilder<SynchronizationBloc, SynchronizationState>(
           builder: (context, state) {
             if (state is SynchronizationInitial) {
-              final biens = state.localites
+              final biens = context.read<SynchronizationBloc>().synchronizationRepository.localisations
                   .expand((loc) => loc.biens)
                   .where((e) =>
                       state.keyword.isEmpty ||

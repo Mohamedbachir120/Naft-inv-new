@@ -187,6 +187,12 @@ String formatDate(int a) {
   }
 }
 
+String date_format() {
+  DateTime day = DateTime.now();
+
+  return "${formatDate(day.day)}-${formatDate(day.month)}-${formatDate(day.year)} ${formatDate(day.hour)}:${formatDate(day.minute)}";
+}
+
 Future<void> scanBarcodeNormal(BuildContext context,
     {int operation = 1}) async {
   String barcodeScanRes = "";

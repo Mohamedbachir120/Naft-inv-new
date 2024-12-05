@@ -17,7 +17,6 @@ class BienImmoCubit extends Cubit<BienImmoState> {
   }) : super(BienImmoInitial());
 
   Future<void> findBien(String codeBar) async {
-    print("######## centre  ${authenticationRepository.user?.COP_ID}");
     emit(BienImmoLoading());
     try {
       dio.options.headers["Authorization"] =
@@ -31,7 +30,6 @@ class BienImmoCubit extends Cubit<BienImmoState> {
       );
 
       if (response.data != null) {
-        print("########## ${response.data}");
         final bienImmo = BienImmo(
           AST_CB: response.data['detail']['AST_CB'],
           AST_LIB: response.data['detail']['AST_LIB'] ?? "",
@@ -49,7 +47,6 @@ class BienImmoCubit extends Cubit<BienImmoState> {
       }
     } catch (e) {
       try {
-        print("###### calling refresh token ");
         await refreshToken();
         dio.options.headers["Authorization"] =
             'Bearer ${await authenticationRepository.user?.getToken()}';
@@ -61,7 +58,6 @@ class BienImmoCubit extends Cubit<BienImmoState> {
           },
         );
         if (response.data != null) {
-          print("########## ${response.data}");
           final bienImmo = BienImmo(
             AST_CB: response.data['detail']['AST_CB'],
             AST_LIB: response.data['detail']['AST_LIB'] ?? "",
@@ -117,8 +113,6 @@ class BienImmoCubit extends Cubit<BienImmoState> {
             'matriculeCar': newBienImmo.AST_TV_MATRICULE
           }));
       emit(BienImmoUpdated(newBienImmo));
-
-      print("###### success ${responseUpdate.data}");
     } catch (e) {
       await refreshToken();
 
@@ -147,7 +141,6 @@ class BienImmoCubit extends Cubit<BienImmoState> {
   }
 
   void editBien(BienImmo bienImmo) {
-    print("##### editing called ");
     emit(BienImmoEdit(bienImmo));
   }
 
@@ -166,9 +159,6 @@ class BienImmoCubit extends Cubit<BienImmoState> {
       authenticationRepository.db.insert(
           'User', authenticationRepository.user!.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print("############# Token refreshed successfully.");
-    } catch (e) {
-      print("############### Error refreshing token: ${e.toString()}");
-    }
+    } catch (e) {}
   }
 }

@@ -21,6 +21,7 @@ class AuthenticationBloc
     on<SelectStructure>(_onSelectStructure);
     on<SubmitAuthentication>(_onSubmitAuthentication);
     on<AuthenticationSignOut>(_onAuthenticationSignOut);
+    on<AuthenticationRefresh>(_onAuthenticationRefresh);
     on<SubmitImmobilisationAuthentication>(
         _onSubmitAuthenticationImmobilisation);
 
@@ -91,7 +92,18 @@ class AuthenticationBloc
             user: authenticationRepository.user,
             centre: authenticationRepository.centre,
             deviceID: authenticationRepository.deviceId));
+      case AuthenticationStatus.incorrectVersion:
+        return emit(AuthenticationInitial(
+            status: AuthenticationStatus.incorrectVersion,
+            user: authenticationRepository.user,
+            centre: authenticationRepository.centre,
+            deviceID: authenticationRepository.deviceId));
     }
+  }
+
+  void _onAuthenticationRefresh(
+      AuthenticationRefresh event, Emitter<AuthenticationState> emit) {
+    authenticationRepository.getStatus();
   }
 
   void _onSelectStructure(

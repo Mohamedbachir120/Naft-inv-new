@@ -83,12 +83,6 @@ class Non_Etiquete {
         device_ID ?? this.device_ID);
   }
 
-  String date_format() {
-    DateTime day = DateTime.now();
-
-    return "${day.day}/${day.month}/${day.year}    ${day.hour}:${day.minute}";
-  }
-
   Map<String, dynamic> toMap() {
     return {
       "num_serie": num_serie,
@@ -172,11 +166,10 @@ class Non_Etiquete {
       dio.options.headers['Accept'] = '*/*';
       dio.options.headers['Content-Type'] = 'application/json';
       dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
-      print(toString());
+
       final response = await dio.post(
           '${LARAVEL_ADDRESS}api/create_NonEtiqu/$imeiNo',
           data: toJson());
-      print(response.data);
 
       stockage = 1;
     } catch (e) {
@@ -199,8 +192,6 @@ class Non_Etiquete {
   }
 
   Store_Non_Etique_Soft() async {
-    date_scan = date_format();
-
     final database = openDatabase(join(await getDatabasesPath(), DBNAME));
     final db = await database;
 
@@ -250,7 +241,7 @@ class Non_Etiquete {
         "codelocalisation": code_localisation,
         "code_cop": CODE_COP,
         "etat": etat,
-        "date_scan": DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now()),
+        "date_scan": date_scan,
         "matricule": matricule,
         "stockage": stockage,
         "marque": marque,
@@ -290,7 +281,7 @@ class Non_Etiquete {
 
   static Future<List<Non_Etiquete>> synchonized_objects(Database db) async {
     final List<Map<String, dynamic>> maps = await db.query("Non_Etiquete ");
-    print(maps);
+
     return List.generate(maps.length, (i) {
       return Non_Etiquete(
           maps[i]["num_serie"],
@@ -361,9 +352,6 @@ class Non_Etiquete {
 
       db.insert('User', user.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print("############# Token refreshed successfully.");
-    } catch (e) {
-      print("############### Error refreshing token: ${e.toString()}");
-    }
+    } catch (e) {}
   }
 }

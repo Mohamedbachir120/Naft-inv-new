@@ -35,6 +35,7 @@ class SynchronizationRepository {
   final _controller = StreamController<SynchronizationStatus>();
 
   Stream<SynchronizationStatus> get status async* {
+    print(status);
     if (!_controller.isClosed) {
       getStatus();
     }
@@ -48,37 +49,33 @@ class SynchronizationRepository {
 
     if (!serviceEnabled) {
       // Notify the user that location services are disabled
-      print("## Location services are disabled.");
       _controller.add(SynchronizationStatus.locationServiceDisabled);
       return;
     }
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        print('## Location permissions are denied');
         return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       // Permissions are denied forever, handle appropriately
-      print('## Location permissions are permanently denied');
       return;
     }
 
     // If permission is granted, start the timer to retrieve the position
 
     _positionTimer?.cancel(); // Cancel any previous timer if active
-    _positionTimer = Timer.periodic(Duration(seconds: 3), (_) async {
+    _positionTimer = Timer.periodic(Duration(seconds: 10), (_) async {
+      _controller.add(SynchronizationStatus.searching);
+
       Position? position = await GetPosition();
-      print(position);
       pos1 = position?.latitude;
       pos2 = position?.longitude;
 
       // Notify listeners (Bloc) about the updated position
       _controller.add(SynchronizationStatus.found);
-
-      _controller.add(SynchronizationStatus.synchronized);
     });
   }
 
@@ -88,7 +85,7 @@ class SynchronizationRepository {
 
   Future<void> getStatus() async {
     deviceID = await DeviceInformation.deviceIMEINumber;
-    print("## geting device ID $deviceID");
+
     String structure = await User.getStructure();
 
     final List<Map<String, dynamic>> naturesQ = await db.query(
@@ -106,6 +103,7 @@ class SynchronizationRepository {
             "##_ user Authenticated on Sync get status object found ${sns.length} ${biens.length}");
         final List<Map<String, dynamic>> maps =
             await db.query("T_E_LOCATION_LOC where COP_ID = '$structure' ");
+        print("#### ${maps.length}");
         localisations = List.generate(maps.length, (i) {
           return Localisation(
               maps[i]['LOC_ID'],
@@ -119,14 +117,10 @@ class SynchronizationRepository {
                   .where((ele) => ele.code_localisation == maps[i]['LOC_ID'])
                   .toList());
         });
-        print("${localisations}");
         original = localisations;
         _controller.add(SynchronizationStatus.success);
       } else {
         try {
-          print(
-              "##_ user unAuthenticated on Sync get status object found ${sns.length} ${biens.length}");
-
           var dio = Dio();
           var response = await dio.post(
             '${LARAVEL_ADDRESS}api/auth/signin',
@@ -153,7 +147,6 @@ class SynchronizationRepository {
                     .where((ele) => ele.code_localisation == temp[i]['loc_ID'])
                     .toList());
           });
-          print("${localisations}");
 
           original = localisations;
 
@@ -231,11 +224,13 @@ class SynchronizationRepository {
     _controller.add(SynchronizationStatus.success);
   }
 
-  void addBien(Bien_materiel bien) async {
+  Future<void> addBien(Bien_materiel bien) async {
     _controller.add(SynchronizationStatus.searching);
 
     // await db.query("Bien_materiel where code_bar  = '$code_bar'  ");
+    Bien_materiel stored = bien.copyWith(latitude: pos1, longitude: pos2);
 
+    await stored.storeBien();
     localisations = localisations.map((e) {
       if (e.code_bar == bien.code_localisation &&
           e.biens
@@ -244,9 +239,6 @@ class SynchronizationRepository {
               .isEmpty) {
         e = e.copyWith(biens: [bien, ...e.biens]);
         _controller.add(SynchronizationStatus.success);
-        Bien_materiel stored = bien.copyWith(latitude: pos1, longitude: pos2);
-        print("## ${stored.latitude} ${stored.longitude}");
-        stored.Store_Bien();
 
         return e;
       } else {
@@ -270,9 +262,13 @@ class SynchronizationRepository {
   }
 
   Future<void> synchronize() async {
+    print("### m callling sync");
     _controller.add(SynchronizationStatus.loading);
     List<Bien_materiel> objects = await Bien_materiel.synchonized_objects(db);
     List<Non_Etiquete> object2 = await Non_Etiquete.synchonized_objects(db);
+    // print("### ${jsonEncode(objects)}");
+    print("### after json ${jsonEncode(object2)}");
+
     User user = await User.auth();
     Dio dio = Dio();
     try {
@@ -293,6 +289,7 @@ class SynchronizationRepository {
             "UPDATE Bien_materiel SET stockage = 1 where stockage = 0");
       }
       _controller.add(SynchronizationStatus.synchronized);
+      _controller.add(SynchronizationStatus.success);
     } catch (e) {
       await refreshToken();
       try {
@@ -339,9 +336,6 @@ class SynchronizationRepository {
 
       db.insert('User', user.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print("############# Token refreshed successfully.");
-    } catch (e) {
-      print("############### Error refreshing token: ${e.toString()}");
-    }
+    } catch (e) {}
   }
 }

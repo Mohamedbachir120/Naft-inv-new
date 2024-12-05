@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:naftinv/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:naftinv/constante.dart';
 import 'package:naftinv/main.dart';
 
@@ -31,13 +33,9 @@ class NoInternet extends StatelessWidget {
                         Size(MediaQuery.of(context).size.width * 0.8, 50),
                     backgroundColor: MAINCOLOR),
                 onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChoixStructurePage(
-                              ),
-                          settings: const RouteSettings()),
-                      (route) => false);
+                  context
+                      .read<AuthenticationBloc>()
+                      .add(AuthenticationRefresh());
                 },
                 child: const Text(
                   "Réessayer",
