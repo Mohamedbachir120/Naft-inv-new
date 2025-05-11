@@ -10,6 +10,7 @@ import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/settings_bloc/settingsRepository.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/constante.dart';
+import 'package:naftinv/homeCommiteReforme.dart';
 import 'package:naftinv/homeImmobilisation.dart';
 import 'package:naftinv/noInternet.dart';
 import 'package:naftinv/permissionNotGranted.dart';
@@ -38,7 +39,7 @@ const LARAVEL_ADDRESS = "https://naftinventaire.naftal.dz/";
 int MODE_SCAN = 1;
 int YEAR = DateTime.now().year;
 
-const CurrentVersion = "3.0.5";
+const CurrentVersion = "3.0.7";
 var STRUCTURE = "";
 const DBNAME = "naftinv_scan.db";
 
@@ -358,214 +359,46 @@ class ChoixStructurePage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          IconButton(
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      titleTextStyle: defaultTextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                          fontWeight: FontWeight.w700),
-                                      backgroundColor: Colors.white,
-                                      title: const Text(
-                                          'Gestion des immobilisations'),
-                                      content: BlocListener<AuthenticationBloc,
-                                          AuthenticationState>(
-                                        listener: (context, state) {
-                                          if (state.status ==
-                                              AuthenticationStatus
-                                                  .authFailedImmo) {
-                                            showTopSnackBar(
-                                              Overlay.of(context),
-                                              const CustomSnackBar.error(
-                                                message:
-                                                    'Username ou mot de passe incorrecte!',
-                                              ),
-                                            );
-                                          }
-                                        },
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Container(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          0, 0, 0, 20),
-                                                  alignment: Alignment.center,
-                                                  child: EasyAutocomplete(
-                                                    controller:
-                                                        structureController,
-                                                    decoration:
-                                                        const InputDecoration(
-                                                            hintText:
-                                                                "Centre d'opération"),
-                                                    inputTextStyle:
-                                                        defaultTextStyle(
-                                                            color: const Color(
-                                                                0xFF171059)),
-                                                    suggestions:
-                                                        state.structures,
-                                                    onChanged: (val) {
-                                                      context
-                                                          .read<
-                                                              ChoixStructureBloc>()
-                                                          .add(
-                                                              ChoixStructurePickStructure(
-                                                                  structure:
-                                                                      val));
-                                                    },
-                                                    onSubmitted: (val) {
-                                                      context
-                                                          .read<
-                                                              ChoixStructureBloc>()
-                                                          .add(
-                                                              ChoixStructurePickStructure(
-                                                                  structure:
-                                                                      val));
-                                                    },
-                                                  )),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(25),
-                                                ),
-                                                child: TextFormField(
-                                                  controller: emailController,
-                                                  decoration:
-                                                      defaultInputDecoration(
-                                                    title: "Nom d'utilisateur",
-                                                  ),
-                                                  keyboardType: TextInputType
-                                                      .emailAddress,
-                                                  style: defaultTextStyle(),
-                                                ),
-                                              ),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(25),
-                                                ),
-                                                child: TextFormField(
-                                                  controller:
-                                                      passwordController,
-                                                  decoration: InputDecoration(
-                                                    suffixIcon: IconButton(
-                                                      onPressed: () {},
-                                                      icon: const Icon(
-                                                        Icons.remove_red_eye,
-                                                        color: MAINCOLOR,
-                                                      ),
-                                                    ),
-                                                    labelText: "Mot de passe",
-                                                    fillColor: Colors.white,
-                                                    labelStyle:
-                                                        defaultTextStyle(),
-
-                                                    focusedBorder:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: GRAY),
-                                                    ),
-                                                    enabledBorder:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: GRAY),
-                                                    ),
-                                                    border:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: GRAY),
-                                                    ),
-                                                    //fillColor: Colors.green
-                                                  ),
-                                                  keyboardType: TextInputType
-                                                      .emailAddress,
-                                                  style: const TextStyle(
-                                                    fontFamily: "Poppins",
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              ElevatedButton(
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                    ),
-                                                    backgroundColor: purple,
-                                                    textStyle: const TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                  onPressed: () async {
-                                                    context
-                                                        .read<
-                                                            AuthenticationBloc>()
-                                                        .add(SubmitImmobilisationAuthentication(
-                                                            matricule:
-                                                                emailController
-                                                                    .text,
-                                                            password:
-                                                                passwordController
-                                                                    .text,
-                                                            centre:
-                                                                structureController
-                                                                    .text));
-
-                                                    context
-                                                        .read<
-                                                            SynchronizationBloc>()
-                                                        .add(
-                                                            SynchronizationRefresh());
-                                                  },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 12,
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      // ignore: prefer_const_literals_to_create_immutables
-                                                      children: <Widget>[
-                                                        Text(
-                                                          'Connexion',
-                                                          style:
-                                                              defaultTextStyle(
-                                                                  fontSize:
-                                                                      14.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  color: Colors
-                                                                      .white),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  });
+                          PopupMenuButton<String>(
+                            onSelected: (value) {
+                              if (value == "Gestion des immobilisations") {
+                                ImmobilisationLoginDialogue(context, state);
+                              } else {
+                                CommiteReformeLoginDialogue(context, state);
+                              }
                             },
-                            icon: const Icon(Icons.info_outline),
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'Gestion des immobilisations',
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.inventory,
+                                    color: MAINCOLOR,
+                                  ),
+                                  title: Text(
+                                    'Gestion des immobilisations',
+                                    style: defaultTextStyle(),
+                                  ),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 'Commité de réforme',
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.home_repair_service,
+                                    color: MAINCOLOR,
+                                  ),
+                                  title: Text(
+                                    'Commité de réforme',
+                                    style: defaultTextStyle(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            child: IconButton(
+                              onPressed: null,
+                              icon: Icon(Icons.more_vert, color: MAINCOLOR),
+                            ),
                           )
                         ],
                       ),
@@ -715,5 +548,299 @@ class ChoixStructurePage extends StatelessWidget {
         }
       },
     );
+  }
+
+  Future<dynamic> ImmobilisationLoginDialogue(
+      BuildContext context, ChoixStructureInitial state) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            titleTextStyle: defaultTextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.04,
+                fontWeight: FontWeight.w700),
+            backgroundColor: Colors.white,
+            title: const Text('Gestion des immobilisations'),
+            content: BlocListener<AuthenticationBloc, AuthenticationState>(
+              listener: (context, state) {
+                if (state.status == AuthenticationStatus.authFailedImmo) {
+                  showTopSnackBar(
+                    Overlay.of(context),
+                    const CustomSnackBar.error(
+                      message: 'Username ou mot de passe incorrecte!',
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                        alignment: Alignment.center,
+                        child: EasyAutocomplete(
+                          controller: structureController,
+                          decoration: const InputDecoration(
+                              hintText: "Centre d'opération"),
+                          inputTextStyle:
+                              defaultTextStyle(color: const Color(0xFF171059)),
+                          suggestions: state.structures,
+                          onChanged: (val) {
+                            context.read<ChoixStructureBloc>().add(
+                                ChoixStructurePickStructure(structure: val));
+                          },
+                          onSubmitted: (val) {
+                            context.read<ChoixStructureBloc>().add(
+                                ChoixStructurePickStructure(structure: val));
+                          },
+                        )),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: TextFormField(
+                        controller: emailController,
+                        decoration: defaultInputDecoration(
+                          title: "Nom d'utilisateur",
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        style: defaultTextStyle(),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: TextFormField(
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.remove_red_eye,
+                              color: MAINCOLOR,
+                            ),
+                          ),
+                          labelText: "Mot de passe",
+                          fillColor: Colors.white,
+                          labelStyle: defaultTextStyle(),
+
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: GRAY),
+                          ),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: GRAY),
+                          ),
+                          border: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: GRAY),
+                          ),
+                          //fillColor: Colors.green
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        style: const TextStyle(
+                          fontFamily: "Poppins",
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          backgroundColor: purple,
+                          textStyle: const TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () async {
+                          context.read<AuthenticationBloc>().add(
+                              SubmitImmobilisationAuthentication(
+                                  matricule: emailController.text,
+                                  password: passwordController.text,
+                                  centre: structureController.text));
+
+                          context
+                              .read<SynchronizationBloc>()
+                              .add(SynchronizationRefresh());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 12,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: <Widget>[
+                              Text(
+                                'Connexion',
+                                style: defaultTextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Future<dynamic> CommiteReformeLoginDialogue(
+      BuildContext context, ChoixStructureInitial state) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            titleTextStyle: defaultTextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.04,
+                fontWeight: FontWeight.w700),
+            backgroundColor: Colors.white,
+            title: const Text('Commité de réforme'),
+            content: BlocListener<AuthenticationBloc, AuthenticationState>(
+              listener: (context, state) {
+                if (state.status == AuthenticationStatus.authFailedImmo) {
+                  showTopSnackBar(
+                    Overlay.of(context),
+                    const CustomSnackBar.error(
+                      message: 'Username ou mot de passe incorrecte!',
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                        alignment: Alignment.center,
+                        child: EasyAutocomplete(
+                          controller: structureController,
+                          decoration: const InputDecoration(
+                              hintText: "Centre d'opération"),
+                          inputTextStyle:
+                              defaultTextStyle(color: const Color(0xFF171059)),
+                          suggestions: state.structures,
+                          onChanged: (val) {
+                            context.read<ChoixStructureBloc>().add(
+                                ChoixStructurePickStructure(structure: val));
+                          },
+                          onSubmitted: (val) {
+                            context.read<ChoixStructureBloc>().add(
+                                ChoixStructurePickStructure(structure: val));
+                          },
+                        )),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: TextFormField(
+                        controller: emailController,
+                        decoration: defaultInputDecoration(
+                          title: "Nom d'utilisateur",
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        style: defaultTextStyle(),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: TextFormField(
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.remove_red_eye,
+                              color: MAINCOLOR,
+                            ),
+                          ),
+                          labelText: "Mot de passe",
+                          fillColor: Colors.white,
+                          labelStyle: defaultTextStyle(),
+
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: GRAY),
+                          ),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: GRAY),
+                          ),
+                          border: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: GRAY),
+                          ),
+                          //fillColor: Colors.green
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        style: const TextStyle(
+                          fontFamily: "Poppins",
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          backgroundColor: purple,
+                          textStyle: const TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () async {
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (BuildContext context) {
+                            return HomeCommiteReforme();
+                          }));
+                          // context.read<AuthenticationBloc>().add(
+                          //     SubmitImmobilisationAuthentication(
+                          //         matricule: emailController.text,
+                          //         password: passwordController.text,
+                          //         centre: structureController.text));
+
+                          // context
+                          //     .read<SynchronizationBloc>()
+                          //     .add(SynchronizationRefresh());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 12,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: <Widget>[
+                              Text(
+                                'Connexion',
+                                style: defaultTextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
