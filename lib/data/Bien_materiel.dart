@@ -285,11 +285,7 @@ class Bien_materiel {
   }
 
   static Future<List<Bien_materiel>> synchonized_objects(Database db) async {
-    final database = openDatabase(join(await getDatabasesPath(), DBNAME));
-    final db = await database;
-
     final List<Map<String, dynamic>> maps = await db.query("Bien_materiel");
-    print("### bien $maps");
     return List.generate(maps.length, (i) {
       return Bien_materiel(
           maps[i]["code_bar"],
