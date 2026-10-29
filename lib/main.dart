@@ -617,6 +617,7 @@ class ChoixStructurePage extends StatelessWidget {
                       ),
                       child: TextFormField(
                         controller: passwordController,
+                        obscureText: true,
                         decoration: InputDecoration(
                           suffixIcon: IconButton(
                             onPressed: () {},
@@ -762,6 +763,7 @@ class ChoixStructurePage extends StatelessWidget {
                       ),
                       child: TextFormField(
                         controller: passwordController,
+                        obscureText: true,
                         decoration: InputDecoration(
                           suffixIcon: IconButton(
                             onPressed: () {},

@@ -131,6 +131,7 @@ class LoginPage extends StatelessWidget {
                             ),
                             child: TextFormField(
                               controller: passwordController,
+                              obscureText: true,
                               decoration: InputDecoration(
                                 suffixIcon: IconButton(
                                   onPressed: () {},
