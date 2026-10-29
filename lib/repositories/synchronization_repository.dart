@@ -14,7 +14,6 @@ import 'package:naftinv/data/Non_Etiquete.dart';
 import 'package:naftinv/data/User.dart';
 import 'package:naftinv/main.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 class SynchronizationRepository {
   final Database db;
