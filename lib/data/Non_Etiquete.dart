@@ -4,7 +4,7 @@ import 'package:naftinv/data/User.dart';
 import 'package:naftinv/main.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:naftinv/core/connectivity.dart';
 import 'package:dio/dio.dart';
 
 class Non_Etiquete {
@@ -114,10 +114,7 @@ class Non_Etiquete {
   }
 
   Future<bool> net_check() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
+    if (await hasNetworkConnection()) {
       var dio = Dio();
       String imeiNo = await DeviceInformation.deviceIMEINumber;
 
@@ -201,9 +198,7 @@ class Non_Etiquete {
             'UPDATE Non_Etiquete SET etat = $MODE_SCAN where num_serie = \'$num_serie\' ');
         return true;
       } else {
-        var connectivityResult = await (Connectivity().checkConnectivity());
-        if (connectivityResult == ConnectivityResult.mobile ||
-            connectivityResult == ConnectivityResult.wifi) {
+        if (await hasNetworkConnection()) {
           try {
             User user = await User.auth();
             Dio dio = Dio();

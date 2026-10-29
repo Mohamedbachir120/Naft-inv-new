@@ -5,7 +5,7 @@ import 'package:naftinv/logs/LogFileHandler.dart';
 import 'package:naftinv/main.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:naftinv/core/connectivity.dart';
 import 'package:dio/dio.dart';
 
 class Bien_materiel {
@@ -104,10 +104,7 @@ class Bien_materiel {
   }
 
   Future<bool> net_check() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
+    if (await hasNetworkConnection()) {
       try {
         User user = await User.auth();
         Dio dio = Dio();
@@ -171,8 +168,7 @@ class Bien_materiel {
       await logHandler.writeLog('Stored in SQLite successfully.');
 
       // Check network connectivity
-      final connectivityResult = await Connectivity().checkConnectivity();
-      if (connectivityResult == ConnectivityResult.none) {
+      if (!await hasNetworkConnection()) {
         // No internet connection, mark as pending synchronization
         await logHandler
             .writeLog('No internet connection. Data saved locally.');
@@ -221,9 +217,7 @@ class Bien_materiel {
             'UPDATE Bien_materiel SET etat = $MODE_SCAN where code_bar = \'$code_bar\' ');
         return true;
       } else {
-        var connectivityResult = await (Connectivity().checkConnectivity());
-        if (connectivityResult == ConnectivityResult.mobile ||
-            connectivityResult == ConnectivityResult.wifi) {
+        if (await hasNetworkConnection()) {
           try {
             User user = await User.auth();
             Dio dio = Dio();
