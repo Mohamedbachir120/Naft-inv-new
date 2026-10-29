@@ -210,16 +210,12 @@ class SynchronizationRepository {
     _controller.add(SynchronizationStatus.searching);
     filter = param;
 
+    // Sort a copy so "no filter" can still restore the original order.
+    localisations = List.of(original);
     if (param == "ASC") {
-      localisations = original;
-
       localisations.sort((a, b) => a.designation.compareTo(b.designation));
     } else if (param == "DESC") {
-      localisations = original;
-      localisations.sort((a, b) => a.designation.compareTo(b.designation));
-      localisations = localisations.reversed.toList();
-    } else {
-      localisations = original;
+      localisations.sort((a, b) => b.designation.compareTo(a.designation));
     }
     _controller.add(SynchronizationStatus.success);
   }
@@ -237,14 +233,12 @@ class SynchronizationRepository {
               .where((bienSearch) => bienSearch.code_bar == bien.code_bar)
               .toList()
               .isEmpty) {
-        e = e.copyWith(biens: [bien, ...e.biens]);
-        _controller.add(SynchronizationStatus.success);
-
-        return e;
+        return e.copyWith(biens: [bien, ...e.biens]);
       } else {
         return e;
       }
     }).toList();
+    _controller.add(SynchronizationStatus.success);
   }
 
   void addSn(Non_Etiquete sn) {
