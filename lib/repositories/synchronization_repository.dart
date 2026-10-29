@@ -168,8 +168,8 @@ class SynchronizationRepository {
           });
 
           var batch = db.batch();
-          batch.execute(
-              "DELETE FROM T_E_LOCATION_LOC WHERE COP_ID = '$STRUCTURE' ;");
+          batch.delete('T_E_LOCATION_LOC',
+              where: 'COP_ID = ?', whereArgs: [structure]);
           batch.execute("DELETE FROM T_E_GROUPE_INV;");
 
           for (var item in localisations) {
