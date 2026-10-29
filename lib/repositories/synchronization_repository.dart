@@ -262,57 +262,46 @@ class SynchronizationRepository {
   }
 
   Future<void> synchronize() async {
-    print("### m callling sync");
     _controller.add(SynchronizationStatus.loading);
     List<Bien_materiel> objects = await Bien_materiel.synchonized_objects(db);
     List<Non_Etiquete> object2 = await Non_Etiquete.synchonized_objects(db);
-    // print("### ${jsonEncode(objects)}");
-    print("### after json ${jsonEncode(object2)}");
 
-    User user = await User.auth();
-    Dio dio = Dio();
     try {
-      dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
-      String imeiNo = await DeviceInformation.deviceIMEINumber;
-
-      var response = await dio.post('${LARAVEL_ADDRESS}api/save_many/$imeiNo',
-          data: jsonEncode(objects));
-
-      response = await dio.post(
-          '${LARAVEL_ADDRESS}api/save_manyNonEtiqu/$imeiNo',
-          data: jsonEncode(object2));
-
-      if (response.toString() == "true") {
-        final database = openDatabase(join(await getDatabasesPath(), DBNAME));
-        final db = await database;
-        await db.rawUpdate(
-            "UPDATE Bien_materiel SET stockage = 1 where stockage = 0");
-      }
-      _controller.add(SynchronizationStatus.synchronized);
-      _controller.add(SynchronizationStatus.success);
+      await _uploadPending(objects, object2);
     } catch (e) {
       await refreshToken();
       try {
-        dio.options.headers["Authorization"] =
-            'Bearer ${await user.getToken()}';
-        String imeiNo = await DeviceInformation.deviceIMEINumber;
-
-        var response = await dio.post('${LARAVEL_ADDRESS}api/save_many/$imeiNo',
-            data: jsonEncode(objects));
-
-        response = await dio.post(
-            '${LARAVEL_ADDRESS}api/save_manyNonEtiqu/$imeiNo',
-            data: jsonEncode(object2));
-
-        if (response.toString() == "true") {
-          final database = openDatabase(join(await getDatabasesPath(), DBNAME));
-          final db = await database;
-          await db.rawUpdate(
-              "UPDATE Bien_materiel SET stockage = 1 where stockage = 0");
-        }
+        await _uploadPending(objects, object2);
       } catch (e) {
         _controller.add(SynchronizationStatus.failed);
+        return;
       }
+    }
+    _controller.add(SynchronizationStatus.synchronized);
+    _controller.add(SynchronizationStatus.success);
+  }
+
+  /// Sends all local items to the server and marks each table as sent
+  /// once the server has accepted it.
+  Future<void> _uploadPending(
+      List<Bien_materiel> biens, List<Non_Etiquete> nonEtiquetes) async {
+    User user = await User.auth();
+    Dio dio = Dio();
+    dio.options.headers["Authorization"] = 'Bearer ${await user.getToken()}';
+    String imeiNo = await DeviceInformation.deviceIMEINumber;
+
+    var response = await dio.post('${LARAVEL_ADDRESS}api/save_many/$imeiNo',
+        data: jsonEncode(biens));
+    if (response.toString() == "true") {
+      await db.rawUpdate(
+          "UPDATE Bien_materiel SET stockage = 1 where stockage = 0");
+    }
+
+    response = await dio.post('${LARAVEL_ADDRESS}api/save_manyNonEtiqu/$imeiNo',
+        data: jsonEncode(nonEtiquetes));
+    if (response.toString() == "true") {
+      await db.rawUpdate(
+          "UPDATE Non_Etiquete SET stockage = 1 where stockage = 0");
     }
   }
 
