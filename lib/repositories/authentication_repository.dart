@@ -1,3 +1,4 @@
+import 'package:naftinv/core/secrets.dart';
 import 'dart:async';
 
 import 'package:device_information/device_information.dart';
@@ -118,7 +119,7 @@ class AuthenticationRepository {
 
       var response = await dio.post(
         '${LARAVEL_ADDRESS}api/auth/signin',
-        data: {"email": "999999", "password": "a", 'code': deviceID},
+        data: {"email": serviceAccountLogin, "password": serviceAccountPassword, 'code': deviceID},
       );
 
       final token = response.data["token"];
@@ -146,8 +147,8 @@ class AuthenticationRepository {
 
   void attemptAuthentication(String matricule, String password) async {
     if (matricule.trim().length > 5 &&
-        password.trim() == "a" &&
-        matricule.trim() != "999999") {
+        password.trim() == defaultUserPassword &&
+        matricule.trim() != serviceAccountLogin) {
       final List<Map<String, dynamic>> maps = await db.query(
           "T_E_GROUPE_INV where EMP_ID = '$matricule' and YEAR = $year and COP_ID = '$centre' ");
 

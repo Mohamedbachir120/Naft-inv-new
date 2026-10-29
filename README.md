@@ -1,16 +1,20 @@
-# naftinv
+# NaftInv
 
-A new Flutter project.
+Flutter app used by NAFTAL inventory teams to scan localities and fixed assets
+and synchronise them with the inventory backend.
 
-## Getting Started
+## Build secrets
 
-This project is a starting point for a Flutter application.
+The service account and the default team password are not stored in the
+source code. They are injected at build time:
 
-A few resources to get you started if this is your first Flutter project:
+1. Copy `secrets.example.json` to `secrets.json` (ignored by git) and fill in
+   the values.
+2. Pass the file to every Flutter command that builds or runs the app:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+   ```sh
+   flutter run --dart-define-from-file=secrets.json
+   flutter build apk --release --dart-define-from-file=secrets.json
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The app stops at start-up with a clear error if it was built without them.

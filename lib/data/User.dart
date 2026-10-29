@@ -1,3 +1,4 @@
+import 'package:naftinv/core/secrets.dart';
 import 'package:device_information/device_information.dart';
 import 'package:dio/dio.dart';
 import 'package:naftinv/main.dart';
@@ -88,7 +89,7 @@ class User {
         data: {
           "name": matricule,
           "email": matricule,
-          "password": "a",
+          "password": defaultUserPassword,
           "code": imeiNo
         },
       );

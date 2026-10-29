@@ -10,6 +10,7 @@ import 'package:naftinv/blocs/settings_bloc/bloc/settings_bloc.dart';
 import 'package:naftinv/blocs/settings_bloc/settingsRepository.dart';
 import 'package:naftinv/blocs/synchronization_bloc/bloc/synchronization_bloc.dart';
 import 'package:naftinv/constante.dart';
+import 'package:naftinv/core/secrets.dart';
 import 'package:naftinv/homeCommiteReforme.dart';
 import 'package:naftinv/homeImmobilisation.dart';
 import 'package:naftinv/noInternet.dart';
@@ -66,6 +67,7 @@ Future<Database> initializeDatabase() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ensureSecretsConfigured();
 
   // Initialize database
   final Database database = await initializeDatabase();

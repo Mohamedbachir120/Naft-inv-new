@@ -1,3 +1,4 @@
+import 'package:naftinv/core/secrets.dart';
 import 'dart:async';
 
 import 'package:device_information/device_information.dart';
@@ -49,7 +50,7 @@ class ChoixStructureRepository {
 
       var response = await dio.post(
         '${LARAVEL_ADDRESS}api/auth/signin',
-        data: {"email": "999999", "password": "a", 'code': imeiNo},
+        data: {"email": serviceAccountLogin, "password": serviceAccountPassword, 'code': imeiNo},
       );
 
       final token = response.data["token"];

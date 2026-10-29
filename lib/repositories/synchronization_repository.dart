@@ -1,3 +1,4 @@
+import 'package:naftinv/core/secrets.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -124,7 +125,7 @@ class SynchronizationRepository {
           var dio = Dio();
           var response = await dio.post(
             '${LARAVEL_ADDRESS}api/auth/signin',
-            data: {"email": "999999", "password": "a", 'code': deviceID},
+            data: {"email": serviceAccountLogin, "password": serviceAccountPassword, 'code': deviceID},
           );
 
           final token = response.data["token"];
